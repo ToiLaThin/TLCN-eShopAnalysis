@@ -1,4 +1,4 @@
-﻿using eShopAnalysis.ProductCatalogAPI.Models;
+﻿using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Utilities;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -6,7 +6,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
-namespace eShopAnalysis.ProductCatalogAPI.Data  
+namespace eShopAnalysis.ProductCatalogAPI.Infrastructure.Data  
 {
     public class MongoDbContext
     {
@@ -21,11 +21,11 @@ namespace eShopAnalysis.ProductCatalogAPI.Data
             }
         }
 
-        public IMongoCollection<Product> ProductCollection
+        public IMongoCollection<Catalog> CatalogCollection
         {
             get
             {
-                return _db.GetCollection<Product>("Products");
+                return _db.GetCollection<Catalog>("CatalogCollection");
             }
         }
     }
