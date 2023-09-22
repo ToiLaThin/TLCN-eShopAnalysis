@@ -19,6 +19,9 @@ builder.Services.AddScoped<MongoDbContext>();
 builder.Services.AddScoped<ICatalogService, CatalogService>();
 builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
 
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
 //config automapper
 var mapperConfig = new MapperConfiguration(cfg => 
 {
