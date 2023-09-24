@@ -12,7 +12,7 @@ using MongoDB.Driver;
 
 namespace eShopAnalysis.ProductCatalogAPI.Controllers
 {
-    [Route("api/ProductAPI")]
+    [Route("api/ProductCatalog/ProductAPI")]
     [ApiController]
     public class ProductController : ControllerBase
     {
