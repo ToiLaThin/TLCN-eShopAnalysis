@@ -5,16 +5,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="MediatR" Version="12.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
     <PackageReference Include="MongoDB.Driver" Version="2.21.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\Dto\" />
-    <Folder Include="Models\Aggregator\" />
-    <Folder Include="Models\Mapping\" />
-    <Folder Include="Services\" />
+    <Folder Include="Domain\DomainEvents\" />
+    <Folder Include="Domain\DomainEventHandlers\" />
     <Folder Include="Extensions\" />
   </ItemGroup>
 </Project>
