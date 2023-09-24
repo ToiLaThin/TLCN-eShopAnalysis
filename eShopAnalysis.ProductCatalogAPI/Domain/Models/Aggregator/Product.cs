@@ -1,29 +1,59 @@
-﻿using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork;
+﻿
+using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.Mediator;
+using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.Prototype;
+using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.FactoryMethod;
 
 namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
 {
     [BsonIgnoreExtraElements]
-    public class Product : IAggregateRoot
+    public class Product : ClonableObject, IAggregateRoot
     {
         //metadata
+        private readonly IDomainEventDispatcher _domainEventDispatcher; 
+
+        private readonly IDomainEventFactory _domainEventFactory; //to create events, 
+        protected Product(Product sourceClone) : base(sourceClone) { 
+            //implement how you want to clone
+            //create a new row with the exact infomation and business key but different productId and increase in revision
+        }
+
+        //so many constructor, which one will be used
+        //tested, this is still called
+        public Product()
+        {
+            IsOnSale = true;
+            HaveVariants = false;
+        }
+        public override ClonableObject Clone()
+        {
+            //just call the above clone constructor
+            return new Product(this);
+        }
+
+        public Product(IDomainEventDispatcher domainEventDispatcher, IDomainEventFactory domainEventFactory)
+        {
+            _domainEventDispatcher = domainEventDispatcher;
+            _domainEventFactory = domainEventFactory;
+        }
+
+        //private readonly 
         [BsonId]
         [BsonRepresentation(BsonType.String)]
         public Guid ProductId { get; set; }
 
         public string ProductName { get; set; }
 
-        [BsonIgnore]
+        [BsonRepresentation(BsonType.String)]
         public Guid SubCatalogId { get; set; }
 
-        //[BsonIgnore]
-        ////in mongodb string field is required
-        //public string SubCatalogName { get; set; }
+        //in mongodb string field is required even if we use BsonIgnore, it just require us to input it, but do not serialized to save into the db
+        public string SubCatalogName { get; set; }
 
         //[BsonIgnore]
-        ////in mongodb string field is required
-        //public string ProductCoverImage { get; set; }
+        //in mongodb string field is required even if we use BsonIgnore, it just require us to input it, but do not serialized to save into the db        //public string ProductCoverImage { get; set; }
 
         public bool IsOnSale { get; set; } //each time a product model is set on sale, this will be on
 
@@ -54,11 +84,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
         //[BsonIgnore]
         //public ProductInfo ProductInfo { get; set; }
 
-        public List<ProductModel> ProductModels { get; set; }
-        public Product() {
-            IsOnSale = false;
-            HaveVariants = false;
-        }
+        public List<ProductModel> ProductModels { get; set; }        
 
 
         //since the data modeling in mongo db is nesting, it introduce complex logic => very fit for domain driven design
@@ -86,10 +112,12 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
             return model;
         }
 
+        public void UpdateSubCatalog(Guid subCatalogId, string subCatalogName)
+        {
+            SubCatalogId = subCatalogId;
+            SubCatalogName = subCatalogName;
+        }
 
-
-
-
-
+        
     }
 }
