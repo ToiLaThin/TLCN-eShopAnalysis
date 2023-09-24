@@ -41,6 +41,13 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
             return result;
         }
 
+        [HttpPost("UpdateProductSubCatalog")]
+        public Product UpdateProductSubCatalog([FromHeader] Guid productId, Guid newSubCatalogId, string newSubCatalogName) 
+        {
+            var result = _service.UpdateSubCatalog(productId, newSubCatalogId, newSubCatalogName);
+            return result;
+        }
+
         [HttpPost("AddNewProductModel")]
         public ProductModel AddNewProductModel([FromHeader] Guid productId, [FromBody] ProductModel newProductModel)
         {

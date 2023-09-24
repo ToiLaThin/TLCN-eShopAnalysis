@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using eShopAnalysis.ProductCatalogAPI.Application.Dto;
+using eShopAnalysis.ProductCatalogAPI.Application.Result;
 using eShopAnalysis.ProductCatalogAPI.Application.Services;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Infrastructure.Data;
@@ -9,6 +10,9 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors;
 
 namespace eShopAnalysis.ProductCatalogAPI.Controllers
 {
@@ -26,19 +30,30 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
 
         #region Catalog Api
         [HttpGet("GetAllCatalog")]
-        public IEnumerable<CatalogDto> GetAll()
+        //not use as attribute but to get the service from DI container
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public ResponseDto<string> GetAll()
         {
             var result = _service.GetAll();
-            IEnumerable<CatalogDto> resultDto = _mapper.Map<IEnumerable<CatalogDto>>(result);
-            if (resultDto != null)
-            {
-                return resultDto;
+            //IEnumerable<CatalogDto> resultDto = _mapper.Map<IEnumerable<CatalogDto>>(result);
+            //if (resultDto != null)
+            //{
+            //    return resultDto;
 
+            //}
+            //return new List<CatalogDto> { };
+            if (result.IsSuccess)
+            {
+                IEnumerable<CatalogDto> resultDto = _mapper.Map <IEnumerable<CatalogDto>>(result.Data);
+                string jsonResult = JsonConvert.SerializeObject(resultDto);
+                return ResponseDto<string>.Success(jsonResult);
             }
-            return new List<CatalogDto> { };
+            else 
+                return ResponseDto<string>.Failure("No catalog");
         }
 
         [HttpGet("GetOneCatalog")]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public CatalogDto GetOne([FromHeader] Guid catalogId)
         {
             var result = _service.Get(catalogId);

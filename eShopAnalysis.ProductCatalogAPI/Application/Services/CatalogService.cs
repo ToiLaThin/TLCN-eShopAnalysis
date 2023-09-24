@@ -1,4 +1,5 @@
-﻿using eShopAnalysis.ProductCatalogAPI.Domain.Models;
+﻿using eShopAnalysis.ProductCatalogAPI.Application.Result;
+using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Infrastructure;
 using System.Runtime.CompilerServices;
 
@@ -8,7 +9,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
     public interface ICatalogService
     {
         Catalog Get(Guid catalogGuid);
-        IEnumerable<Catalog> GetAll();
+        ResponseDto<IEnumerable<Catalog>> GetAll();
         Catalog AddCatalog(Catalog catalog);
         bool DeleteCatalog(Guid catalogId);
         Catalog UpdateCatalog(Catalog catalog); //for testing only
@@ -30,10 +31,10 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             _repository = repository;
         }
 
-        public IEnumerable<Catalog> GetAll()
+        public ResponseDto<IEnumerable<Catalog>> GetAll()
         {
             var result = _repository.GetAll();
-            return result;
+            return ResponseDto<IEnumerable<Catalog>>.Success(result);
         }
 
         public Catalog Get(Guid catalogGuid)
