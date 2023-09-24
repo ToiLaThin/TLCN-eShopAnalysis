@@ -52,8 +52,9 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
         //in mongodb string field is required even if we use BsonIgnore, it just require us to input it, but do not serialized to save into the db
         public string SubCatalogName { get; set; }
 
-        //[BsonIgnore]
-        //in mongodb string field is required even if we use BsonIgnore, it just require us to input it, but do not serialized to save into the db        //public string ProductCoverImage { get; set; }
+        [BsonIgnore]
+        //in mongodb string field is required even if we use BsonIgnore, it just require us to input it, but do not serialized to save into the db        
+        public string ProductCoverImage { get; set; }
 
         public bool IsOnSale { get; set; } //each time a product model is set on sale, this will be on
 
@@ -81,8 +82,8 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
         public Guid BusinessKey { get; set; }
         #endregion
 
-        //[BsonIgnore]
-        //public ProductInfo ProductInfo { get; set; }
+        [BsonIgnore]
+        public ProductInfo ProductInfo { get; set; }
 
         public List<ProductModel> ProductModels { get; set; }        
 

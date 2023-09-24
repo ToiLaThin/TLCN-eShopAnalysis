@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using eShopAnalysis.ProductCatalogAPI.Application.Dto;
 using eShopAnalysis.ProductCatalogAPI.Application.Services;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
@@ -21,38 +22,59 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         }
 
         [HttpGet("GetOneProduct")]
-        public Product GetOneProduct(Guid productId)
+        public ProductDto GetOneProduct(Guid productId)
         {
             var result = _service.Get(productId);
-            return result;
+            var resultDto = (result.IsSuccess == true) ? _mapper.Map<Product, ProductDto>(result.Data) : null;
+            return resultDto;
         }
 
         [HttpGet("GetAllProduct")]
-        public IEnumerable<Product> GetAllProduct()
+        public IEnumerable<ProductDto> GetAllProduct()
         {
             var result = _service.GetAll();
-            return result;
+            var resultDto = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(result.Data);
+            return resultDto;
         }
 
         [HttpPost("AddProduct")]
-        public Product GetAllProduct([FromBody] Product newProduct)
+        public ProductDto AddProduct([FromBody] Product newProduct)
         {
             var result = _service.AddProduct(newProduct);
-            return result;
+            var resultDto = (result.IsSuccess == true) ? _mapper.Map<Product,ProductDto>(result.Data) : null;
+            return resultDto;
         }
 
         [HttpPost("UpdateProductSubCatalog")]
-        public Product UpdateProductSubCatalog([FromHeader] Guid productId, Guid newSubCatalogId, string newSubCatalogName) 
+        public ProductDto UpdateProductSubCatalog([FromHeader] Guid productId, Guid newSubCatalogId, string newSubCatalogName) 
         {
             var result = _service.UpdateSubCatalog(productId, newSubCatalogId, newSubCatalogName);
-            return result;
+            var resultDto = (result.IsSuccess == true) ? _mapper.Map<Product, ProductDto>(result.Data) : null;
+            return resultDto;
+        }
+
+        [HttpGet("GetAllProductModels")]
+        public IEnumerable<ProductModelDto> GetAllProductModels([FromHeader] Guid productId)
+        {
+            var result = _service.GetAllProductModels(productId);
+            var resultDto = (result.IsSuccess == true) ? _mapper.Map<IEnumerable<ProductModel>, IEnumerable<ProductModelDto>>(result.Data) : null;
+            return resultDto;
+        }
+
+        [HttpGet("GetProductModel")]
+        public ProductModelDto GetProductModel([FromHeader] Guid productId, [FromHeader] Guid pModelId)
+        {
+            var result = _service.GetProductModel(productId, pModelId);
+            var resultDto = (result.IsSuccess == true) ? _mapper.Map<ProductModel, ProductModelDto>(result.Data) : null;
+            return resultDto;
         }
 
         [HttpPost("AddNewProductModel")]
-        public ProductModel AddNewProductModel([FromHeader] Guid productId, [FromBody] ProductModel newProductModel)
+        public ProductModelDto AddNewProductModel([FromHeader] Guid productId, [FromBody] ProductModel newProductModel)
         {
             var result = _service.AddNewProductModel(productId, newProductModel);
-            return result;
+            var resultDto = (result.IsSuccess == true) ? _mapper.Map<ProductModel, ProductModelDto>(result.Data) : null;
+            return resultDto;
         }
 
     }
