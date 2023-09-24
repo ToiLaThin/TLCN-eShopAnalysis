@@ -5,10 +5,14 @@ using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Driver;
 
 namespace eShopAnalysis.ProductCatalogAPI.Controllers
 {
-    [Route("api/ProductAPI")]
+    [Route("api/ProductCatalog/ProductAPI")]
     [ApiController]
     public class ProductController : ControllerBase
     {

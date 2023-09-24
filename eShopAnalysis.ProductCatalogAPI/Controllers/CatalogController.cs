@@ -16,7 +16,7 @@ using eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors;
 
 namespace eShopAnalysis.ProductCatalogAPI.Controllers
 {
-    [Route("api/CatalogAPI")]
+    [Route("api/ProductCatalog/CatalogAPI")]
     [ApiController]
     public class CatalogController : ControllerBase
     {
