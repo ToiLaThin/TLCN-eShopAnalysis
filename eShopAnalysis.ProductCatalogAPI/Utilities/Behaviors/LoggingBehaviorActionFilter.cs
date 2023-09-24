@@ -64,6 +64,16 @@ namespace eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors
                     DateTime.UtcNow
                     );
             }
+            else
+            {
+                _logger.LogInformation(
+                    "Done controller {@ControllerName} \nAt action {@ActionName} \nAt route {@RouteName} \nAt {@DateTime} without knowing successful or not",
+                    controllerName,
+                    actionName,
+                    actionRoute,
+                    DateTime.UtcNow
+                    );
+            }
             //todo check context.Result with different type to find a way to know if this have error or not for structure loggin
         }
 
