@@ -1,0 +1,13 @@
+﻿@using eShopAnalysis.IdentityServer.Models.ViewModels;
+@model NotifyConfirmEmailViewModel
+<form asp-controller="Auth" asp-action="NotifyConfirmEmail" method="post">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <input type="hidden" asp-for="Email" />
+    <div>
+        <input type="text" disabled value="@Model.Email"/>
+    </div>
+    <div>
+        <button type="submit">Confirm using this email</button>
+        <small>We will send an link to your email to confirm</small>
+    </div>
+</form>
