@@ -1,0 +1,117 @@
+@import "mixins";
+
+form {
+    @include px-2; @include py-2;
+    border: 2px solid var(--bg-secondary-clr);
+
+    border-radius: 5px;
+    @include card;
+}
+
+input {
+    width: 280px;
+    @include px-1; @include py-1;
+    border: 2px solid var(--bg-secondary-clr);
+    border-radius: 10px;
+    margin-bottom: var(--m-1);
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
+}
+
+select {
+    @include px-1; @include py-1;
+    border: 2px solid var(--bg-secondary-clr);
+    border-radius: 2px;
+    margin-bottom: var(--m-1);
+}
+
+textarea {
+    width: 280px;
+    @include px-1; @include py-1;
+    border: 2px solid var(--bg-secondary-clr);
+    border-radius: 10px;
+    margin-bottom: var(--m-1);
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
+}
+
+label {
+    font-family: var(--ff-secondary);
+    font-size: var(--fs-md);
+    font-weight: bold;
+}
+
+// control co class .ng-valid va co attribute required
+.ng-touched.ng-valid[required] {
+    border: 2px solid var(--clr-primary-green); 
+}
+
+.ng-touched.ng-invalid:not(form)  {
+    border: 2px solid var(--clr-primary-red); 
+}
+
+
+
+:host ::ng-deep .ck-editor__editable_inline {
+    min-height: 500px;
+    min-width: 400px;
+}
+
+.cover-img-container {
+    img {
+        width: 200px;
+        height: 200px;
+        overflow: hidden;
+    }
+}
+
+.form-group {
+    @include flex;
+    justify-content: space-between;
+}
+
+.form-header {
+    height: 100px;
+    background-color: var(--bg-secondary);
+    margin-bottom: var(--m-1);
+    .form-close-btn {
+        position: relative;
+        z-index: 0;
+        top: 12%;
+        left: 90%;
+        
+        font-size: var(--fs-xlg);
+        font-weight: var(--fw-bold);
+        color: var(--clr-primary-red);
+        @include transition-configuration(var(--animation-fast), ease-in-out) {
+            transition-property: all;
+            @include transition-hover-zoom { } //can be extended if needed
+        }
+        @include clear-fix;
+        
+    }
+}
+.form-footer {
+    height: 100px;
+    background-color: var(--bg-primary);
+    @include flex;
+    justify-content: space-around;
+
+    .disabled-btn {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    button {
+        @include px-1; @include py-1;
+        border: 1px solid var(--text-primary-clr);
+        border-radius: 4px;
+        cursor: pointer;
+
+        @include transition-configuration(var(--animation-fast), ease-in-out) {
+            transition-property: all;
+            @include transition-hover-zoom { 
+                color: var(--clr-primary-red);
+                border-color: var(--clr-primary-red);
+            }
+        }
+    }
+}

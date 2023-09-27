@@ -1,4 +1,5 @@
 using AutoMapper;
+using eShopAnalysis.IdentityServer.Utilities;
 using eShopAnalysis.ProductCatalogAPI.Application.Services;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.FactoryMethod;
@@ -7,6 +8,8 @@ using eShopAnalysis.ProductCatalogAPI.Infrastructure;
 using eShopAnalysis.ProductCatalogAPI.Infrastructure.Data;
 using eShopAnalysis.ProductCatalogAPI.Utilities;
 using eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +47,36 @@ builder.Services.AddSingleton(mapper);
 
 
 builder.Services.AddScoped<LoggingBehaviorActionFilter>();
+
+builder.Services.AddAuthentication()
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOption =>
+                {
+                    jwtOption.Authority = "https://localhost:7002";
+                    jwtOption.SaveToken = true;
+                    jwtOption.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuerSigningKey = false,
+                        ValidateActor = false,
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                    };
+                });
+builder.Services.AddAuthorization(authOption =>
+{
+    authOption.AddPolicy(PolicyNames.AdminPolicy, policy =>
+    {
+        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("admin");
+    });
+    authOption.AddPolicy(PolicyNames.AuthenticatedUserPolicy, policy =>
+    {
+        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("authenticatedUser");
+    });
+});
+
 var app = builder.Build();
 
 app.UseHttpLogging(); //middleware for logging request and resp https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-logging/?view=aspnetcore-7.0

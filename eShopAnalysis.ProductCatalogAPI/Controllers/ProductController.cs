@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using eShopAnalysis.IdentityServer.Utilities;
 using eShopAnalysis.ProductCatalogAPI.Application.Dto;
 using eShopAnalysis.ProductCatalogAPI.Application.Services;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -42,6 +45,11 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         }
 
         [HttpPost("AddProduct")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = PolicyNames.AdminPolicy,
+            Roles = $"{RoleType.Admin}")
+        ]
         public ProductDto AddProduct([FromBody] Product newProduct)
         {
             var result = _service.AddProduct(newProduct);

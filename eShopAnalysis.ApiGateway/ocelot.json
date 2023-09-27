@@ -7,41 +7,27 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7002
+          "Port": 7003
         }
       ],
       "UpstreamPathTemplate": "/api/{anyControllerActionParams}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "Priority": 0
-    },
-    //{
-    //  "DownstreamPathTemplate": "/Category/{anyControllerActionParams}",
-    //  "DownstreamScheme": "http",
-    //  "DownstreamHostAndPorts": [
-    //    {
-    //      "Host": "CMS.Category.Api",
-    //      "Port": 80
-    //    }
-    //  ],
-    //  "UpstreamPathTemplate": "/Category/{anyControllerActionParams}",
-    //  "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-    //  "Priority": 0
-    //},
-    //{
-    //  "DownstreamPathTemplate": "/{any}",
-    //  "DownstreamScheme": "http",
-    //  "DownstreamHostAndPorts": [
-    //    {
-    //      "Host": "Auth.IdentityServer",
-    //      "Port": 80
-    //      //This is url of identity server
+    },    
+    {
+      "DownstreamPathTemplate": "/{any}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7002
 
-    //    }
-    //  ],
-    //  "UpstreamPathTemplate": "/Auth/IdentityServer/{any}",
-    //  "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-    //  "Priority": 0
-    //}
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/IdentityServer/{any}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "Priority": 0
+    }
     //oidc client make a request of https://localhost:7003/Auth/IdentityServer/.well-known/openid-configuration
     //but it do do not redirect properly
     //i found this ref: https://medium.com/@zahidcakici/securing-microservices-demo-with-identityserver4-ocelot-and-angular-spa-in-net-6-42dc0ce3f909
@@ -52,6 +38,6 @@
     //NOTE ALL above is wrong, Promise, window.location =url | window.location.href = url | window.location.replace() does not affect ocelot, it might other place and oidc client can still redirect to ocelot to ids4 normally    
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:7001"
+    "BaseUrl": "https://localhost:7001"
   }
 }

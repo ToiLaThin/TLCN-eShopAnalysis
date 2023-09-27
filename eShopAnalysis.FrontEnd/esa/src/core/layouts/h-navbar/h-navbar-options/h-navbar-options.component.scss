@@ -1,0 +1,30 @@
+@import '/src/styles/_mixins.scss';
+:host {
+    @include flex {
+        flex-direction: row;
+        justify-content: space-between;
+        
+        a {
+            display: inline-block;
+            padding: 0 1rem;
+            color: var(--text-primary-clr);
+            cursor: pointer;
+            @include transition-configuration(var(--animation-fast), ease-in-out) {
+                transition-property: all;
+                @include transition-hover-zoom { color: var(--clr-primary-blue); }
+            }
+        }
+    }
+
+    .hnavbar-account {
+        @include flex {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        i.fa-user-tie {
+            background-color: var(--clr-shadow);
+            border-radius: 50%;
+        }
+    }
+}
