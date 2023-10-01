@@ -24,7 +24,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) { }
 app.UseCors(corPolicyName);
-app.UseHttpsRedirection(); //needed to redirect to another https url
+//app.UseHttpsRedirection(); //needed to redirect to another https url
 app.UseOcelot();
 app.UseAuthorization();
 

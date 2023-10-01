@@ -51,7 +51,7 @@ builder.Services.AddScoped<LoggingBehaviorActionFilter>();
 builder.Services.AddAuthentication()
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOption =>
                 {
-                    jwtOption.Authority = "https://localhost:7002";
+                    jwtOption.Authority = "http://localhost:7002";
                     jwtOption.SaveToken = true;
                     jwtOption.TokenValidationParameters = new TokenValidationParameters()
                     {
@@ -60,6 +60,7 @@ builder.Services.AddAuthentication()
                         ValidateIssuer = false,
                         ValidateAudience = false,
                     };
+                    jwtOption.RequireHttpsMetadata = false;
                 });
 builder.Services.AddAuthorization(authOption =>
 {
@@ -67,13 +68,13 @@ builder.Services.AddAuthorization(authOption =>
     {
         policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
         policy.RequireAuthenticatedUser();
-        //policy.RequireRole("admin");
+        policy.RequireRole(RoleType.Admin);
     });
     authOption.AddPolicy(PolicyNames.AuthenticatedUserPolicy, policy =>
     {
         policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
         policy.RequireAuthenticatedUser();
-        policy.RequireRole("authenticatedUser");
+        policy.RequireRole(RoleType.AuthenticatedUser);
     });
 });
 
@@ -87,7 +88,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

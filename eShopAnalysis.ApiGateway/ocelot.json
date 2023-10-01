@@ -3,7 +3,7 @@
     {
       //api/<BoundedContextName>/<ApiName>/{any}
       "DownstreamPathTemplate": "/api/ProductCatalog/{anyControllerActionParams}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -16,7 +16,7 @@
     },    
     {
       "DownstreamPathTemplate": "/{any}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -38,6 +38,6 @@
     //NOTE ALL above is wrong, Promise, window.location =url | window.location.href = url | window.location.replace() does not affect ocelot, it might other place and oidc client can still redirect to ocelot to ids4 normally    
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7001"
+    "BaseUrl": "http://localhost:7001"
   }
 }

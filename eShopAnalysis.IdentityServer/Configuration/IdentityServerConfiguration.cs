@@ -54,7 +54,7 @@ namespace eShopAnalysis.IdentityServer.Configuration
                 AllowedCorsOrigins = { "http://localhost:4200" },
                 RequireClientSecret = false,
                 PostLogoutRedirectUris = new List<string> { "http://localhost:4200/signout-oidc" },
-                AccessTokenLifetime = 3600
+                AccessTokenLifetime = 3600,                
             }
         };
     }

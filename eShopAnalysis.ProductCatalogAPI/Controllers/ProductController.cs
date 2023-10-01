@@ -47,7 +47,8 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [HttpPost("AddProduct")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = PolicyNames.AdminPolicy
+            Policy = PolicyNames.AdminPolicy,
+            Roles = RoleType.Admin
            )
         ]
         public ProductDto AddProduct([FromBody] Product newProduct)
