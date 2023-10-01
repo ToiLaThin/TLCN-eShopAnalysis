@@ -15,5 +15,5 @@ export interface IProduct {
     revision?: number;
     businessKey?: string;
     productInfo?: IProductInfo;
-    productModels?: IProductModel[];
+    productModels: IProductModel[];
 }

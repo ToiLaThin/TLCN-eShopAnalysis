@@ -67,7 +67,7 @@ builder.Services.AddAuthorization(authOption =>
     {
         policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
         policy.RequireAuthenticatedUser();
-        policy.RequireRole("admin");
+        //policy.RequireRole("admin");
     });
     authOption.AddPolicy(PolicyNames.AuthenticatedUserPolicy, policy =>
     {

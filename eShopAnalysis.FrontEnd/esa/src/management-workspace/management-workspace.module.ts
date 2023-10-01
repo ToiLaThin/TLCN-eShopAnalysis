@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ManagementWorkspaceComponent } from './management-workspace/management-workspace.component';
 import { RouterModule, Routes, CanActivate } from '@angular/router';
 import { SharedModule } from 'src/shared/shared.module';
-import { ProductAddComponent } from './management-workspace/product-add/product-add.component';
 import { RoleGuard } from 'src/shared/guards/role.guard';
 import { AuthenticatedGuard } from 'src/shared/guards/authenticated.guard';
+import { ProductCatalogModule } from './management-workspace/product-catalog/product-catalog.module';
 
 
 const managementWorkspaceRoutes: Routes = [
@@ -13,16 +13,14 @@ const managementWorkspaceRoutes: Routes = [
     path:'',
     component: ManagementWorkspaceComponent,
 
-    canActivate: [AuthenticatedGuard],
-    canActivateChild: [RoleGuard],
+    // canActivate: [AuthenticatedGuard],
+    // canActivateChild: [RoleGuard],
     children: [
       {
-        path: 'product-add',
-        component: ProductAddComponent,
+        path: 'product-catalog',
+        loadChildren: () => import('./management-workspace/product-catalog/product-catalog.module').then(m => m.ProductCatalogModule),
         outlet: 'primary',
-        pathMatch: 'full',
-
-      }
+      },      
     ]
   }
 ]
@@ -30,7 +28,6 @@ const managementWorkspaceRoutes: Routes = [
 @NgModule({
   declarations: [
     ManagementWorkspaceComponent,
-    ProductAddComponent
   ],
   imports: [
     CommonModule,

@@ -6,8 +6,22 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoaderSpinnerComponent } from './components/loader-spinner/loader-spinner.component';
-
-
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatIconModule } from '@angular/material/icon';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatCardModule} from '@angular/material/card';
+import {MatButtonModule} from '@angular/material/button';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatSelectModule} from '@angular/material/select';
+import {MatTreeModule} from '@angular/material/tree';
+import {MatTableModule} from '@angular/material/table';
+import {MatStepperModule} from '@angular/material/stepper';
+import { MatInputModule } from '@angular/material/input';
+// import { MatFormFieldModule } from "@angular/material/form-field";
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import { GgAnalyticsService } from './services/gg-analytics.service';
 
 @NgModule({
   declarations: [
@@ -20,7 +34,21 @@ import { LoaderSpinnerComponent } from './components/loader-spinner/loader-spinn
     RouterModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatSidenavModule,
+    MatTreeModule,
+    MatTabsModule,
+    MatTooltipModule,
+    MatCardModule,
+    MatButtonModule,
+    MatRadioModule,
+    MatSelectModule,//can be import in the component level
+    MatTableModule,
+    MatStepperModule,
+    MatInputModule,
+    MatCheckboxModule
   ],
   exports: [
     DropdownMenuComponent,
@@ -28,7 +56,26 @@ import { LoaderSpinnerComponent } from './components/loader-spinner/loader-spinn
     LoaderSpinnerComponent,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatSidenavModule,
+    MatTreeModule,
+    MatTabsModule,
+    MatTooltipModule,
+    MatCardModule,
+    MatButtonModule,
+    MatRadioModule,
+    MatSelectModule,
+    MatTableModule,
+    MatStepperModule,
+    MatInputModule,
+    MatCheckboxModule
+  ],
+  providers: [
+    GgAnalyticsService
   ]
 })
 export class SharedModule { }

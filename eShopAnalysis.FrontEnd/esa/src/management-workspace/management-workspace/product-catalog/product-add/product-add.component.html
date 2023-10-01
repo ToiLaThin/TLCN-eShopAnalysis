@@ -1,0 +1,189 @@
+<div class="form-header">
+    <a [routerLink]="['/management', {outlets: { primary: null } }]" class="form-close-btn"><span>&times;</span></a>
+</div>
+<button mat-flat-button (click)="stepper.reset()">Reset</button>
+<br>
+<br>
+<form [formGroup]="godProductFrmGrp" (submit)="addNewProduct()">
+    <div *ngIf="godProductFrmGrp.invalid && 
+                            (godProductFrmGrp.dirty || godProductFrmGrp.touched)" 
+                            style="color: red;font-size: 20px;">
+                    The process is invalid
+                </div>
+    <mat-stepper #stepper style="width: 50%;">
+        <mat-step [stepControl]="catalogProductFrmGrp">
+            <form [formGroup]="catalogProductFrmGrp">            
+                <ng-template matStepLabel="">Choose catalog</ng-template>
+                <mat-form-field>
+                    <mat-label>Catalog</mat-label>
+                    <mat-select formControlName="catalogId">
+                        <mat-option *ngFor="let catalog of (this.allCatalogs$ | async)"                                
+                                    [value]="catalog.catalogId"
+                                    (onSelectionChange)="reloadSubCatalogs()"
+                        >
+                            {{catalog.catalogName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <br>
+                <mat-form-field>
+                    <mat-label>Sub Catalog</mat-label>
+                    <mat-select formControlName="subCatalogId" id="subCatalogId">
+                        <mat-option *ngFor="let subcatalog of (this.subCatalogVisible$ | async)"                                
+                                    [value]="subcatalog.subCatalogId"
+                        >
+                            {{subcatalog.subCatalogName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <br>
+                <button mat-icon-button matStepperNext>
+                    <mat-icon>home</mat-icon>
+                </button>
+            </form>
+        </mat-step>
+    
+        <mat-step [stepControl]="productEssentialFrmGrp">
+            <form [formGroup]="productEssentialFrmGrp">
+                <div *ngIf="productEssentialFrmGrp.invalid && 
+                            (productEssentialFrmGrp.dirty || productEssentialFrmGrp.touched)" 
+                            style="color: red;font-size: 20px;">
+                    This is invalid
+                </div>
+                <ng-template matStepLabel="">Fill out product info</ng-template>
+                <mat-form-field>
+                    <mat-label>Product name</mat-label>
+                    <input matInput formControlName="productName" required>
+                </mat-form-field>
+                <br>
+                <mat-form-field>
+                    <mat-label>Product cover image</mat-label>
+                    <input matInput formControlName="productCoverImage" required>
+                </mat-form-field>
+                <br>
+    
+                <button mat-icon-button matStepperPrevious>
+                    <mat-icon>home</mat-icon>
+                </button>
+                <button mat-icon-button matStepperNext>
+                    <mat-icon>home</mat-icon>
+                </button>
+            </form>
+        </mat-step>
+    
+        <mat-step [stepControl]="productInfoFrmGrp">
+            <mat-checkbox [checked]="haveVariants === true"
+                              (change)="toggleHaveVariants()"
+            >
+                Have variants
+            </mat-checkbox>
+            <br>
+            <button mat-icon-button matStepperPrevious>
+                <mat-icon>home</mat-icon>
+            </button>
+            <button mat-icon-button matStepperNext>
+                <mat-icon>home</mat-icon>
+            </button>
+        </mat-step>
+        <mat-step [stepControl]="productModelsFrmArr">
+            <form formArrayName="productModelsFrmArr">
+                <div *ngIf="productModelsFrmArr.invalid && 
+                            (productModelsFrmArr.dirty || productModelsFrmArr.touched)" 
+                            style="color: red;font-size: 20px;">
+                            This is invalid
+                </div>
+                <div *ngIf="this.haveVariants;else defaultProductModelTemplate">
+                    <button mat-flat-button color="primary" (click)="addProductModel()">Add model</button>
+                    <div *ngFor="let frmGrp of productModelsFrmArr.controls;let modelIndex=index">
+                        <div [formGroupName]="modelIndex" style="border: 3px solid whitesmoke;">
+                            <ng-template matStepLabel="">Model info</ng-template>
+                            <p>for model {{modelIndex}}</p>
+                            <mat-form-field>
+                                <mat-label>Cublic Type</mat-label>
+                                <mat-select formControlName="productCublicType">
+                                    <ng-container *ngFor="let ct of this.cublicKeyValueArr">
+                                        <mat-option [value]="ct.key" *ngIf="ct !== undefined">{{ct.value}}</mat-option>
+                                    </ng-container>
+                                </mat-select>
+                            </mat-form-field>
+                            <br>
+                            <mat-form-field>
+                                <mat-label>Cublic Value</mat-label>
+                                <input matInput formControlName="productCublicValue" type="number">
+                            </mat-form-field>
+                            <br>
+                            <mat-checkbox [checked]="havePricePerCublic === true"
+                                          (change)="toggleHavePricePerCublic()"
+                                          #checkboxHavePricePerCublic>
+                                Have price per cublic
+                            </mat-checkbox>
+                            <br>
+                        
+                            <mat-form-field *ngIf="havePricePerCublic; else productNonVariantsPrice">
+                                <mat-label>Price per cublic</mat-label>
+                                <input matInput formControlName="productPricePerCublicValue" type="number">
+                            </mat-form-field>
+                            <ng-template #productNonVariantsPrice>
+                                <mat-form-field>
+                                    <mat-label>productPriceNonCublic</mat-label>
+                                    <input matInput formControlName="productPriceNonCublic" type="number">                    
+                                </mat-form-field>
+                            </ng-template>
+                            <br>
+                            <button mat-flat-button color="warn" (click)="removeProductModel(modelIndex)">Remove this model</button>
+                        </div>
+                    </div>                    
+                </div>
+                <ng-template #defaultProductModelTemplate>
+                    <div [formGroupName]="0" style="border: 3px solid whitesmoke;">
+                        <ng-template matStepLabel="">Product info</ng-template>
+                        <mat-form-field>
+                            <mat-label>Cublic Type</mat-label>
+                            <mat-select formControlName="productCublicType">
+                                <ng-container *ngFor="let ct of this.cublicKeyValueArr">
+                                    <mat-option [value]="ct.key" *ngIf="ct !== undefined">{{ct.value}}</mat-option>
+                                </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                        <br>
+                        <mat-form-field>
+                            <mat-label>Cublic Value</mat-label>
+                            <input matInput formControlName="productCublicValue" type="number">
+                        </mat-form-field>
+                        <br>
+                        <mat-checkbox [checked]="havePricePerCublic === true"
+                                      (change)="toggleHavePricePerCublic()"
+                                      #checkboxHavePricePerCublic
+                        >
+                            Have price per cublic
+                        </mat-checkbox>
+                        <br>
+                    
+                        <mat-form-field *ngIf="havePricePerCublic; else productNonVariantsPrice">
+                            <mat-label>Price per cublic</mat-label>
+                            <input matInput formControlName="productPricePerCublicValue" type="number">
+                        </mat-form-field>
+                        <ng-template #productNonVariantsPrice>
+                            <mat-form-field>
+                                <mat-label>productPriceNonCublic</mat-label>
+                                <input matInput formControlName="productPriceNonCublic" type="number">                    
+                            </mat-form-field>
+                        </ng-template>
+                    </div>
+                </ng-template>
+            </form>
+            <button mat-icon-button matStepperPrevious>
+                <mat-icon>home</mat-icon>
+            </button>
+            <button mat-flat-button type="submit">Submit this form</button>
+        </mat-step>
+    </mat-stepper>
+</form>
+<!-- <div class="form-footer">
+    <button type="submit">Add</button>
+    Both of these not work 
+    <a [routerLink]="['management', {outlets: {primary: 'product-catalog/product-add', 'sidenav-links-outlet':'product-links', pm: 'product-test'}}]">Test product</a>
+    <a [routerLink]="['management', {outlets: {primary: 'product-catalog/product-add', 'sidenav-links-outlet':null}}]">Test product</a>
+    <a [routerLink]="'product-test'">Test product</a>
+    <router-outlet></router-outlet>
+</div> -->

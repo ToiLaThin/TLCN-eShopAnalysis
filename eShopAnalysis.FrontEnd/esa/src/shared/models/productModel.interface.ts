@@ -1,4 +1,4 @@
-enum CublicType {
+export enum CublicType {
     M = 0,
     V = 1,
     S = 2,
@@ -6,14 +6,14 @@ enum CublicType {
 }
 
 export interface IProductModel {
-    productModelId: string;
+    productModelId?: string;
     productModelThumbnails: string[];
     cublicType: CublicType;
     cublicValue: number;
-    pricePerCublicValue: number;
-    cublicPrice: number;
+    pricePerCublicValue?: number;
+    cublicPrice?: number;
     price: number;
-    isOnSaleModel: boolean;
-    salePercentModel: number;
-    priceOnSaleModel: number;
+    isOnSaleModel?: boolean;
+    salePercentModel?: number;
+    priceOnSaleModel?: number;
 }
