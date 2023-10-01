@@ -1,0 +1,51 @@
+<form [formGroup]="newSubCatalogFrmGrp" (ngSubmit)="addSubCatalog()" class="container">
+    <div class="form-header">
+        <a [routerLink]="['/management', {outlets: { primary: null } }]" class="form-close-btn"><span>&times;</span></a>
+    </div>
+    <div class="form-body">
+        <div class="form-group">
+            <mat-form-field>
+                <mat-label>Category</mat-label>
+                <mat-select formControlName="selectedCatalogId">
+                    <mat-option *ngFor="let catalog of (this.allCatalogs$ | async)"                                
+                                [value]="catalog.catalogId"
+                    >
+                        {{catalog.catalogName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="form-group">
+            <div>
+                <label for="subCatalogName">catalogName: </label>
+                <input formControlName="subCatalogName" 
+                       id="subCatalogName"
+                       required 
+                >
+            </div>
+        </div>
+        <br>
+        <div>
+            <label for="subCatalogDescription">catalogDescription: </label>
+            <input type="text" 
+                   formControlName="subCatalogDescription" 
+                   id="subCatalogDescription"
+                   required 
+                   max="50" min="20"
+            >
+        </div>
+        <br>
+
+        <div>
+            <label for="subCatalogImage">catalogImage: </label>
+            <input formControlName="subCatalogImage" 
+                    id="subCatalogImage"    
+                    required="true"                    
+            >
+        </div>
+        <br>        
+    </div>
+    <div class="form-footer">
+        <button type="submit">Add Subcatalog</button>
+    </div>
+</form>

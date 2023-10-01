@@ -1,0 +1,183 @@
+@import "animations";
+
+@mixin flex {
+    display: flex;
+    align-items: center;
+    @content;
+    //for flex-direction & justify-content
+}
+
+@mixin clear-fix {
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+
+@mixin card {
+    border-radius: 4px;
+    box-shadow: 0 0 10px var(--clr-shadow);
+    @content;
+}
+
+// animation
+@mixin full-screen-layer-shade {
+    position: fixed;
+    top: 0;
+    left: 0;
+    @content; /*z-index ?*/
+
+    width: 100vw;
+    height: 100vh;
+
+    background-color: var(--bg-shade-layer);
+}
+
+ // media query
+@mixin mobile-screen {
+    @media screen and (max-width: 576px) {
+        @content;
+    }
+}
+@mixin table-screen {
+    @media screen and (max-width: 576px) {
+        @content;
+    }
+}
+@mixin laptop-screen {
+    @media screen and (max-width: 576px) {
+        @content;
+    }
+}
+@mixin pc-screen {
+    @media screen and (max-width: 576px) {
+        @content;
+    }
+}
+
+//padding
+@mixin px-1 {
+    padding-left: var(--p-1);
+    padding-right: var(--p-1);
+}
+
+@mixin py-1 {
+    padding-top: var(--p-1);
+    padding-bottom: var(--p-1);
+}
+@mixin px-2 {
+    padding-left: var(--p-2);
+    padding-right: var(--p-2);
+}
+
+@mixin py-2 {
+    padding-top: var(--p-2);
+    padding-bottom: var(--p-2);
+}
+@mixin px-3 {
+    padding-left: var(--p-3);
+    padding-right: var(--p-3);
+}
+
+@mixin py-3 {
+    padding-top: var(--p-3);
+    padding-bottom: var(--p-3);
+}
+@mixin px-4 {
+    padding-left: var(--p-4);
+    padding-right: var(--p-4);
+}
+
+@mixin py-4 {
+    padding-top: var(--p-4);
+    padding-bottom: var(--p-4);
+}
+@mixin px-5 {
+    padding-left: var(--p-5);
+    padding-right: var(--p-5);
+}
+
+@mixin py-5 {
+    padding-top: var(--p-5);
+    padding-bottom: var(--p-5);
+}
+@mixin px-6 {
+    padding-left: var(--p-6);
+    padding-right: var(--p-6);
+}
+
+@mixin py-6 {
+    padding-top: var(--p-6);
+    padding-bottom: var(--p-6);
+}
+
+
+//margin
+@mixin mx-1 {
+    margin-left: var(--m-1);
+    margin-right: var(--m-1);
+}
+
+@mixin my-1 {
+    margin-top: var(--m-1);
+    margin-bottom: var(--m-1);
+}
+@mixin mx-2 {
+    margin-left: var(--m-2);
+    margin-right: var(--m-2);
+}
+
+@mixin my-2 {
+    margin-top: var(--m-2);
+    margin-bottom: var(--m-2);
+}
+@mixin mx-3 {
+    margin-left: var(--m-3);
+    margin-right: var(--m-3);
+}
+
+@mixin my-3 {
+    margin-top: var(--m-3);
+    margin-bottom: var(--m-3);
+}
+@mixin mx-4 {
+    margin-left: var(--m-4);
+    margin-right: var(--m-4);
+}
+
+@mixin my-4 {
+    margin-top: var(--m-4);
+    margin-bottom: var(--m-4);
+}
+@mixin mx-5 {
+    margin-left: var(--m-5);
+    margin-right: var(--m-5);
+}
+
+@mixin my-5 {
+    margin-top: var(--m-5);
+    margin-bottom: var(--m-5);
+}
+@mixin mx-6 {
+    margin-left: var(--m-6);
+    margin-right: var(--m-6);
+}
+
+@mixin my-6 {
+    margin-top: var(--m-6);
+    margin-bottom: var(--m-6);
+}
+
+//notification btn trong notification box component
+@mixin btn-notification{
+    //background-color: yellow; sẽ bị overrid nếu content có background-color
+    //vẫn nhận được variable khai báo ở _resets.scss vì _mixins.scss được import vào global sau khi import _resets.scss
+    color: var(--text-primary-clr); 
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-md);
+    line-height: 1.25rem;
+    @include px-4;
+    @include py-2;
+    @content; //pls add background-color
+}

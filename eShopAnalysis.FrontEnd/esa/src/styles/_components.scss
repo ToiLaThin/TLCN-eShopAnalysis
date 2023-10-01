@@ -1,0 +1,15 @@
+@import '/src/styles/resets';
+
+.light-theme {
+    --bg-primary-clr: var(--clr-primary-light);
+    --bg-secondary-clr: var(--clr-secondary-dark);//ko doi    
+    --text-primary-clr: var(--clr-primary-dark);
+    --text-secondary-clr: var(--clr-secondary-light);
+}
+
+.dark-theme {
+    --bg-primary-clr: var(--clr-primary-dark);
+    --bg-secondary-clr: var(--clr-secondary-dark);//ko doi
+    --text-primary-clr: var(--clr-primary-light);
+    --text-secondary-clr: var(--clr-secondary-light);
+}

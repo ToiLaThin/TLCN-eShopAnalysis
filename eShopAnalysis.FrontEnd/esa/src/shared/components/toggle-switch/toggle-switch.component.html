@@ -1,0 +1,7 @@
+<label class="switch" 
+       [class.slided]="(this.isDarkTheme$ | async) === true"
+       [class.not-slided]="(this.isDarkTheme$ | async) === false">
+    <input type="checkbox" (change)="toggle()" [checked]="(this.isDarkTheme$ | async) === true">
+    <span class="slider round">
+    </span>
+</label>

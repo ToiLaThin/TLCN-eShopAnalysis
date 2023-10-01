@@ -1,0 +1,17 @@
+<h2>For Catalog {{catalogName}}</h2>
+<table>
+    <tr>
+        <th>Subcatalog Name</th>
+        <th>Subcatalog Description</th>
+        <th>Actions</th>
+    </tr>
+    <tr *ngFor="let sub of (this.allSubCatalogs$ | async)">
+        <td>{{sub.subCatalogName}}</td>
+        <td>{{sub.subCatalogDescription}}</td>
+        <td>
+            <a mat-fab color="primary">
+                <mat-icon>add</mat-icon>
+            </a>
+        </td>
+    </tr>
+</table>

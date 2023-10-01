@@ -1,0 +1,19 @@
+<table>
+    <tr>
+        <th>Catalog Name</th>
+        <th>CatalogDescription</th>
+        <th>Actions</th>
+    </tr>
+    <tr *ngFor="let cat of (this.allCatalogs$ | async)">
+        <td>{{cat.catalogName}}</td>
+        <td>{{cat.catalogDescription}}</td>
+        <td>
+            <a mat-fab color="primary" (click)="viewSubCatalog(cat.catalogId)">
+                <mat-icon>eye</mat-icon>
+            </a>
+            <a mat-fab color="primary" (click)="addSubCatalog(cat.catalogId)">
+                <mat-icon>add</mat-icon>
+            </a>
+        </td>
+    </tr>
+</table>

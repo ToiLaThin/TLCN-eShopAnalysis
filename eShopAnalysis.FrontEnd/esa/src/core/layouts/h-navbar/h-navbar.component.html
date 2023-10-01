@@ -1,0 +1,24 @@
+<nav class="hnavbar">
+    <div class="hnavbar-header">
+        <img src="/assets/images/logo.png" class="logo">
+        <div class="hnavbar-options">
+            <div class="container">
+                <esa-h-navbar-options></esa-h-navbar-options>
+                <button class="hnavbar-tabs-toggler" (click)="toggleNav()"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <ul class="hnavbar-tabs">
+        <li><a href="#">HOME</a></li>
+        <li><a [routerLink]="[{outlets: {primary: 'management'}}]">MANAGEMENT</a></li>
+        <li><a [routerLink]="[{outlets: {primary: 'shopping'}}]">SHOPPING</a></li>
+        <li><a href="#">CONTACT</a></li>
+    </ul>
+    
+    <div class="container">
+        <esa-h-navbar-options></esa-h-navbar-options>
+    </div>
+
+
+</nav>

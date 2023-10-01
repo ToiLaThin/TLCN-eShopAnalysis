@@ -1,0 +1,5 @@
+<div>
+    <p *ngFor="let product of ( allProduct$ | async)">
+        {{ product.productName }}
+    </p>
+</div>

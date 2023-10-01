@@ -160,8 +160,12 @@ namespace eShopAnalysis.IdentityServer.Controllers
                     Email = rvm.Email,
                 };
 
+                var claimToAdd = new Claim(MyClaimType.Country, "VN");
+                var claimToAddToAccessToken = new Claim(MyClaimType.Role, RoleType.Admin);
                 var result = await _userManager.CreateAsync(user, rvm.Password);
                 if (result.Succeeded) {
+                    await _userManager.AddClaimAsync(user, claimToAdd); //TO TEST
+                    await _userManager.AddClaimAsync(user, claimToAddToAccessToken); //TO TEST
                     return RedirectToAction(nameof(NotifyConfirmEmail), new { email = rvm.Email, returnUrl = rvm.ReturnUrl });
                 }
 

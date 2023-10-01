@@ -90,17 +90,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
 
         //since the data modeling in mongo db is nesting, it introduce complex logic => very fit for domain driven design
         public ProductModel AddNewProductModel(ProductModel model)
-        {
-            if (ProductModels.Count == 0)
-            {
-                var defaultProductModel = new ProductModel()
-                {
-                    ProductModelId = Guid.NewGuid(),
-                    Price = 5
-                };
-                ProductModels.Add(defaultProductModel); //this product models only have one , which is the product itself
-                return defaultProductModel;
-            }
+        {            
             if (ProductModels.Count == 1 && HaveVariants is false) //mean that it have the default model represent the product
             {
                 HaveVariants = true;
