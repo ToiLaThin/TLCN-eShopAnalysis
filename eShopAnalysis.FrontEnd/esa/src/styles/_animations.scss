@@ -1,0 +1,35 @@
+@mixin animation-configuration($duration, $timing-function: ease, $delay: 0, $iteration-count: 1) {
+    // animation-name: $animation-name;
+    animation-duration: $duration;
+    animation-timing-function: $timing-function;
+    animation-delay: $delay;
+    animation-iteration-count: $iteration-count;
+    // animation: $animation-name $animation-duration $animation-timing-function $animation-delay $animation-iteration-count; shorthand
+    @content; //add animation name
+}
+
+@mixin transition-configuration($transition-duration, $transition-timing-function: ease, $transition-delay: 0) {
+    transition-duration: $transition-duration;
+    transition-timing-function: $transition-timing-function;
+    transition-delay: $transition-delay;
+    // transition: $transition-property $transition-duration $transition-timing-function $transition-delay; // shorthand 
+    @content; //add transition property and interaction like &:hover (another mixin)
+}
+
+@keyframes animation-spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes animation-spinner-fade-in {
+    0% { opacity: 0; transform: rotate(0deg);}
+    100% { opacity: 1; transform: rotate(360deg); }
+}
+
+@mixin transition-hover-zoom {
+    &:hover {
+        transform: scale(1.1);
+        @content;
+        // transition: all 0.2s ease-in-out;
+    }
+}  

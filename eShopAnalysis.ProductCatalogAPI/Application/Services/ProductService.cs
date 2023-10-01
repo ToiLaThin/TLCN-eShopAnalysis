@@ -55,7 +55,6 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
         }
         public ResponseDto<Product> AddProduct(Product product)
         {
-            product.AddNewProductModel(new ProductModel()); //default one which is the product itself
             var result = _productRepository.Add(product);
             if (result != null)
             {

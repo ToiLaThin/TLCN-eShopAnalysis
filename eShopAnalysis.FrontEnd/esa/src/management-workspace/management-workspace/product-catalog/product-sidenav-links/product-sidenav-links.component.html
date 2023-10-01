@@ -1,0 +1,19 @@
+<!-- <a [routerLink]="['/management/product-calog',{outlets: {primary: 'product-add', 'sidenav-links-outlet':'product-links'}}]">Add new product</a> 
+Wrong
+-->
+<a [routerLink]="['/management/product-catalog',{outlets: {primary: 'product-list'}}]">All products</a>
+<br>
+<a [routerLink]="['/management/product-catalog',{outlets: {primary: 'product-add'}}]">Add new product</a>
+<!-- should be like thí for lazy load -->
+<!-- Both this and the below are runable -->
+<!-- this is like absolute route, use ../ is like relative route -->
+<br>
+<a [routerLink]="['/management',{outlets: {primary: 'product-catalog/product-edit'}}]">Edit product</a>
+<br>
+<a [routerLink]="['/management/product-catalog',{outlets: {primary: 'catalog-list'}}]">All catalogs</a>
+<br>
+<a [routerLink]="['/management',{outlets: {primary: 'product-catalog/catalog-add'}}]">Add catalog</a>
+<br>
+<a [routerLink]="['/management/product-catalog',{outlets: {primary: 'subcatalog-list'}}]">All subcatalogs</a>
+<br>
+<a [routerLink]="['/management',{outlets: {primary: 'product-catalog/subcatalog-add'}}]">Add subcatalog</a>

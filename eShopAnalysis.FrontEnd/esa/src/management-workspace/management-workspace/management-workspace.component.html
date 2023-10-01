@@ -1,0 +1,10 @@
+<div class="container">
+    <div class="icon-sidenav">
+        <a [routerLink]="['/management',{outlets: {primary: 'product-catalog'}}]">
+            <i class="fa-solid fa-cart-shopping"></i>
+        </a>
+        <a [routerLink]="['/management',{outlets: {primary: 'product-catalog'}}]"><i class="fa-solid fa-cubes-stacked"></i></a>
+        <a href=""><mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="home"></mat-icon></a>
+    </div>
+    <router-outlet></router-outlet>
+</div>

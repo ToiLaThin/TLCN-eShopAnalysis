@@ -1,0 +1,19 @@
+@import '/src/styles/mixins';
+
+.spinner__container {
+    @include full-screen-layer-shade { z-index: 101;/* always on top*/ };
+    &--flex {
+        @include flex { justify-content: center; }
+        height: 100%;
+    }
+}
+
+.spinner {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    border: 12px solid #ccc;
+    border-top: 12px solid #3498db;
+    @include animation-configuration(var(--animation-fast),ease-in-out,$iteration-count: infinite) {
+        animation-name: animation-spinner-fade-in ;
+    }
+}

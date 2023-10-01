@@ -1,0 +1,115 @@
+@import '/src/styles/mixins.scss';
+:host{
+    position: fixed;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    background-color: var(--bg-primary-clr);
+    min-width: 100%;
+}
+
+.showNavs {
+    height: auto !important;
+}
+.hnavbar {
+    @include flex {
+        flex-direction: row;
+        justify-content: space-between;
+    };
+    @include card;
+
+
+    .hnavbar-header {
+        @include flex {
+            flex-direction: row;
+            justify-content: space-between;
+        };
+
+        .logo {
+            height: 60px;
+            width: auto;
+            min-width: 210px; //nếu chỉ có auto thì khi thu nhở nó sẽ bị co lại xấu
+            @include mx-1; @include my-1;
+        }
+
+        .hnavbar-options{
+            @include flex;
+            .hnavbar-tabs-toggler, .container{ display: none; }
+        }
+
+    }
+
+    .hnavbar-tabs {
+        @include flex {
+            flex-direction: row;
+            justify-content: space-between;
+            
+            a {
+                display: block;
+                @include px-3;
+                color: var(--text-primary-clr);
+                font-size: var(--fs-lg);
+                cursor: pointer;
+
+                @include transition-configuration(var(--animation-fast), ease-in-out) {
+                    transition-property: all;
+                    @include transition-hover-zoom { color: var(--clr-primary-red); }
+                }
+                &:focus-within { color: var(--clr-primary-red); }
+            }
+            
+        };
+    }
+}
+
+@include mobile-screen {
+    .hnavbar {
+        display: block; //
+        .container { //different from container of app-h-navbar-options in .hnavbar-options
+            display: none;
+        }
+        .hnavbar-header {
+            @include card;
+            @include flex {
+                flex-direction: row;
+                justify-content: space-between;
+            };
+
+            .hnavbar-options {
+                .hnavbar-tabs-toggler {
+                    display: block;
+                    font-size: var(--fs-md);  
+                    @include py-1;
+                    cursor: pointer;
+                    @include transition-configuration(var(--animation-fast), ease-in-out) {
+                        transition-property: all;
+                        @include transition-hover-zoom { color: var(--clr-primary-red); }
+                    }
+                }
+                .container { display: block; }
+            }
+        }
+
+        .hnavbar-tabs {
+            overflow: hidden;
+            height: 0;
+            @include flex {
+                flex-direction: column;
+                justify-content: space-between;
+            };
+            overflow: hidden;
+            li { width: 100%; }
+            a { 
+                text-align: center;
+                @include py-2;
+                @include px-2;
+                transition: translateX 0.2s ease-in-out;
+                &:hover { //override existing hover
+                    font-weight: bold;
+                    background-color: var(--clr-shadow);
+                    transform: translateX(-20px);
+                }            
+            }
+        }
+    }
+}

@@ -1,0 +1,112 @@
+/* You can add global styles to this file, and also import other style files */
+:root {
+    // paddings
+    --p-1: 0.5rem;
+    --p-2: 1.0rem;//12px
+    --p-3: 2rem;
+    --p-4: 4rem;
+    --p-5: 5rem; //64px
+    --p-6: 10rem;
+
+    // margins
+    --m-1: 0.5rem;
+    --m-2: 1.0rem;//12px
+    --m-3: 2rem;
+    --m-4: 4rem;
+    --m-5: 5rem; //64px
+    --m-6: 10rem;
+
+    // font sizes
+    --fs-sm: 0.8rem;
+    --fs-md: 1rem;
+    --fs-lg: 1.5rem;
+    --fs-xlg: 2rem;
+    --fs-xxlg: 3rem;
+
+    // font families
+    --ff-primary: Helvetica, Arial, sans-serif;
+    --ff-secondary: Roboto, sans-serif;
+
+    // font weights
+    --fw-light: 300;
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-bold: 700;
+
+    // colors
+    --clr-primary-light: #fff;
+    --clr-secondary-light: #F1F6F9;
+    --clr-primary-dark: #000;
+    --clr-secondary-dark: #394867;
+    --clr-shadow: #9BA4B5;
+    --clr-primary-blue: #3e8ed0;
+    --clr-primary-red: #f14668;
+    --clr-primary-green: #48c78e;
+
+
+    --bg-primary-clr: var(--clr-secondary-light);
+    --bg-secondary-clr: var(--clr-secondary-dark);
+    --bg-shadow: var(--clr-shadow);
+    --bg-shade-layer: rgba(0,0,0,.9);
+    --text-primary-clr: var(--clr-primary-dark);
+    --text-secondary-clr: var(--clr-primary-light);
+
+    --animation-fast: 0.3s;
+    --animation-normal: 0.1s;
+    --animation-slow: 2s;
+}
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    font-weight: var(--fw-regular);
+}
+
+body {
+    padding: 10px;
+    margin: 10px;
+    font-size: 16px;
+    font-family: var(--ff-primary);
+}
+body::-webkit-scrollbar { width: 0.5rem; }  
+body::-webkit-scrollbar-thumb { background: var(--primary-color); }
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: var(--clr-primary-blue)
+}
+
+input,
+select,
+button {
+    border: none;
+    outline: none;
+    font: inherit;
+    color: inherit;
+    background: transparent;
+}
+
+img {
+    // fluid image
+    max-width: 100%;
+    height: auto;
+    display: block; //
+}
