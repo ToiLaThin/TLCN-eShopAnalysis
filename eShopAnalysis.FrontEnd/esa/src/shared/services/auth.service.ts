@@ -16,11 +16,11 @@ export class AuthService {
   private _user!: User;
   private get idpSettings() : UserManagerSettings {
     return {
-      authority: `https://localhost:7001//Auth/IdentityServer/`,
+      authority: `${env.BASEURL}/Auth/IdentityServer/`,      
       //phải là localhost:5143 chứ ko đi qua ocelot(localhost:7003 vì nó sẽ đưa vào auth.identityserver 
       //là container mà brower ko biết đường dẫn đến container đó => 
       //gây lỗi dns probe finished nxdomain(có config dns, extra host hoặc cả host.docker.internal cũng ko được))
-      metadataUrl: `https://localhost:7002/.well-known/openid-configuration`,
+      metadataUrl: `${env.BASEURL}/Auth/IdentityServer/.well-known/openid-configuration`,
       client_id: env.CLIENTID,
       redirect_uri: `${env.CLIENTROOT}/signin-oidc`,
       post_logout_redirect_uri: `${env.CLIENTROOT}/signout-oidc`,
@@ -48,7 +48,7 @@ export class AuthService {
     private router: Router) { 
 
     this._userManager = new UserManager(this.idpSettings);
-    this.checkLoginStatus();
+    // this.checkLoginStatus();
   }  
 
   public checkLoginStatus() : AuthStatus {
@@ -79,7 +79,7 @@ export class AuthService {
   finishLogin() : Promise<User> {
     return this._userManager.signinRedirectCallback().then((user) => {
       this._user = user!;
-      console.log(this._user);
+      console.log("this is the user: ",this._user);
       //have Identity.Cookie =>delete it so that when user logout, login again we will have to login again
       //if server set lifetime for cookie, we do not need to delete it
       // console.log(window.document.cookie);

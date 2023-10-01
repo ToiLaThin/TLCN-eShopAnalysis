@@ -12,10 +12,12 @@ import { CatalogAddComponent } from './catalog-add/catalog-add.component';
 import { SubcatalogAddComponent } from './subcatalog-add/subcatalog-add.component';
 import { CatalogListComponent } from './catalog-list/catalog-list.component';
 import { SubcatalogListComponent } from './subcatalog-list/subcatalog-list.component';
+import { RoleGuard } from 'src/shared/guards/role.guard';
 
 
 const productCatalogRoutes: Routes = [
   {
+    canActivate: [RoleGuard],
     path: '',
     component: ProductCatalogComponent,
     pathMatch: 'prefix',

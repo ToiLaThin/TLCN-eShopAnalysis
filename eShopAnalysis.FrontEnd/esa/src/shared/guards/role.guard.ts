@@ -15,7 +15,7 @@ export class RoleGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (!this.isNotUser) { //is user
+    if (this.isNotUser) { //is user
       console.log('is trying to get this woman');
       this.router.navigateByUrl('/shopping');
     }

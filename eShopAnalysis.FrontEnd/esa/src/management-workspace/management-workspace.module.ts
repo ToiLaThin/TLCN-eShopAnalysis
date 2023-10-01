@@ -13,8 +13,8 @@ const managementWorkspaceRoutes: Routes = [
     path:'',
     component: ManagementWorkspaceComponent,
 
-    // canActivate: [AuthenticatedGuard],
-    // canActivateChild: [RoleGuard],
+    canActivate: [AuthenticatedGuard],
+    
     children: [
       {
         path: 'product-catalog',

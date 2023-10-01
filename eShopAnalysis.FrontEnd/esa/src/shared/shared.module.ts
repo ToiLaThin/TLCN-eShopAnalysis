@@ -22,7 +22,9 @@ import { MatInputModule } from '@angular/material/input';
 // import { MatFormFieldModule } from "@angular/material/form-field";
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { GgAnalyticsService } from './services/gg-analytics.service';
-
+import { MatListModule } from '@angular/material/list';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatMenuModule } from '@angular/material/menu';
 @NgModule({
   declarations: [
     DropdownMenuComponent,
@@ -48,7 +50,10 @@ import { GgAnalyticsService } from './services/gg-analytics.service';
     MatTableModule,
     MatStepperModule,
     MatInputModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatListModule,
+    MatGridListModule,
+    MatMenuModule
   ],
   exports: [
     DropdownMenuComponent,
@@ -72,7 +77,10 @@ import { GgAnalyticsService } from './services/gg-analytics.service';
     MatTableModule,
     MatStepperModule,
     MatInputModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatListModule,
+    MatGridListModule,
+    MatMenuModule
   ],
   providers: [
     GgAnalyticsService
