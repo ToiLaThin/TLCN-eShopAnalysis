@@ -1,5 +1,6 @@
 using AutoMapper;
 using eShopAnalysis.IdentityServer.Utilities;
+using eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto;
 using eShopAnalysis.ProductCatalogAPI.Application.BackchannelServices;
 using eShopAnalysis.ProductCatalogAPI.Application.Services;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
@@ -26,6 +27,7 @@ builder.Services.AddHttpLogging(configLog =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection(nameof(MongoDbSettings)));
+builder.Services.Configure<BackChannelCommunication>(builder.Configuration.GetSection(nameof(BackChannelCommunication)));
 builder.Services.AddScoped<MongoDbContext>();
 
 
@@ -41,10 +43,7 @@ builder.Services.AddScoped<IDomainEventFactory, DomainEventFactory>();
 builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
 builder.Services.AddHttpClient(); //resolve IHttpClientFactory
-builder.Services.AddHttpClient("StockInventoryAPI", clientConfig =>
-{
-    clientConfig.BaseAddress = new Uri(builder.Configuration["BackChannelCommunication:StockInventoryAPIBaseUri"]);
-});
+builder.Services.AddScoped<IBackChannelBaseService<StockInventoryDto, StockInventoryDto>, BackChannelBaseService<StockInventoryDto, StockInventoryDto>>();
 
 //config automapper
 var mapperConfig = new MapperConfiguration(cfg => 

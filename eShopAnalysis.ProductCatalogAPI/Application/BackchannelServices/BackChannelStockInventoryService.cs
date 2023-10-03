@@ -9,46 +9,22 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.BackchannelServices
 {
     public class BackChannelStockInventoryService : IBackChannelStockInventoryService
     {
-        private IHttpClientFactory _httpClientFactory;
-        public BackChannelStockInventoryService(IHttpClientFactory httpClientFactory)
+        private readonly IBackChannelBaseService<StockInventoryDto, StockInventoryDto> _baseService;
+        private readonly IOptions<BackChannelCommunication> _backChannelUrls;
+        public BackChannelStockInventoryService(IBackChannelBaseService<StockInventoryDto, StockInventoryDto> baseService, IOptions<BackChannelCommunication> backChannelUrls)
         {
-            _httpClientFactory = httpClientFactory;
+            _baseService = baseService;
+            _backChannelUrls = backChannelUrls;
         }
         public async Task<BackChannelResponseDto<StockInventoryDto>> AddNewStockInventory(string productId, string productModelId, string businessKey)
         {
-            try
+            var result = await _baseService.SendAsync(new BackChannelRequestDto<StockInventoryDto>()
             {
-                var httpClient = _httpClientFactory.CreateClient("StockInventoryAPI"); //client này sẽ có base address theo như config trong program.cs
-                HttpRequestMessage requestMsg = new();
-                requestMsg.Headers.Add("productId", productId);
-                requestMsg.Headers.Add("productModelId", productModelId);
-                requestMsg.Headers.Add("businessKey", businessKey);
-
-                requestMsg.RequestUri = new Uri($"{httpClient.BaseAddress}/AddStock");
-
-                requestMsg.Method = HttpMethod.Post;
-                //add bearer token to header if require
-                var apiResponse = await httpClient.SendAsync(requestMsg);
-                switch(apiResponse.StatusCode)
-                {
-                    case HttpStatusCode.NotFound:
-                        return BackChannelResponseDto<StockInventoryDto>.Failure("Not found");
-                    case HttpStatusCode.Forbidden:
-                        return BackChannelResponseDto<StockInventoryDto>.Failure("Access denied");
-                    case HttpStatusCode.Unauthorized:
-                        return BackChannelResponseDto<StockInventoryDto>.Failure("Unauthorized");
-                    case HttpStatusCode.InternalServerError:
-                        return BackChannelResponseDto<StockInventoryDto>.Failure("Internal server error");
-                    default:
-                        var apiContent = await apiResponse.Content.ReadAsStringAsync();
-                        var apiResponseDto = JsonConvert.DeserializeObject<BackChannelResponseDto<StockInventoryDto>>(apiContent);
-                        return apiResponseDto;
-                }
-            }
-            catch (Exception ex)
-            {
-                return BackChannelResponseDto<StockInventoryDto>.Exception(ex.Message);
-            }
+                ApiType = ApiType.POST,
+                Url = $"{_backChannelUrls.Value.StockInventoryAPIBaseUri}/AddStock",
+                Data = new StockInventoryDto() { ProductId = productId, ProductModelId = productModelId, ProductBusinessKey = businessKey }
+            });
+            return result;
         }
     }
 }
