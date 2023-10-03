@@ -15,7 +15,7 @@
     //this response dto should be used after get data from http client to other microservices
 
     //operation response pattern
-    public class ResponseDto<T> where T : class
+    public class ServiceResponseDto<T> where T : class
     {
         //incapsulation can only be set through factory method
         public T Data { get; private set; } //jsonString Data
@@ -32,21 +32,21 @@
 
 
 
-        private ResponseDto() { }
+        private ServiceResponseDto() { }
 
         //factory method to create an instance of that responseDto
-        public static ResponseDto<T> Success(T result)
+        public static ServiceResponseDto<T> Success(T result)
         {
-            return new ResponseDto<T>
+            return new ServiceResponseDto<T>
             {
                 Data = result,
                 Result = ResultType.Success
             };
         }
 
-        public static ResponseDto<T> Failure(string errMessage)
+        public static ServiceResponseDto<T> Failure(string errMessage)
         {
-            return new ResponseDto<T>
+            return new ServiceResponseDto<T>
             {
                 Data = default(T),
                 Result = ResultType.Failed,
@@ -54,9 +54,9 @@
             };
         }
 
-        public static ResponseDto<T> Exception(string exceptionMessage)
+        public static ServiceResponseDto<T> Exception(string exceptionMessage)
         {
-            return new ResponseDto<T>
+            return new ServiceResponseDto<T>
             {   
                 Data = default(T),
                 Result = ResultType.Exception,

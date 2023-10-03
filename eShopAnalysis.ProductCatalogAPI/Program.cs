@@ -1,5 +1,6 @@
 using AutoMapper;
 using eShopAnalysis.IdentityServer.Utilities;
+using eShopAnalysis.ProductCatalogAPI.Application.BackchannelServices;
 using eShopAnalysis.ProductCatalogAPI.Application.Services;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.FactoryMethod;
@@ -34,8 +35,16 @@ builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
+builder.Services.AddScoped<IBackChannelStockInventoryService, BackChannelStockInventoryService>();
+
 builder.Services.AddScoped<IDomainEventFactory, DomainEventFactory>();
 builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+
+builder.Services.AddHttpClient(); //resolve IHttpClientFactory
+builder.Services.AddHttpClient("StockInventoryAPI", clientConfig =>
+{
+    clientConfig.BaseAddress = new Uri(builder.Configuration["BackChannelCommunication:StockInventoryAPIBaseUri"]);
+});
 
 //config automapper
 var mapperConfig = new MapperConfiguration(cfg => 

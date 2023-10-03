@@ -9,7 +9,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
     public interface ICatalogService
     {
         Catalog Get(Guid catalogGuid);
-        ResponseDto<IEnumerable<Catalog>> GetAll();
+        ServiceResponseDto<IEnumerable<Catalog>> GetAll();
         Catalog AddCatalog(Catalog catalog);
         bool DeleteCatalog(Guid catalogId);
         Catalog UpdateCatalog(Catalog catalog); //for testing only
@@ -31,10 +31,10 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             _repository = repository;
         }
 
-        public ResponseDto<IEnumerable<Catalog>> GetAll()
+        public ServiceResponseDto<IEnumerable<Catalog>> GetAll()
         {
             var result = _repository.GetAll();
-            return ResponseDto<IEnumerable<Catalog>>.Success(result);
+            return ServiceResponseDto<IEnumerable<Catalog>>.Success(result);
         }
 
         public Catalog Get(Guid catalogGuid)

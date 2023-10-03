@@ -25,7 +25,7 @@ export class ProductHttpService implements OnInit {
   }
 
   private getProducts() {
-    return this.http.get<IProduct[]>(`${env.BASEURL}/api/ProductAPI/GetAllProduct`);
+    return this.http.get<IProduct[]>(`${env.BASEURL}/api/ProductCatalog/ProductAPI/GetAllProduct`);
   }
   
   GetProducts() {
@@ -35,7 +35,7 @@ export class ProductHttpService implements OnInit {
   }
   
   private addProduct(product: IProduct) {
-    return this.http.post<IProduct>(`${env.BASEURL}/api/ProductAPI/AddProduct`, product);
+    return this.http.post<IProduct>(`${env.BASEURL}/api/ProductCatalog/ProductAPI/AddProduct`, product);
   }
 
   public AddProduct(product: IProduct) {

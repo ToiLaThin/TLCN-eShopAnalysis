@@ -16,7 +16,7 @@ using eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors;
 
 namespace eShopAnalysis.ProductCatalogAPI.Controllers
 {
-    [Route("api/ProductCatalog/CatalogAPI")]
+    [Route("api/ProductCatalogAPI/CatalogAPI")]
     [ApiController]
     public class CatalogController : ControllerBase
     {
@@ -33,7 +33,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         //not use as attribute but to get the service from DI container
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         //FOR TESTING STRUCTURE LOGGING USING ACITON FILTER
-        //public ResponseDto<string> GetAll()
+        //public ServiceResponseDto<string> GetAll()
         //{
         //    var result = _service.GetAll();
         //    //IEnumerable<CatalogDto> resultDto = _mapper.Map<IEnumerable<CatalogDto>>(result);
@@ -47,10 +47,10 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         //    {
         //        IEnumerable<CatalogDto> resultDto = _mapper.Map <IEnumerable<CatalogDto>>(result.Data);
         //        string jsonResult = JsonConvert.SerializeObject(resultDto);
-        //        return ResponseDto<string>.Success(jsonResult);
+        //        return ServiceResponseDto<string>.Success(jsonResult);
         //    }
         //    else 
-        //        return ResponseDto<string>.Failure("No catalog");
+        //        return ServiceResponseDto<string>.Failure("No catalog");
         //}
         public IEnumerable<CatalogDto> GetAll()
         {

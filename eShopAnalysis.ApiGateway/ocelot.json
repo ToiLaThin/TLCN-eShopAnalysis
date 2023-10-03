@@ -2,7 +2,7 @@
   "Routes": [
     {
       //api/<BoundedContextName>/<ApiName>/{any}
-      "DownstreamPathTemplate": "/api/ProductCatalog/{anyControllerActionParams}",
+      "DownstreamPathTemplate": "/api/ProductCatalogAPI/{anyControllerActionParams}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -10,10 +10,10 @@
           "Port": 7003
         }
       ],
-      "UpstreamPathTemplate": "/api/{anyControllerActionParams}",
+      "UpstreamPathTemplate": "/api/ProductCatalog/{anyControllerActionParams}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "Priority": 0
-    },    
+    },
     {
       "DownstreamPathTemplate": "/{any}",
       "DownstreamScheme": "http",
@@ -25,6 +25,20 @@
         }
       ],
       "UpstreamPathTemplate": "/Auth/IdentityServer/{any}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "Priority": 0
+    },
+    {
+      "DownstreamPathTemplate": "/api/StockInventoryAPI/{any}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7004
+
+        }
+      ],
+      "UpstreamPathTemplate": "/api/StockInventory/{any}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "Priority": 0
     }

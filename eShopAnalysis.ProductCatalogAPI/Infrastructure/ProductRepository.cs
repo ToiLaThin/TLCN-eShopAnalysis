@@ -50,6 +50,17 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure
             else { return false; }
         }
 
+        public bool Delete(Product productDel)
+        {
+            var filter = Builders<Product>.Filter.Eq(oldPro => oldPro.ProductId, productDel.ProductId);
+            var deleteResult = _context.ProductCollection.DeleteOne(filter);
+            if (deleteResult.DeletedCount > 0)
+            {
+                return true;
+            }
+            else { return false; }
+        }
+
         public bool SaveChanges(Product newProduct)
         {
             var filter = Builders<Product>.Filter.Eq(oldPro => oldPro.ProductId, newProduct.ProductId);

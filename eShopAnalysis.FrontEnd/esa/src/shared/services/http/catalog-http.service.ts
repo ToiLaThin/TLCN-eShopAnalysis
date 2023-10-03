@@ -22,7 +22,7 @@ export class CatalogHttpService {
   }
 
   private getAllCatalogs() {
-    return this.http.get<ICatalog[]>(`${env.BASEURL}/api/CatalogAPI/GetAllCatalog`);
+    return this.http.get<ICatalog[]>(`${env.BASEURL}/api/ProductCatalog/CatalogAPI/GetAllCatalog`);
   }
 
   public GetAllCatalogs() {
@@ -33,7 +33,7 @@ export class CatalogHttpService {
   private getAllSubCatalogs(catalogId: string) {
     let httpHeaders = new HttpHeaders();
     httpHeaders = httpHeaders.append('catalogId', catalogId);
-    return this.http.get<ISubCatalog[]>(`${env.BASEURL}/api/CatalogAPI/GetAllSubCatalogs`, { headers: httpHeaders });
+    return this.http.get<ISubCatalog[]>(`${env.BASEURL}/api/ProductCatalog/CatalogAPI/GetAllSubCatalogs`, { headers: httpHeaders });
   }
 
   public GetAllSubCatalogs(catalogId: string) {
@@ -43,7 +43,7 @@ export class CatalogHttpService {
   }
 
   private addCatalog(catalog: ICatalog) {
-    return this.http.post<ICatalog>(`${env.BASEURL}/api/CatalogAPI/CreateCatalog`, catalog);
+    return this.http.post<ICatalog>(`${env.BASEURL}/api/ProductCatalog/CatalogAPI/CreateCatalog`, catalog);
   }
 
   public AddCatalog(catalog: ICatalog) {
@@ -55,7 +55,7 @@ export class CatalogHttpService {
   private addSubCatalog(subCatalog: ISubCatalog, catalogId: string) {
     let httpHeaders = new HttpHeaders();
     httpHeaders = httpHeaders.append('catalogId', catalogId);
-    return this.http.post<ISubCatalog>(`${env.BASEURL}/api/CatalogAPI/CreateSubCatalog`, subCatalog, { headers: httpHeaders });
+    return this.http.post<ISubCatalog>(`${env.BASEURL}/api/ProductCatalog/CatalogAPI/CreateSubCatalog`, subCatalog, { headers: httpHeaders });
   }
 
   public AddSubCatalog(subCatalog: ISubCatalog, catalogId: string) {

@@ -9,6 +9,8 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure
 
         bool Replace(Product product);
 
+        bool Delete(Product productDel);
+
         bool SaveChanges(Product product); //wrapper for mongo db replace
 
         Product Get(Guid id);
