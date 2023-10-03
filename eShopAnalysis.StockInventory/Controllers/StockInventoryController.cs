@@ -44,9 +44,9 @@ namespace eShopAnalysis.StockInventory.Controllers
 
         //for any microservice want to add new stock inventory
         [HttpPost("BackChannel/AddStock")]
-        public BackChannelResponseDto<StockInventoryDto> AddNew([FromHeader] string productId, [FromHeader] string productModelId, [FromHeader] string businessKey)
+        public BackChannelResponseDto<StockInventoryDto> AddNew([FromBody] StockInventoryDto stockInventoryDtoToAdd)
         {
-            var result = _service.AddNew(productId, productModelId, businessKey);
+            var result = _service.AddNew(stockInventoryDtoToAdd.ProductId, stockInventoryDtoToAdd.ProductModelId, stockInventoryDtoToAdd.ProductBusinessKey);
             if (result.IsFailed) {
                 return null;
             }
