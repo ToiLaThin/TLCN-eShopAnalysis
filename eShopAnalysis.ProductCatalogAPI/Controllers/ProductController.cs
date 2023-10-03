@@ -15,7 +15,7 @@ using MongoDB.Driver;
 
 namespace eShopAnalysis.ProductCatalogAPI.Controllers
 {
-    [Route("api/ProductCatalog/ProductAPI")]
+    [Route("api/ProductCatalogAPI/ProductAPI")]
     [ApiController]
     public class ProductController : ControllerBase
     {
@@ -51,9 +51,9 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
             Roles = RoleType.Admin
            )
         ]
-        public ProductDto AddProduct([FromBody] Product newProduct)
+        public async Task<ProductDto> AddProduct([FromBody] Product newProduct)
         {
-            var result = _service.AddProduct(newProduct);
+            var result = await _service.AddProduct(newProduct);
             var resultDto = (result.IsSuccess == true) ? _mapper.Map<Product,ProductDto>(result.Data) : null;
             return resultDto;
         }

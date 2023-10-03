@@ -28,7 +28,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors
             var actionDescriptor = context.ActionDescriptor;
             var actionName = actionDescriptor.DisplayName;
             var actionRoute = actionDescriptor.AttributeRouteInfo.Template;
-            var responseDtoTryCast  = (context.Result as ObjectResult).Value as ResponseDto<string>; //unboxing but with check https://stackoverflow.com/a/13405826
+            var responseDtoTryCast  = (context.Result as ObjectResult).Value as ServiceResponseDto<string>; //unboxing but with check https://stackoverflow.com/a/13405826
             if (responseDtoTryCast != null) //can be cast to ResponseDto
             {
             
