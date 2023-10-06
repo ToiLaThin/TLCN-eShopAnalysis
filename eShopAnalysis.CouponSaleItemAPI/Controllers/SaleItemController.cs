@@ -1,4 +1,6 @@
-﻿using eShopAnalysis.CouponSaleItemAPI.Models;
+﻿using AutoMapper;
+using eShopAnalysis.CouponSaleItemAPI.Dto;
+using eShopAnalysis.CouponSaleItemAPI.Models;
 using eShopAnalysis.CouponSaleItemAPI.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,23 +13,35 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
     public class SaleItemController : ControllerBase
     {
         private readonly ISaleItemService _saleItemService;
-        public SaleItemController(ISaleItemService saleItemService)
+        private readonly IMapper _mapper;
+        public SaleItemController(ISaleItemService saleItemService, IMapper mapper)
         {
             _saleItemService = saleItemService;
+            _mapper = mapper;
         }
 
         [HttpGet("GetAllSaleItems")]
-        public IEnumerable<SaleItem> GetAllSaleItems()
+        public IEnumerable<SaleItemDto> GetAllSaleItems()
         {
             var result = _saleItemService.GetAll();
-            return result;
+            if (result.IsFailed)
+            {
+                return null;
+            }
+            var resultDto = _mapper.Map<IEnumerable<SaleItemDto>>(result.Data);
+            return resultDto;
         }
 
         [HttpPost("AddSaleItem")]
-        public async Task<SaleItem> AddSaleItem([FromBody] SaleItem saleItem)
+        public async Task<SaleItemDto> AddSaleItem([FromBody] SaleItem saleItem)
         {
             var result = await _saleItemService.Add(saleItem);
-            return result;
+            if (result.IsFailed)
+            {
+                return null;
+            }
+            var resultDto = _mapper.Map<SaleItemDto>(result.Data);
+            return resultDto;
         }
     }
 }

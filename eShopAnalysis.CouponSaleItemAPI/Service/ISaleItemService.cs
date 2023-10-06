@@ -1,12 +1,13 @@
-﻿using eShopAnalysis.CouponSaleItemAPI.Models;
+﻿using eShopAnalysis.CouponSaleItemAPI.Dto;
+using eShopAnalysis.CouponSaleItemAPI.Models;
 
 namespace eShopAnalysis.CouponSaleItemAPI.Service
 {
     public interface ISaleItemService
     {
-        Task<SaleItem> Add(SaleItem saleItem);
-        Task<SaleItem> Delete(Guid saleItem);
-        IEnumerable<SaleItem> GetAll();
-        SaleItem GetCoupon(Guid couponId);
+        Task<ServiceResponseDto<SaleItem>> Add(SaleItem saleItem);
+        Task<ServiceResponseDto<SaleItem>> Delete(Guid saleItem);
+        ServiceResponseDto<IEnumerable<SaleItem>> GetAll();
+        ServiceResponseDto<SaleItem> GetCoupon(Guid couponId);
     }
 }

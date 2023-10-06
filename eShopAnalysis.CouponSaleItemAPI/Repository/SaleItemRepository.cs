@@ -17,7 +17,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Repository
             {
                 _dbContext.Add(nSaleItem);
                 _dbContext.SaveChanges();
-                //throw new Exception("Just testing to see the sale item saved"); wwork well the data not saved into the db even called SaveChanges since rollback in service
+                //throw new Exception("Just testing to see the sale item saved"); //wwork well the data not saved into the db even called SaveChanges since rollback in service
                 return nSaleItem; //luc nay da duoc set , ke ca guid
             }
             catch { return null; }
