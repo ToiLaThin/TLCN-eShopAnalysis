@@ -1,4 +1,5 @@
-﻿using eShopAnalysis.CouponSaleItemAPI.Models;
+﻿using eShopAnalysis.CouponSaleItemAPI.Dto;
+using eShopAnalysis.CouponSaleItemAPI.Models;
 using eShopAnalysis.CouponSaleItemAPI.UnitOfWork;
 
 namespace eShopAnalysis.CouponSaleItemAPI.Service
@@ -11,48 +12,48 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
             _uOW = uOW;
         }
 
-        public async Task<Coupon> Add(Coupon coupon)
+        public async Task<ServiceResponseDto<Coupon>> Add(Coupon coupon)
         {
             var transaction = await _uOW.BeginTransactionAsync();
             var result = _uOW.CouponRepository.Add(coupon);
             if (result == null)
             {
-                transaction.RollbackAsync();
-                return null;
+                await transaction.RollbackAsync();
+                return ServiceResponseDto<Coupon>.Failure("cannot add coupon, rolled back the transaction");
             }
             else
             {
-                transaction.CommitAsync();
-                return result;
+                await transaction.CommitAsync(); //because return no value
+                return ServiceResponseDto<Coupon>.Success(result);
             }
         }
 
-        public async Task<Coupon> Delete(Guid coupon)
+        public async Task<ServiceResponseDto<Coupon>> Delete(Guid coupon)
         {
             var transaction = await _uOW.BeginTransactionAsync();
             var result = _uOW.CouponRepository.Delete(coupon);
             if (result == null)
             {
-                transaction.RollbackAsync();
-                return null;
+                await transaction.RollbackAsync();
+                return ServiceResponseDto<Coupon>.Failure("cannot delete coupon, rolled back the transaction");
             }
             else
             {
-                transaction.CommitAsync();
-                return result;
+                await transaction.CommitAsync();
+                return ServiceResponseDto<Coupon>.Success(result);
             }
         }
 
-        public IEnumerable<Coupon> GetAll()
+        public ServiceResponseDto<IEnumerable<Coupon>> GetAll()
         {
             var result = _uOW.CouponRepository.GetAll();
-            return result;
+            return ServiceResponseDto<IEnumerable<Coupon>>.Success(result);
         }
 
-        public Coupon GetCoupon(Guid couponId)
+        public ServiceResponseDto<Coupon> GetCoupon(Guid couponId)
         {
             var result = _uOW.CouponRepository.Get(couponId);
-            return result;
+            return ServiceResponseDto<Coupon>.Success(result);
         }
 
 
