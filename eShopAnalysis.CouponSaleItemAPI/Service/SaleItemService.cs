@@ -1,5 +1,6 @@
 ﻿using eShopAnalysis.CouponSaleItemAPI.Dto;
 using eShopAnalysis.CouponSaleItemAPI.Models;
+using eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService;
 using eShopAnalysis.CouponSaleItemAPI.UnitOfWork;
 
 namespace eShopAnalysis.CouponSaleItemAPI.Service
@@ -7,9 +8,12 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
     public class SaleItemService : ISaleItemService
     {
         private IUnitOfWork _uOW;
-        public SaleItemService(IUnitOfWork uOW)
+        private IBackChannelProductCatalogService _backChannelProductCatalogService;
+        public SaleItemService(IUnitOfWork uOW, IBackChannelProductCatalogService backChannelProductCatalogService)
         {
             _uOW = uOW;
+            _backChannelProductCatalogService = backChannelProductCatalogService;
+
         }
 
         public async Task<ServiceResponseDto<SaleItem>> Add(SaleItem saleItem)
@@ -23,7 +27,15 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
             }
             else
             {
-                await transaction.CommitAsync();
+                var backChannelResponse = await _backChannelProductCatalogService.UpdateProductToSaleAsync(result.ProductId, result.ProductModelId, result.DiscountType, result.DiscountValue);
+                if (backChannelResponse.IsFailed || backChannelResponse.IsException)
+                {
+                    await transaction.RollbackAsync();
+                    return ServiceResponseDto<SaleItem>.Failure("cannot update the associate product model, rolled back transaction");
+                    //TODO also see how you can rollback the change in product, may be sending another request to reset the model
+                }
+                var x = backChannelResponse.Result; //inspect x to see if it 's updated to isOnSale
+                await transaction.CommitAsync();               
                 return ServiceResponseDto<SaleItem>.Success(result);
             }
         }

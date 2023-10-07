@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eShopAnalysis.CouponSaleItemAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/CouponSaleItemAPI/CouponAPI")]
     [ApiController]
     public class CouponController : ControllerBase
     {

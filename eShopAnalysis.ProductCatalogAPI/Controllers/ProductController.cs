@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using eShopAnalysis.IdentityServer.Utilities;
+using eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto;
 using eShopAnalysis.ProductCatalogAPI.Application.Dto;
+using eShopAnalysis.ProductCatalogAPI.Application.Result;
 using eShopAnalysis.ProductCatalogAPI.Application.Services;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
@@ -90,5 +92,24 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
             return resultDto;
         }
 
+
+        //for any microservice want to add new stock inventory
+        [HttpPost("BackChannel/UpdateProductToOnSale")]
+        public BackChannelResponseDto<ProductDto> UpdateProductToOnSale([FromBody] ProductUpdateToSaleRequestDto productUpdateToSaleRequestDto)
+        {
+            var result = _service.UpdateProductToOnSale(productUpdateToSaleRequestDto.ProductId,
+                                                        productUpdateToSaleRequestDto.ProductModelId,
+                                                        productUpdateToSaleRequestDto.DiscountType,
+                                                        productUpdateToSaleRequestDto.DiscountValue);
+            if (result.IsFailed)
+            {
+                return BackChannelResponseDto<ProductDto>.Failure(result.Error);
+            } else if (result.IsException)
+            {
+                return BackChannelResponseDto<ProductDto>.Exception(result.Error);
+            }
+            var productDto = _mapper.Map<ProductDto>(result.Data);
+            return BackChannelResponseDto<ProductDto>.Success(productDto);
+        }
     }
 }

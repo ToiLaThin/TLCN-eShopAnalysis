@@ -1,10 +1,13 @@
-﻿using eShopAnalysis.CouponSaleItemAPI.Models;
-
-namespace eShopAnalysis.CouponSaleItemAPI.Dto.BackchannelDto
+﻿namespace eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto
 {
+    public enum DiscountType
+    {
+        ByValue,
+        ByPercent
+    }
+
     public class ProductUpdateToSaleRequestDto
     {
-        //TODO fix the model of product and saleiitem, about the discount type
         public Guid ProductId { get; set; }
 
         public Guid ProductModelId { get; set; }

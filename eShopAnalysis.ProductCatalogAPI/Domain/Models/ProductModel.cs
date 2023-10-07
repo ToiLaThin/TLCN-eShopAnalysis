@@ -14,6 +14,7 @@ public enum CublicType
 
 public class ProductModel
 {
+    //TODO remove some bson ignore
     [BsonId]
     [BsonRepresentation(BsonType.String)]
     public Guid ProductModelId { get; set; }

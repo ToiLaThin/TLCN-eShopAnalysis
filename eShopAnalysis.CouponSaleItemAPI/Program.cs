@@ -5,6 +5,11 @@ using eShopAnalysis.CouponSaleItemAPI.UnitOfWork;
 using eShopAnalysis.CouponSaleItemAPI.Service;
 using AutoMapper;
 using System.Reflection;
+using eShopAnalysis.CouponSaleItemAPI.Utilities;
+using eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService;
+using eShopAnalysis.CouponSaleItemAPI.Service.BackChannelService;
+using eShopAnalysis.CouponSaleItemAPI.Dto.BackchannelDto;
+using eShopAnalysis.Dto.BackchannelDto;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -17,6 +22,9 @@ builder.Services.AddDbContext<PostgresDbContext>(ctxOption =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddScoped<ISaleItemService, SaleItemService>();
+builder.Services.AddHttpClient(); //resolve http client factory
+builder.Services.AddScoped<IBackChannelBaseService<ProductUpdateToSaleRequestDto, ProductDto>, BackChannelBaseService<ProductUpdateToSaleRequestDto, ProductDto>>();
+builder.Services.AddScoped<IBackChannelProductCatalogService, BackChannelProductCatalogService>();
 
 //config automapper
 var mapperConfig = new MapperConfiguration(cfg =>
@@ -25,6 +33,8 @@ var mapperConfig = new MapperConfiguration(cfg =>
 });
 IMapper mapper = new Mapper(mapperConfig);
 builder.Services.AddSingleton(mapper);
+
+builder.Services.Configure<BackChannelCommunication>(builder.Configuration.GetSection(nameof(BackChannelCommunication)));
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
