@@ -1,11 +1,11 @@
 ﻿using eShopAnalysis.CouponSaleItemAPI.Dto;
+using eShopAnalysis.CouponSaleItemAPI.Models;
 using eShopAnalysis.Dto.BackchannelDto;
 
 namespace eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService
 {
     public interface IBackChannelProductCatalogService
     {
-        //TODO implement this after determine the productupdateToSaleRequest in BackchannelDto
-        Task<BackChannelResponseDto<ProductDto>> UpdateProductToSale();
+        Task<BackChannelResponseDto<ProductDto>> UpdateProductToSaleAsync(Guid productId, Guid productModelId, DiscountType discountType, double discountValue);
     }
 }

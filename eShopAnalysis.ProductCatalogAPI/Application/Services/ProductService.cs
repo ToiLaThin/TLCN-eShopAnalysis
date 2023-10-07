@@ -1,4 +1,5 @@
-﻿using eShopAnalysis.ProductCatalogAPI.Application.BackchannelServices;
+﻿using eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto;
+using eShopAnalysis.ProductCatalogAPI.Application.BackchannelServices;
 using eShopAnalysis.ProductCatalogAPI.Application.Result;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
@@ -20,6 +21,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
         //Product UpdateCatalogInfo(Product product);//only modify name and info
 
         ServiceResponseDto<Product> UpdateSubCatalog(Guid productId, Guid subCatalogId, string subCatalogName);
+        ServiceResponseDto<Product> UpdateProductToOnSale(Guid productId, Guid productModelId, DiscountType discountType, double discountValue);
 
         //SubCatalog manipulate from product
         ServiceResponseDto<ProductModel> GetProductModel(Guid productId, Guid pModelId);
@@ -134,6 +136,23 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
                 return ServiceResponseDto<ProductModel>.Success(product.ProductModels.Last());
             }
             return ServiceResponseDto<ProductModel>.Failure("cannot save changes adding product model to mongo db");
+        }
+
+        public ServiceResponseDto<Product> UpdateProductToOnSale(Guid productId, Guid productModelId, DiscountType discountType, double discountValue)
+        {
+            var product = _productRepository.Get(productId);
+            if (product == null) { 
+                return ServiceResponseDto<Product>.Failure("product cannot be found"); 
+            }
+
+            var updatedProduct = product.UpdateProductToOnSale(productModelId, discountType, discountValue);
+            if (updatedProduct != null)
+            {
+                var result = ServiceResponseDto<Product>.Success(updatedProduct);
+                _productRepository.SaveChanges(updatedProduct);
+                return result;
+            }
+            return ServiceResponseDto<Product>.Failure("product model cannot be found or updated");
         }
         #endregion
 

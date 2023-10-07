@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eShopAnalysis.CouponSaleItemAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/CouponSaleItemAPI/SaleItemAPI")]
     [ApiController]
     public class SaleItemController : ControllerBase
     {

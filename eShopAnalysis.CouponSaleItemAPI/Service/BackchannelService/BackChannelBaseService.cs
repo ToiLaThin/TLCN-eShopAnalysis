@@ -1,11 +1,12 @@
 ﻿using eShopAnalysis.CouponSaleItemAPI.Dto;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Text;
 
 namespace eShopAnalysis.CouponSaleItemAPI.Service.BackChannelService
 {
-    //two generic arg is type of request and response, we will specify them in sub class, or in the call
+    //two generic arg is type of request and response, we will specify them in sub class, or in the call    
     public class BackChannelBaseService<S, D> : IBackChannelBaseService<S, D> where S : class where D : class
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -55,7 +56,13 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service.BackChannelService
                         return BackChannelResponseDto<D>.Failure("Internal server error");
                     default:
                         var apiContent = await apiResponse.Content.ReadAsStringAsync();
-                        var apiResponseDto = JsonConvert.DeserializeObject<BackChannelResponseDto<D>>(apiContent);
+                        var apiResponseDtoJObject = JsonConvert.DeserializeObject(apiContent) as JObject;
+                        //jsonConvert đã sai, luôn deserialize ră sai Deserialize<BackchannelResponseDto<D>> do cai type D, thu serialize thanh string truoc khi gui no di => ko duoc, doc sai
+                        //o các controller action backchannel
+                        //solution la chuyen sang JObject  rồi tự construct nên BackChannelResponseDto<D> qua JOject to LinQ
+                        //refer to this https://stackoverflow.com/questions/44545955/generic-type-jsonconvert-deserializeobjectlisttstring
+                        //and this: https://stackoverflow.com/questions/25672338/dynamically-deserialize-json-into-any-object-passed-in-c-sharp
+                        var apiResponseDto = ConvertJObjToGenericBackChannelResponseDto(apiResponseDtoJObject);
                         return apiResponseDto;
                 }
             }
@@ -65,5 +72,27 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service.BackChannelService
                 return apiResponseDto;
             }
         }
+        private static BackChannelResponseDto<D> ConvertJObjToGenericBackChannelResponseDto(JObject jObj)
+        {
+            string dataKey = "data";
+            string resultKey = "result";
+            string errorKey = "error"; //for both failure and exception
+            ResultType resultType = jObj[resultKey].ToObject<ResultType>();
+            switch (resultType)
+            {                
+                case ResultType.Success:
+                    var adapterResult = BackChannelResponseDto<D>.Success(jObj[dataKey].ToObject<D>());
+                    return adapterResult;
+                case ResultType.Failed:
+                    adapterResult = BackChannelResponseDto<D>.Failure(jObj[errorKey].ToString());
+                    return adapterResult;
+                case ResultType.Exception:
+                    adapterResult = BackChannelResponseDto<D>.Exception(jObj[errorKey].ToString());
+                    return adapterResult;
+                default:
+                    return BackChannelResponseDto<D>.Failure("unknown resultType");
+            }
+        }
+
     }
 }

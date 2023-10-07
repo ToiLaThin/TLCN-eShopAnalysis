@@ -1,12 +1,13 @@
 ﻿using eShopAnalysis.CouponSaleItemAPI.Dto;
 using eShopAnalysis.CouponSaleItemAPI.Models;
+using eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService;
 using eShopAnalysis.CouponSaleItemAPI.UnitOfWork;
 
 namespace eShopAnalysis.CouponSaleItemAPI.Service
 {
     public class CouponService : ICouponService
     {
-        private IUnitOfWork _uOW;
+        private IUnitOfWork _uOW;        
         public CouponService(IUnitOfWork uOW)
         {
             _uOW = uOW;

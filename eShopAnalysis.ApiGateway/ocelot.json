@@ -41,7 +41,22 @@
       "UpstreamPathTemplate": "/api/StockInventory/{any}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "Priority": 0
+    },
+    {
+      "DownstreamPathTemplate": "/api/CouponSaleItemAPI/{any}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7005
+
+        }
+      ],
+      "UpstreamPathTemplate": "/api/CouponSaleItem/{any}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "Priority": 0
     }
+
     //oidc client make a request of https://localhost:7003/Auth/IdentityServer/.well-known/openid-configuration
     //but it do do not redirect properly
     //i found this ref: https://medium.com/@zahidcakici/securing-microservices-demo-with-identityserver4-ocelot-and-angular-spa-in-net-6-42dc0ce3f909

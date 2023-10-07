@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.Mediator;
 using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.Prototype;
 using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.FactoryMethod;
+using eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto;
 
 namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
 {
@@ -109,6 +110,29 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
             SubCatalogName = subCatalogName;
         }
 
-        
+        private ProductModel UpdateProductModelToOnSale(Guid productModelId, DiscountType discountType, double discountValue)
+        {
+            var findedProductModel = this.ProductModels.Where(pm => pm.ProductModelId == productModelId).FirstOrDefault();
+            if (findedProductModel != null)
+            {
+                findedProductModel.IsOnSaleModel = true;
+                findedProductModel.SalePercentModel = discountValue;
+                findedProductModel.PriceOnSaleModel = findedProductModel.Price - discountValue;
+                return findedProductModel;
+            }
+            return null;
+        }
+
+        public Product UpdateProductToOnSale(Guid productModelId, DiscountType discountType, double discountValue)
+        {
+            var updatedModel = this.UpdateProductModelToOnSale(productModelId, discountType, discountValue);
+            if (updatedModel != null)
+            {
+                this.IsOnSale = true;
+                this.PriceOnSale = this.ProductModels.Where(pm => pm.IsOnSaleModel).Max(pm => pm.PriceOnSaleModel);
+                return this;
+            }
+            return null;
+        }
     }
 }

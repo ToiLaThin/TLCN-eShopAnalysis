@@ -1,4 +1,5 @@
 ﻿using eShopAnalysis.CouponSaleItemAPI.Dto;
+using Newtonsoft.Json.Linq;
 
 namespace eShopAnalysis.CouponSaleItemAPI.Service.BackChannelService
 {
