@@ -1,11 +1,7 @@
-﻿namespace eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto
-{
-    public enum DiscountType
-    {
-        ByValue,
-        ByPercent
-    }
+﻿using static eShopAnalysis.ProductCatalogAPI.Domain.Models.ProductModel;
 
+namespace eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto
+{
     public class ProductUpdateToSaleRequestDto
     {
         public Guid ProductId { get; set; }
