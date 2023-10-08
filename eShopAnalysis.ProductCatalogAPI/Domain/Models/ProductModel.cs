@@ -41,10 +41,13 @@ public class ProductModel
     public bool IsOnSaleModel { get; set; }
 
     [BsonIgnore]
-    public double SalePercentModel { get; set; }
+    public double SaleValueModel { get; set; }
 
     [BsonIgnore]
-    public double PriceOnSaleModel { get; set;}
+    public DiscountType SaleType { get; set; }
+
+    [BsonIgnore]
+    public double PriceOnSaleModel { get; set; }
 
     [BsonConstructor]
     public ProductModel()
@@ -52,4 +55,27 @@ public class ProductModel
         ProductModelId = Guid.NewGuid();
     }
 
+    public enum DiscountType
+    {
+        ByValue,
+        ByPercent
+    }
+
+    public ProductModel UpdateThisModelToOnSale(DiscountType discountType, double discountValue)
+    {
+        this.IsOnSaleModel = true;
+        this.SaleType = discountType;
+        this.SaleValueModel = discountValue;
+        switch (discountType)
+        {
+            case DiscountType.ByPercent:
+                this.PriceOnSaleModel = this.Price - (discountValue * this.Price);
+                break;
+            case DiscountType.ByValue:
+                this.PriceOnSaleModel = this.Price - discountValue;
+                break;
+
+        }
+        return this;
+    }
 }

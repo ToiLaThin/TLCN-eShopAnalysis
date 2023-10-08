@@ -9,6 +9,9 @@ using eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto;
 
 namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
 {
+    using eShopAnalysis.ProductCatalogAPI.Domain.Models;
+    using static eShopAnalysis.ProductCatalogAPI.Domain.Models.ProductModel;
+
     [BsonIgnoreExtraElements]
     public class Product : ClonableObject, IAggregateRoot
     {
@@ -60,10 +63,13 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
         public bool IsOnSale { get; set; } //each time a product model is set on sale, this will be on
 
         [BsonIgnore]
-        public double SalePercent{ get; set; } //will be set on product largest product model sale
+        public double ProductDisplaySaleValue { get; set; } //will be set on product largest product model sale
 
         [BsonIgnore]
-        public double PriceOnSale{ get; set; }
+        public DiscountType ProductDisplaySaleType { get; set; }
+
+        [BsonIgnore]
+        public double ProductDisplayPriceOnSale { get; set; }
 
 
         #region other unfamiliar meta info
@@ -109,27 +115,23 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
             SubCatalogId = subCatalogId;
             SubCatalogName = subCatalogName;
         }
+        
 
-        private ProductModel UpdateProductModelToOnSale(Guid productModelId, DiscountType discountType, double discountValue)
-        {
-            var findedProductModel = this.ProductModels.Where(pm => pm.ProductModelId == productModelId).FirstOrDefault();
-            if (findedProductModel != null)
-            {
-                findedProductModel.IsOnSaleModel = true;
-                findedProductModel.SalePercentModel = discountValue;
-                findedProductModel.PriceOnSaleModel = findedProductModel.Price - discountValue;
-                return findedProductModel;
-            }
-            return null;
-        }
-
+        //this product display sale is of the best sale of its models
         public Product UpdateProductToOnSale(Guid productModelId, DiscountType discountType, double discountValue)
         {
-            var updatedModel = this.UpdateProductModelToOnSale(productModelId, discountType, discountValue);
+            var updatedModel = this.ProductModels.Where(pm => pm.ProductModelId == productModelId).FirstOrDefault();
             if (updatedModel != null)
             {
+                updatedModel.UpdateThisModelToOnSale(discountType, discountValue);
+
+                double minPriceOnSaleOfModels = this.ProductModels.Where(pm => pm.IsOnSaleModel).Min(pm => pm.PriceOnSaleModel);
+                ProductModel bestModelCurrentlyOnSale = ProductModels.Where(pm => pm.IsOnSaleModel)
+                                                                     .Single(pm => pm.PriceOnSaleModel == minPriceOnSaleOfModels);
                 this.IsOnSale = true;
-                this.PriceOnSale = this.ProductModels.Where(pm => pm.IsOnSaleModel).Max(pm => pm.PriceOnSaleModel);
+                this.ProductDisplaySaleType = bestModelCurrentlyOnSale.SaleType;
+                this.ProductDisplaySaleValue = bestModelCurrentlyOnSale.SaleValueModel;
+                this.ProductDisplayPriceOnSale = bestModelCurrentlyOnSale.PriceOnSaleModel;
                 return this;
             }
             return null;
