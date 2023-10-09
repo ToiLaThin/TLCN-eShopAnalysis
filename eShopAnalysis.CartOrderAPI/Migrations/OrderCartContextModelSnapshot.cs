@@ -139,6 +139,50 @@ namespace eShopAnalysis.CartOrderAPI.Migrations
                     b.ToTable("Cart", (string)null);
                 });
 
+            modelBuilder.Entity("eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("BusinessKey")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DateCheckouted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateCompleted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateConfirmed")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateRefunded")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Revision")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId")
+                        .IsUnique();
+
+                    b.ToTable("Orders");
+                });
+
             modelBuilder.Entity("eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate.CartItem", b =>
                 {
                     b.HasOne("eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate.CartSummary", null)
@@ -146,6 +190,17 @@ namespace eShopAnalysis.CartOrderAPI.Migrations
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate.Order", b =>
+                {
+                    b.HasOne("eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate.CartSummary", "Cart")
+                        .WithOne()
+                        .HasForeignKey("eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate.Order", "CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
                 });
 
             modelBuilder.Entity("eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate.CartSummary", b =>

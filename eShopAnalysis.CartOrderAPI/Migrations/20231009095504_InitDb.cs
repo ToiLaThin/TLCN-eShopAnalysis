@@ -62,6 +62,32 @@ namespace eShopAnalysis.CartOrderAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CartId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BusinessKey = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateCheckouted = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateConfirmed = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateRefunded = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateCompleted = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Revision = table.Column<int>(type: "int", nullable: false, defaultValue: 1)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Orders_Cart_CartId",
+                        column: x => x.CartId,
+                        principalTable: "Cart",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IndexPKCartItem",
                 table: "CartItem",
@@ -73,6 +99,12 @@ namespace eShopAnalysis.CartOrderAPI.Migrations
                 name: "IX_CartItem_CartId",
                 table: "CartItem",
                 column: "CartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_CartId",
+                table: "Orders",
+                column: "CartId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -80,6 +112,9 @@ namespace eShopAnalysis.CartOrderAPI.Migrations
         {
             migrationBuilder.DropTable(
                 name: "CartItem");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Cart");

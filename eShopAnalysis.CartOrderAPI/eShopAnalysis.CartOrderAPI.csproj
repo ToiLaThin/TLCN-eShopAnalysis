@@ -18,8 +18,6 @@
   <ItemGroup>
     <Folder Include="Application\Behaviors\" />
     <Folder Include="Application\Queries\ViewModels\" />
-    <Folder Include="Domain\DomainModels\OrderAggregate\" />
-    <Folder Include="Infrastructure\EntityConfigurations\" />
     <Folder Include="Infrastructure\Idempotency\" />
     <Folder Include="Migrations\" />
     <Folder Include="Utilities\" />

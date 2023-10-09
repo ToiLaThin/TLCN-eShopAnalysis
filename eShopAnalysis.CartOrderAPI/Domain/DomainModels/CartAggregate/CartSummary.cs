@@ -54,7 +54,7 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate
 
         public void AddToThisItem(CartItem itemToAdd)
         {
-            //itemToAdd.MarkBelongToCartWithId(this.Id); //this is not necessary, since we config foreign key, do not neet to explicitly set it
+            //itemToAdd.MarkBelongToCartWithId(this.Id); //this is not necessary, since we config foreign key in entity type configuration, do not need to explicitly set it
             this.Items.Add(itemToAdd);
             this.TotalPriceOriginal += itemToAdd.UnitPrice * itemToAdd.Quantity;
             this.TotalPriceFinal = this.TotalPriceOriginal; //TO DO change these logic as new business rule introduced
