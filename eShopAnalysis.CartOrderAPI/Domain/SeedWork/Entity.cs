@@ -1,7 +1,7 @@
 ﻿namespace eShopAnalysis.CartOrderAPI.Domain.SeedWork
 {
     public abstract class Entity //if the primary key is for one single id, composite key cannot use it
-    {
+    {        
         public Guid Id { get; init; } //once in the constructor
         protected Entity(Guid id) { Id = id; }
 
@@ -36,6 +36,26 @@
         public override int GetHashCode()
         {
             return Id.GetHashCode() ^ 31; //fingerprint base on the id
+        }
+
+
+        //so aggregate root like cart and order can raise domain event
+        private readonly List<IDomainEvent> _domainEvents = new();
+
+        public IReadOnlyList<IDomainEvent> GetDomainEvents()
+        {
+            return _domainEvents.AsReadOnly().ToList();
+            //ko thể set value cho 1 domain event trong collection này
+        }
+
+        public void ClearDomainEvents()
+        {
+            _domainEvents.Clear();
+        }
+
+        public void ToRaiseDomainEvent(IDomainEvent domainEvent)
+        {
+            _domainEvents.Add(domainEvent);
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
+using eShopAnalysis.CartOrderAPI.Domain.DomainModels.DomainEvents;
 using eShopAnalysis.CartOrderAPI.Infrastructure;
 using eShopAnalysis.CartOrderAPI.Infrastructure.Repositories;
 using MediatR;
+using System.Linq.Expressions;
 using System.Runtime.Serialization;
 
 namespace eShopAnalysis.CartOrderAPI.Application.Commands
@@ -22,6 +24,8 @@ namespace eShopAnalysis.CartOrderAPI.Application.Commands
                 cartSummary.AddToThisItem(cartItemToAdd);
             }
             var result = _uOW.CartRepository.Add(cartSummary);
+            var cartCheckoutRequestSentDomainEvent = new CartCheckoutRequestSent(cartSummary);
+            cartSummary.ToRaiseDomainEvent(cartCheckoutRequestSentDomainEvent);
             await _uOW.CommitTransactionAsync(transaction);
             return result;
                

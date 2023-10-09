@@ -1,4 +1,5 @@
 using eShopAnalysis.CartOrderAPI.Infrastructure;
+using eShopAnalysis.CartOrderAPI.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -15,6 +16,8 @@ builder.Services.AddMediatR(mediatRConfig =>
     mediatRConfig.RegisterServicesFromAssembly(assembly: Assembly.GetExecutingAssembly());
 });
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
