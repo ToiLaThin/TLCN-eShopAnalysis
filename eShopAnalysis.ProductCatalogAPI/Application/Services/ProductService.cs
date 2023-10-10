@@ -7,6 +7,7 @@ using eShopAnalysis.ProductCatalogAPI.Infrastructure;
 using eShopAnalysis.ProductCatalogAPI.Utilities;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.Eventing.Reader;
+using static eShopAnalysis.ProductCatalogAPI.Domain.Models.ProductModel;
 
 namespace eShopAnalysis.ProductCatalogAPI.Application.Services
 {

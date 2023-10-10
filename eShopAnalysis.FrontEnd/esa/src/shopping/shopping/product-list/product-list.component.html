@@ -1,5 +1,5 @@
-<div>
-    <p *ngFor="let product of ( allProduct$ | async)">
-        {{ product.productName }}
-    </p>
+<div class="product-list-container">
+    <ng-container *ngFor="let product of ( allProduct$ | async)">
+        <esa-product-list-card [product]="product"></esa-product-list-card>
+    </ng-container>
 </div>
