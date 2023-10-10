@@ -1,0 +1,43 @@
+@import '/src/styles/mixins';
+div.shade-layer {
+    @include full-screen-layer-shade { z-index: 100; }    
+}
+.notification {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 101;
+
+    max-width: 400px;
+    width: 100%;
+    height: 200px;
+
+    background-color: whitesmoke;
+    @include card;
+
+    &__header {
+        @include card {background-color: var(--clr-primary-red); color: whitesmoke; }
+        @include flex { justify-content: space-between; align-items: center; }
+        @include px-1; @include py-1;
+
+        &__title {
+        i { margin-right: var(--m-1); }
+        margin-top: var(--m-1);
+        margin-left: var(--m-1);
+        }
+
+        &__close-btn {
+           position: absolute;
+           top: 8px; right: 12px;
+           font-size: var(--fs-lg);
+           font-weight: var(--fw-bold);
+           @include transition-configuration(var(--animation-fast), ease-in-out) {
+                transition-property: all;
+                @include transition-hover-zoom { color: yellow; }
+           }
+        }
+    }
+
+    &__body { @include px-1; @include py-1; color: black; }
+}

@@ -1,0 +1,37 @@
+<ng-container *ngIf="this.product === null; else productInfo">
+    <div>
+        <h2>Select one product on the table to view sale info</h2>
+    </div>
+</ng-container>
+<ng-template #productInfo>
+    <h2>Product: {{this.product?.productName}}</h2>
+    <ng-container *ngFor="let model of this.product?.productModels;let i = index;">
+        <div class="model-container">
+            <h3>Model {{i}}: </h3>
+            <div style="display: flex; gap: 5px">
+                <h4>Original Price: {{model.price}}</h4>
+                <h4>OnSale: {{model.isOnSaleModel}}</h4>
+                <h4 *ngIf="model.isOnSaleModel">Sale percent: {{model.salePercentModel}}</h4>
+                <h4 *ngIf="model.isOnSaleModel">sale price: {{model.priceOnSaleModel}}</h4>
+            </div>
+            <div style="display: flex; flex-direction: row; gap: 4px">
+                <button *ngIf="!model.isOnSaleModel"
+                        mat-flat-button 
+                        (click)="addSaleToModel()">Add Sale
+                </button>
+                <button *ngIf="model.isOnSaleModel"
+                        mat-flat-button 
+                        (click)="hello()">Disable Sale
+                </button>
+                <ng-template [ngIf]="this.isAddingSaleToModel">
+                    <esa-sale-add [title]="'Add Sale to model'"
+                                  (onCloseBtnClick)="onCloseNotificationBox()"
+                                  [productId]="this.product?.productId"
+                                  [productModelId]="model.productModelId"
+                                  [businessKey]="this.product?.businessKey"
+                    ></esa-sale-add>
+                </ng-template>
+            </div>
+        </div>
+    </ng-container>
+</ng-template>

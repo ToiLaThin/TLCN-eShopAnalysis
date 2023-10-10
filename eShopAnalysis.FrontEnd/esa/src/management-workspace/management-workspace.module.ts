@@ -20,7 +20,12 @@ const managementWorkspaceRoutes: Routes = [
         path: 'product-catalog',
         loadChildren: () => import('./management-workspace/product-catalog/product-catalog.module').then(m => m.ProductCatalogModule),
         outlet: 'primary',
-      },      
+      },   
+      {
+        path: 'sale-coupon',
+        loadChildren: () => import('./management-workspace/sale-coupon/sale-coupon.module').then(m => m.SaleCouponModule),
+        outlet: 'primary',
+      }   
     ]
   }
 ]
