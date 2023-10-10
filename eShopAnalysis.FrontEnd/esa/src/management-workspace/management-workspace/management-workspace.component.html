@@ -4,7 +4,7 @@
             <i class="fa-solid fa-cart-shopping"></i>
         </a>
         <a [routerLink]="['/management',{outlets: {primary: 'product-catalog'}}]"><i class="fa-solid fa-cubes-stacked"></i></a>
-        <a href=""><mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="home"></mat-icon></a>
+        <a [routerLink]="['/management',{outlets: {primary: 'sale-coupon'}}]"><i class="fa-solid fa-percent"></i></a>
     </div>
     <router-outlet></router-outlet>
 </div>

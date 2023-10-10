@@ -1,0 +1,12 @@
+<mat-sidenav-container class="example-container">
+    <mat-sidenav #sidenav [mode]="'push'">
+        <esa-sale-sidenav-links></esa-sale-sidenav-links>
+        <p><button mat-button (click)="sidenav.toggle()">Toggle</button></p>                  
+    </mat-sidenav>
+  
+    <mat-sidenav-content>
+        <p><button mat-button (click)="sidenav.toggle()">Toggle</button></p>     
+        <router-outlet></router-outlet>
+        <!-- primary router outlet should never have a name -->
+    </mat-sidenav-content>
+</mat-sidenav-container>

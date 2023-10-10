@@ -1,0 +1,16 @@
+@import '/src/styles/mixins.scss';
+mat-sidenav-container {
+    // position: fixed;
+    // top: 5rem;
+    // left: 0;
+    flex: 1;
+    @include clear-fix;
+
+}
+mat-sidenav {
+    width: 200px;
+    color: red;
+}
+mat-sidenav-content {
+    height: 200vh;
+}

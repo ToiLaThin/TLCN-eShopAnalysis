@@ -1,0 +1,33 @@
+<div class="shade-layer">
+    <section class="notification">
+        <div class="notification__header">
+            <h1 class="notification__header__title"><i class="fas fa-user"></i>{{title}}</h1>
+            <button class="notification__header__close-btn" (click)="BtnCloseClickHandler()">&times;</button>
+        </div>
+        <div class="notification__body">
+            <form [formGroup]="modelSaleFrmGrp" (submit)="addSaleToModel()">
+                <input type="hidden" formControlName="productId" [value]="productId">
+                <input type="hidden" formControlName="productModelId" [value]="productModelId">
+                <input type="hidden" formControlName="businessKey" [value]="businessKey">
+                <mat-form-field>
+                    <mat-label>Discount Type:</mat-label>
+                    <mat-select formControlName="discountType">
+                        <ng-container *ngFor="let type of this.discountTypeKeyValueArr">
+                            <mat-option [value]="type.key">
+                                {{type.value}}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Discount Value</mat-label>
+                    <input matInput
+                           formControlName="discountValue"
+                           type="number"
+                    >
+                </mat-form-field>
+                <button mat-flat-button color="primary">Submit</button>
+            </form>
+        </div>
+    </section>
+</div>

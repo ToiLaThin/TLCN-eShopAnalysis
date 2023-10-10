@@ -1,0 +1,19 @@
+.container {
+}
+table {
+    width: 50%;
+    float: left;
+}
+
+.right-section {
+    width: 50%;
+    height: 100vh;
+    background-color: white;
+    color: black;
+    float: left;
+    &::after {
+        clear: both;
+        display: table;
+        content: "";
+    }
+}
