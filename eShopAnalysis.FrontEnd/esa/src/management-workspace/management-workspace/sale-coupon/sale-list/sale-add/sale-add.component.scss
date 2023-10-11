@@ -39,5 +39,11 @@ div.shade-layer {
         }
     }
 
-    &__body { @include px-1; @include py-1; color: black; }
+    &__body { 
+        @include px-1; @include py-1; color: black; 
+        mat-input, input, mat-select,mat-option {
+            border: 1px solid red;
+            color:black;
+        }
+    }
 }

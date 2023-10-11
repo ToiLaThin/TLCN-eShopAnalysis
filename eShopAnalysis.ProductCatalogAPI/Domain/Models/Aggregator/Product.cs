@@ -25,12 +25,22 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
         }
 
         //so many constructor, which one will be used
-        //tested, this is still called
+        //tested, this is still called      
+        [BsonConstructor]
         public Product()
         {
-            IsOnSale = true;
+            //default values
             HaveVariants = false;
-        }
+            HavePricePerCublic = false;
+
+            IsOnSale = false;
+            ProductDisplaySaleValue = -1;
+            ProductDisplaySaleType = DiscountType.NoDiscount;
+            ProductDisplayPriceOnSale = -1;
+
+            BusinessKey = Guid.NewGuid();
+            Revision = 0;
+    }
         public override ClonableObject Clone()
         {
             //just call the above clone constructor
@@ -56,19 +66,15 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
         //in mongodb string field is required even if we use BsonIgnore, it just require us to input it, but do not serialized to save into the db
         public string SubCatalogName { get; set; }
 
-        [BsonIgnore]
         //in mongodb string field is required even if we use BsonIgnore, it just require us to input it, but do not serialized to save into the db        
         public string ProductCoverImage { get; set; }
 
         public bool IsOnSale { get; set; } //each time a product model is set on sale, this will be on
 
-        [BsonIgnore]
         public double ProductDisplaySaleValue { get; set; } //will be set on product largest product model sale
 
-        [BsonIgnore]
         public DiscountType ProductDisplaySaleType { get; set; }
 
-        [BsonIgnore]
         public double ProductDisplayPriceOnSale { get; set; }
 
 
@@ -76,20 +82,17 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
         public bool HaveVariants { get; set; }
 
         //cublic la don vi do nhu kg, m, l
-        [BsonIgnore]
         public bool HavePricePerCublic { get; set; }
 
         //this is the number to know the version of this currrent product
         //every time we update the product, it create another row not updating existing one
-        [BsonIgnore]
         public int Revision { get; set; }
 
         //to know if all the revision product is refer to the same one
-        [BsonIgnore]
+        [BsonRepresentation(BsonType.String)]
         public Guid BusinessKey { get; set; }
         #endregion
 
-        [BsonIgnore]
         public ProductInfo ProductInfo { get; set; }
 
         public List<ProductModel> ProductModels { get; set; }        
@@ -135,6 +138,16 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
                 return this;
             }
             return null;
+        }
+
+        public Product MarkThisAsNotOnSale()
+        {
+            //when no model is one sale
+            IsOnSale = false;
+            ProductDisplaySaleValue = -1;
+            ProductDisplaySaleType = DiscountType.NoDiscount;
+            ProductDisplayPriceOnSale = -1;
+            return this;
         }
     }
 }

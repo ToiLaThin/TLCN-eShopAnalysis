@@ -17,8 +17,8 @@ export class SaleAddComponent implements OnInit {
       productId: [this.productId],
       productModelId: [this.productModelId],
       businessKey: [this.businessKey],
-      discountType: [DiscountType.ByValue],
-      discountValue: [0],    
+      discountType: [DiscountType.ByValue], //inital value, it is not NoDiscount to avoid submit without selecting discount type, which will cause invalid data
+      discountValue: [5], //-1 means no discount
     })
   }
   
@@ -29,20 +29,20 @@ export class SaleAddComponent implements OnInit {
   @Output('onCloseBtnClick') btnCloseClickEvent: EventEmitter<any> = new EventEmitter<any>();
   modelSaleFrmGrp!: FormGroup;
   
-  BtnCloseClickHandler() {
-    this.btnCloseClickEvent.emit();
-  }
-
-
   discountTypeKeyArr = Object.keys(DiscountType)
                              .map(x => parseInt(x))
-                             .filter(x => !isNaN(x));
+                             .filter(x => !isNaN(x) && x !== DiscountType.NoDiscount);
   discountTypeKeyValueArr = this.discountTypeKeyArr.map(key => {
     return {
       key: key,
       value: DiscountType[key]
     }
   });
+  BtnCloseClickHandler() {
+    this.btnCloseClickEvent.emit();
+  }
+
+
 
   addSaleToModel() {
     console.log(this.modelSaleFrmGrp.value);

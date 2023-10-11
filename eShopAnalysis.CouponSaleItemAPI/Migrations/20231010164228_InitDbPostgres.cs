@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace eShopAnalysis.CouponSaleItemAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class InitPostgresDb : Migration
+    public partial class InitDbPostgres : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,10 +46,9 @@ namespace eShopAnalysis.CouponSaleItemAPI.Migrations
                     BusinessKey = table.Column<Guid>(type: "uuid", nullable: false),
                     DiscountType = table.Column<int>(type: "integer", nullable: false),
                     DiscountValue = table.Column<double>(type: "double precision", nullable: false),
-                    MinOrderValueToApply = table.Column<double>(type: "double precision", nullable: false),
                     DateAdded = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DateEnded = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CouponStatus = table.Column<int>(type: "integer", nullable: false),
+                    SaleItemStatus = table.Column<int>(type: "integer", nullable: false),
                     RewardPointRequire = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -69,7 +68,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Migrations
                 schema: "Discount",
                 table: "SaleItem",
                 columns: new[] { "ProductId", "ProductModelId", "BusinessKey" })
-                .Annotation("Npgsql:IndexInclude", new[] { "CouponStatus" });
+                .Annotation("Npgsql:IndexInclude", new[] { "SaleItemStatus" });
         }
 
         /// <inheritdoc />

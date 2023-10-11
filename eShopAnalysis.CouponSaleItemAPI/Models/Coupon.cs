@@ -5,7 +5,8 @@ namespace eShopAnalysis.CouponSaleItemAPI.Models
     public enum DiscountType
     {
         ByValue,
-        ByPercent
+        ByPercent,
+        NoDiscount
     }
 
     public enum Status

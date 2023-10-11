@@ -5,6 +5,11 @@
     <mat-card-subtitle>
         {{product.subCatalogName}}
     </mat-card-subtitle>
+    <ng-container *ngIf="this.product.isOnSale === true">
+        <mat-card-subtitle>
+            <span style="color: white; background-color: red;">{{product.productDisplaySaleValue}}</span>
+        </mat-card-subtitle>
+    </ng-container>
 
     <mat-card-content>
         <img mat-card-image 

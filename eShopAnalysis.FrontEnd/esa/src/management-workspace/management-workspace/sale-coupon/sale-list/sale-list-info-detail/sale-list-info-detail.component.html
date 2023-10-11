@@ -11,26 +11,27 @@
             <div style="display: flex; gap: 5px">
                 <h4>Original Price: {{model.price}}</h4>
                 <h4>OnSale: {{model.isOnSaleModel}}</h4>
-                <h4 *ngIf="model.isOnSaleModel">Sale percent: {{model.salePercentModel}}</h4>
+                <h4 *ngIf="model.isOnSaleModel">Sale value(percent or monetary): {{model.saleValueModel}}</h4>
                 <h4 *ngIf="model.isOnSaleModel">sale price: {{model.priceOnSaleModel}}</h4>
             </div>
             <div style="display: flex; flex-direction: row; gap: 4px">
                 <button *ngIf="!model.isOnSaleModel"
                         mat-flat-button 
-                        (click)="addSaleToModel()">Add Sale
+                        (click)="addSaleToModel($event)">Add Sale
                 </button>
                 <button *ngIf="model.isOnSaleModel"
                         mat-flat-button 
                         (click)="hello()">Disable Sale
                 </button>
-                <ng-template [ngIf]="this.isAddingSaleToModel">
-                    <esa-sale-add [title]="'Add Sale to model'"
-                                  (onCloseBtnClick)="onCloseNotificationBox()"
-                                  [productId]="this.product?.productId"
-                                  [productModelId]="model.productModelId"
-                                  [businessKey]="this.product?.businessKey"
-                    ></esa-sale-add>
-                </ng-template>
+                <!-- nếu dùng ng-template productModelId luôn là của model cuối cùng dù nhấn add sale cua model nào-->
+                <esa-sale-add [title]="'Add Sale to model'"
+                                (onCloseBtnClick)="onCloseNotificationBox()"
+                                [productId]="this.product?.productId"
+                                [productModelId]="model.productModelId"
+                                [businessKey]="this.product?.businessKey"
+                                style="display: none;"
+                                class="add-sale-box"
+                ></esa-sale-add>
             </div>
         </div>
     </ng-container>

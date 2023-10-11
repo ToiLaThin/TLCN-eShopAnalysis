@@ -1,6 +1,8 @@
 export enum DiscountType {
     ByValue = 0,
     ByPercent = 1,
+    NoDiscount = 2, //must match with backend
+
 }
 export enum Status
 {
@@ -8,15 +10,15 @@ export enum Status
     Ended = 1
 }
 export interface ISaleItem {
+    saleItemId?: string; //for post
     productId: string;
     productModelId: string;
     businessKey: string;
     discountType: DiscountType;
     discountValue: number;
-    minOrderValueToApply?: number;//???
     dateAdded?: Date;
     dateEnded?: Date;
-    couponStatus?: Status;
+    saleItemStatus?: Status;
     rewardPointRequire?: number;
 
 }
