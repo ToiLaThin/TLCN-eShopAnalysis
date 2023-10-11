@@ -174,8 +174,8 @@ export class ProductAddComponent implements OnInit, OnDestroy {
     
     this.newProduct.productCoverImage = this.productEssentialFrmGrp.get('productCoverImage')?.value;
     this.newProduct.isOnSale = false;
-    this.newProduct.salePercent = 0;
-    this.newProduct.priceOnSale = 0;
+    this.newProduct.productDisplaySaleValue = undefined;
+    this.newProduct.productDisplayPriceOnSale = undefined;
     this.newProduct.haveVariants = this.haveVariants;
     this.newProduct.havePricePerCublic = this.havePricePerCublic;
     this.newProduct.revision = 0;
@@ -209,8 +209,9 @@ export class ProductAddComponent implements OnInit, OnDestroy {
           cublicPrice: pCublicPrice,
           price: pCublicPrice !== undefined ? pCublicPrice : productModelFrmGrpTemp.get('productPriceNonCublic')?.value,
           isOnSaleModel: false,
-          salePercentModel: 0,
-          priceOnSaleModel: 0,
+          saleValueModel: undefined,
+          saleType: undefined,
+          priceOnSaleModel: undefined,
         }
       ];
       this.productService.AddProduct(this.newProduct);
@@ -236,8 +237,10 @@ export class ProductAddComponent implements OnInit, OnDestroy {
           cublicPrice: pmCublicPrice,
           price: pmCublicPrice !== undefined ? pmCublicPrice : modelFrmGrp.get('productPriceNonCublic')?.value,
           isOnSaleModel: false,
-          salePercentModel: 0,
-          priceOnSaleModel: 0,
+          productDisplaySaleValue: undefined,
+          productDisplaySaleType: undefined,
+          saleType: undefined,
+          productDisplayPriceOnSale: undefined,
         };
         this.newProduct.productModels.push(thisProductModel);
       });

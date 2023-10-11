@@ -12,8 +12,8 @@ using eShopAnalysis.CouponSaleItemAPI.Data;
 namespace eShopAnalysis.CouponSaleItemAPI.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20231005225126_InitPostgresDb")]
-    partial class InitPostgresDb
+    [Migration("20231010164228_InitDbPostgres")]
+    partial class InitDbPostgres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,9 +76,6 @@ namespace eShopAnalysis.CouponSaleItemAPI.Migrations
                     b.Property<Guid>("BusinessKey")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("CouponStatus")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("timestamp with time zone");
 
@@ -91,9 +88,6 @@ namespace eShopAnalysis.CouponSaleItemAPI.Migrations
                     b.Property<double>("DiscountValue")
                         .HasColumnType("double precision");
 
-                    b.Property<double>("MinOrderValueToApply")
-                        .HasColumnType("double precision");
-
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
@@ -103,11 +97,14 @@ namespace eShopAnalysis.CouponSaleItemAPI.Migrations
                     b.Property<int>("RewardPointRequire")
                         .HasColumnType("integer");
 
+                    b.Property<int>("SaleItemStatus")
+                        .HasColumnType("integer");
+
                     b.HasKey("SaleItemId");
 
                     b.HasIndex("ProductId", "ProductModelId", "BusinessKey");
 
-                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("ProductId", "ProductModelId", "BusinessKey"), new[] { "CouponStatus" });
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("ProductId", "ProductModelId", "BusinessKey"), new[] { "SaleItemStatus" });
 
                     b.ToTable("SaleItem", "Discount");
                 });

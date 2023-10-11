@@ -1,6 +1,7 @@
 ﻿using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using static eShopAnalysis.ProductCatalogAPI.Domain.Models.ProductModel;
 
 namespace eShopAnalysis.ProductCatalogAPI.Application.Dto
 {
@@ -18,9 +19,11 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Dto
 
         public bool IsOnSale { get; set; } 
 
-        public double SalePercent { get; set; } 
+        public double ProductDisplaySaleValue { get; set; }
 
-        public double PriceOnSale { get; set; }
+        public DiscountType ProductDisplaySaleType { get; set; }
+
+        public double ProductDisplayPriceOnSale { get; set; }
 
 
         public bool HaveVariants { get; set; }
@@ -58,7 +61,9 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Dto
 
         public bool IsOnSaleModel { get; set; }
 
-        public double SalePercentModel { get; set; }
+        public double SaleValueModel { get; set; }
+
+        public DiscountType SaleType { get; set; }
 
         public double PriceOnSaleModel { get; set; }
     }

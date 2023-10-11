@@ -12,13 +12,11 @@
 
         public double DiscountValue { get; set; }
 
-        public double MinOrderValueToApply { get; set; }
-
         public DateTime DateAdded { get; set; }
 
         public DateTime DateEnded { get; set; }
 
-        public Status CouponStatus { get; set; }
+        public Status SaleItemStatus { get; set; }
 
         public int RewardPointRequire { get; set; }
     }

@@ -10,7 +10,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.EntityConfigurations
         {
             saleItemBuilder.ToTable("SaleItem", "Discount");
             saleItemBuilder.HasKey(s => s.SaleItemId);
-            saleItemBuilder.HasIndex(c => new { c.ProductId, c.ProductModelId, c.BusinessKey}).IncludeProperties(s => s.CouponStatus);
+            saleItemBuilder.HasIndex(c => new { c.ProductId, c.ProductModelId, c.BusinessKey}).IncludeProperties(s => s.SaleItemStatus);
 
             //there can only one active sale item with the same pId, pMId, BK
             //sale item that add must have product model be active now and is the latest version

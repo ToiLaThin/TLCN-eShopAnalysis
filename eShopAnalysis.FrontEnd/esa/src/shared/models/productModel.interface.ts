@@ -1,3 +1,5 @@
+import { DiscountType } from "./saleItem.interface";
+
 export enum CublicType {
     M = 0,
     V = 1,
@@ -14,6 +16,7 @@ export interface IProductModel {
     cublicPrice?: number;
     price: number;
     isOnSaleModel?: boolean;
-    salePercentModel?: number;
+    saleValueModel?: number;
+    saleType?: DiscountType;
     priceOnSaleModel?: number;
 }

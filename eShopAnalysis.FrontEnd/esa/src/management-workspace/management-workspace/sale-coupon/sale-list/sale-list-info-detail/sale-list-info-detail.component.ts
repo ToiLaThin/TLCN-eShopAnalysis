@@ -12,16 +12,18 @@ export class SaleListInfoDetailComponent implements OnInit  {
   @Input('selectedProduct') product!: IProduct | null;
   ngOnInit(): void {
   }
-  isAddingSaleToModel: boolean = false;
+  
   hello() {}
 
-  addSaleToModel() {
-    console.log("addSaleToModel");
-    
-    this.isAddingSaleToModel = true;
+  addSaleToModel(evt: Event) {
+    //whenever the structure of html change, this has to be changed too
+    const clickedBtn = evt.target as HTMLButtonElement;
+    const parent = clickedBtn.closest('div') as HTMLDivElement;
+    const saleAddBox = parent.querySelector('esa-sale-add') as HTMLElement;
+    saleAddBox.style.display = 'block';
   }
 
   onCloseNotificationBox() {
-    this.isAddingSaleToModel = false;
+    (document.querySelector('esa-sale-add') as HTMLElement).style.display = 'none';
   }
 }

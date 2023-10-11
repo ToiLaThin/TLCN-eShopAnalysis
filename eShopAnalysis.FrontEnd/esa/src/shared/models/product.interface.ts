@@ -1,5 +1,6 @@
 import { IProductInfo } from "./productInfo.interface";
 import { IProductModel } from "./productModel.interface";
+import { DiscountType } from "./saleItem.interface";
 
 export interface IProduct {
     productId?: string;
@@ -8,8 +9,9 @@ export interface IProduct {
     subCatalogName?: string;
     productCoverImage?: string;
     isOnSale?: boolean;
-    salePercent?: number;
-    priceOnSale?: number;
+    productDisplaySaleValue?: number;
+    productDisplaySaleType?: DiscountType;
+    productDisplayPriceOnSale?: number;
     haveVariants?: boolean;
     havePricePerCublic?: boolean;
     revision?: number;

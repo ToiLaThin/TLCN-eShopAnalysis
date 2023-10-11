@@ -19,7 +19,6 @@ public class ProductModel
     [BsonRepresentation(BsonType.String)]
     public Guid ProductModelId { get; set; }
 
-    [BsonIgnore]
     public IEnumerable<string> ProductModelThumbnails { get; set; }
 
     [BsonElement("CublicType")]
@@ -37,28 +36,34 @@ public class ProductModel
 
     public double Price { get; set; }
 
-    [BsonIgnore]
     public bool IsOnSaleModel { get; set; }
 
-    [BsonIgnore]
     public double SaleValueModel { get; set; }
 
-    [BsonIgnore]
     public DiscountType SaleType { get; set; }
 
-    [BsonIgnore]
     public double PriceOnSaleModel { get; set; }
 
     [BsonConstructor]
     public ProductModel()
     {
         ProductModelId = Guid.NewGuid();
+        //set default value
+        IsOnSaleModel = false;
+        SaleType = DiscountType.NoDiscount;// them 1 discount Type là none cả trên front end và backend
+        PriceOnSaleModel = -1;
+        SaleValueModel = -1;
+
+        PricePerCublicValue = -1;
+        CublicValue = -1;
+        CublicType = CublicType.N;
     }
 
     public enum DiscountType
     {
         ByValue,
-        ByPercent
+        ByPercent,
+        NoDiscount
     }
 
     public ProductModel UpdateThisModelToOnSale(DiscountType discountType, double discountValue)
@@ -76,6 +81,15 @@ public class ProductModel
                 break;
 
         }
+        return this;
+    }
+
+    public ProductModel ClearSaleOfThisModel()
+    {
+        IsOnSaleModel = false;
+        SaleType = DiscountType.NoDiscount;// them 1 discount Type là none cả trên front end và backend
+        PriceOnSaleModel = -1;
+        SaleValueModel = -1;
         return this;
     }
 }
