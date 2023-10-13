@@ -1,5 +1,8 @@
 <div class="product-list-container">
     <ng-container *ngFor="let product of ( allProduct$ | async)">
-        <esa-product-list-card [product]="product"></esa-product-list-card>
+        <esa-product-list-card [product]="product" 
+                               (click)="viewProductDetail(product.productId)"
+        >
+        </esa-product-list-card>
     </ng-container>
 </div>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/shared/services/auth.service';
+import { CartHttpService } from 'src/shared/services/http/cart-http.service';
 import { ShowDropDownService } from 'src/shared/services/show-drop-down.service';
 import { ThemeToggleService } from 'src/shared/services/theme-toggle.service';
 import { AuthStatus } from 'src/shared/types/auth-status.enum';
@@ -17,16 +18,19 @@ export class HNavbarOptionsComponent implements OnInit {
   userName$!: Observable<string>;
   userRole$!: Observable<string>;
   authStatus$!: Observable<AuthStatus>;
+  cartItemsCount$!: Observable<number>;
   get AuthStatus() { return AuthStatus; } //for template to use enum
 
   constructor(private showDropDownService: ShowDropDownService, 
               private toggleThemeService: ThemeToggleService, 
-              private authService: AuthService) { 
+              private authService: AuthService,
+              private cartService: CartHttpService) { 
       this.showDropDown$ = this.showDropDownService.showHNavBarDropDown$;
       this.isDarkTheme$ = this.toggleThemeService.isDarkTheme$;
       this.userName$ = this.authService.userName$;
       this.userRole$ = this.authService.userRole$;
       this.authStatus$ = this.authService.authStatusGetter$;
+      this.cartItemsCount$ = this.cartService.itemsInCartCount$;
   }
   ngOnInit(): void {
   }

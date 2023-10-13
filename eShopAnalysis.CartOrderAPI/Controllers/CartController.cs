@@ -1,4 +1,5 @@
 ﻿using eShopAnalysis.CartOrderAPI.Application.Commands;
+using eShopAnalysis.CartOrderAPI.Application.Dto;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -19,12 +20,12 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
         [HttpPost("AddCart")]
         //only have one thing can be in FromBody
         //also in get request should not have body
-        //TODO create a CartCreateRequestDTO have both cartItems and userId since only one model can reside in body
+        //TODO create a CartConfirmRequestDTO have both cartItems and userId since only one model can reside in body (DONE)
         // if CartCreateCommand have private setter, it will not have example schema in the swagger index.html and the data we received (cartItem and userId) will be null and default Guid
         //so in controller we received a Dto and create the command
         //TODO we could also use factory to create command with validation the input
-        public async Task<CartSummary> AddCart([FromBody] IEnumerable<CartItem> cartItems,[FromHeader] Guid userId) { 
-            CartCreateCommand command = new CartCreateCommand(cartItems, userId);
+        public async Task<CartSummary> AddCart([FromBody] CartConfirmRequestDto cartConfirmRequestDto) { 
+            CartCreateCommand command = new CartCreateCommand(cartConfirmRequestDto.CartItems, cartConfirmRequestDto.UserId);
             var result = await _mediator.Send(command);
             return result;
         }

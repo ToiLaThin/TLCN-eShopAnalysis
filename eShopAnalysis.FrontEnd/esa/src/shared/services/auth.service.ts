@@ -42,7 +42,8 @@ export class AuthService {
   }  
   get authStatusGetter$() : BehaviorSubject<AuthStatus> { return this.authStatus$; } //for other component observable to subscribe will be used to check if user authenticated or not
   set authStatus(status: AuthStatus) { this.authStatus$.next(status); }
-
+  get userId() { return this._user.profile.sub; }
+  
   constructor(private http: HttpClient, 
     private jwtService: JwtService,
     private router: Router) { 

@@ -1,0 +1,28 @@
+<div class="product-detail-container">
+    <div class="product-detail-image-container">
+        <img [src]="product?.productCoverImage" alt="product image">
+    </div>
+    <div class="product-detail-info-container">
+        <div class="product-detail-info">
+            <div class="product-detail-info-title">
+                <h2>{{product?.productName}}</h2>
+                <span>{{product?.subCatalogName}}</span>
+            </div>
+            <div class="product-detail-info-price">
+                Giam gia <span style="color: red;">{{product?.productDisplayPriceOnSale | currency}}</span>
+            </div>
+            <div class="product-detail-info-description">
+                <p>{{product?.isOnSale}}</p>
+            </div>
+            <ng-container *ngFor="let model of this.product?.productModels; let i = index">
+                <div class="product-detail-info-quantity" style="padding: 2rem; border: 1px solid dodgerblue;">
+                    <h2>Model {{i}}</h2>
+                    <p>Price {{model.price}} <span style="color: red;">{{model.priceOnSaleModel}}</span></p>
+                    <label>Quantity</label>
+                    <input type="number" name="quantity" min="1" max="5" value="1" style="border: 1px solid lightgrey;">
+                    <br>
+                    <button mat-raised-button color="primary" (click)="addModelToCart($event, model)">Add to Cart</button>
+                </div>
+            </ng-container>
+        </div>
+    </div>
