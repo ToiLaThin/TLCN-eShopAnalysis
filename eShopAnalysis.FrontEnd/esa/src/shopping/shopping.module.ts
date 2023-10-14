@@ -7,6 +7,7 @@ import { SharedModule } from 'src/shared/shared.module';
 import { ProductListCardComponent } from './shopping/product-list/product-list-card/product-list-card.component';
 import { ProductDetailComponent } from './shopping/product-detail/product-detail.component';
 import { CartListComponent } from './shopping/cart-list/cart-list.component';
+import { AuthenticatedGuard } from 'src/shared/guards/authenticated.guard';
 
 const shoppingRoutes: Routes = [
   {
@@ -24,7 +25,9 @@ const shoppingRoutes: Routes = [
     component: ProductDetailComponent,
     pathMatch: 'full'
   },
+  
   {
+    canActivate: [AuthenticatedGuard],
     path: 'cart-list',
     component: CartListComponent,
     pathMatch: 'full'
