@@ -36,6 +36,8 @@ public class ProductModel
 
     public double Price { get; set; }
 
+    [BsonRepresentation(BsonType.String)]
+    public Guid? SaleItemId { get; set; }
     public bool IsOnSaleModel { get; set; }
 
     public double SaleValueModel { get; set; }
@@ -50,6 +52,7 @@ public class ProductModel
         ProductModelId = Guid.NewGuid();
         //set default value
         IsOnSaleModel = false;
+        SaleItemId = null; //at first it is null
         SaleType = DiscountType.NoDiscount;// them 1 discount Type là none cả trên front end và backend
         PriceOnSaleModel = -1;
         SaleValueModel = -1;
@@ -66,15 +69,16 @@ public class ProductModel
         NoDiscount
     }
 
-    public ProductModel UpdateThisModelToOnSale(DiscountType discountType, double discountValue)
+    public ProductModel UpdateThisModelToOnSale(Guid saleItemId, DiscountType discountType, double discountValue)
     {
         this.IsOnSaleModel = true;
+        this.SaleItemId = saleItemId;
         this.SaleType = discountType;
         this.SaleValueModel = discountValue;
         switch (discountType)
         {
             case DiscountType.ByPercent:
-                this.PriceOnSaleModel = this.Price - (discountValue * this.Price);
+                this.PriceOnSaleModel = this.Price - (discountValue * this.Price) /100;
                 break;
             case DiscountType.ByValue:
                 this.PriceOnSaleModel = this.Price - discountValue;

@@ -1,4 +1,6 @@
-﻿using eShopAnalysis.CartOrderAPI.Domain.SeedWork;
+﻿using Azure.Core;
+using eShopAnalysis.CartOrderAPI.Domain.SeedWork;
+using System.Runtime.CompilerServices;
 
 namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate
 {
@@ -44,20 +46,47 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate
 
         public List<CartItem> Items { get; set; }
 
-        public CartSummary(Guid id) : base(id) { }
+        private CartSummary(Guid id) : base(id) { }
 
-        public CartSummary(Guid cartId, Guid userId) : base(cartId)
+        private CartSummary(Guid cartId, Guid userId) : base(cartId)
         {
+            //where cart got its id,only then it can passed this id to cart item
             this.UserId = userId;
             this.Items = new List<CartItem>();
         }
 
-        public void AddToThisItem(CartItem itemToAdd)
+        private void AddToThisItem(CartItem itemToAdd)
         {
             //itemToAdd.MarkBelongToCartWithId(this.Id); //this is not necessary, since we config foreign key in entity type configuration, do not need to explicitly set it
             this.Items.Add(itemToAdd);
+            //kt item hien tai co dc sale ko, neu co thi lay cai sale id do gan vo, cap nhat gia saleDiscountAmount, Price after sale
+            if (itemToAdd.SaleType != DiscountType.NoDiscount)
+            {
+                if (!this.HaveAnySaleItem) //first sale item it have in cart
+                {
+                    this.HaveAnySaleItem = true;
+                    this.TotalSaleDiscountAmount = 0;                    
+                }
+                //no matter first time or not , we still add the total sale discount amount since this is a sale itme
+                this.TotalSaleDiscountAmount += itemToAdd.FinalPrice - itemToAdd.FinalAfterSalePrice;
+            }
             this.TotalPriceOriginal += itemToAdd.UnitPrice * itemToAdd.Quantity;
-            this.TotalPriceFinal = this.TotalPriceOriginal; //TO DO change these logic as new business rule introduced
+        }
+
+        public static CartSummary CreateCartSummaryFromItems(Guid cartGeneratedId,Guid buyerId, IEnumerable<CartItem> itemToAdd)
+        {
+            CartSummary cartSummary = new CartSummary(cartGeneratedId, buyerId);
+            foreach (var cartItemToAdd in itemToAdd)
+            {
+                cartSummary.AddToThisItem(cartItemToAdd);
+            }
+            if (cartSummary.HaveAnySaleItem)
+            {
+                cartSummary.TotalPriceAfterSale = cartSummary.TotalPriceOriginal - cartSummary.TotalSaleDiscountAmount;
+                //TODO coupon check
+                cartSummary.TotalPriceFinal = cartSummary.TotalPriceAfterSale;
+            }
+            return cartSummary;
         }
 
     }

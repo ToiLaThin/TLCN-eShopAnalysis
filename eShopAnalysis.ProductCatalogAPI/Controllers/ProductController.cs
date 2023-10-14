@@ -99,6 +99,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         {
             var result = _service.UpdateProductToOnSale(productUpdateToSaleRequestDto.ProductId,
                                                         productUpdateToSaleRequestDto.ProductModelId,
+                                                        productUpdateToSaleRequestDto.SaleItemId,
                                                         productUpdateToSaleRequestDto.DiscountType,
                                                         productUpdateToSaleRequestDto.DiscountValue);
             if (result.IsFailed)

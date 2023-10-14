@@ -18,14 +18,10 @@ namespace eShopAnalysis.CartOrderAPI.Application.Commands
         public async Task<CartSummary> Handle(CartCreateCommand request, CancellationToken cancellationToken)
         {
             var transaction = await _uOW.BeginTransactionAsync();
-            CartSummary cartSummary = new CartSummary(Guid.NewGuid(), request.UserId); //where cart got its id,only then it can passed this id to cart item
-            foreach (var cartItemToAdd in request.CartItems)
-            {
-                cartSummary.AddToThisItem(cartItemToAdd);
-            }
-            var result = _uOW.CartRepository.Add(cartSummary);
-            var cartCheckoutRequestSentDomainEvent = new CartCheckoutRequestSent(cartSummary);
-            cartSummary.ToRaiseDomainEvent(cartCheckoutRequestSentDomainEvent);
+            var cartSummaryCreated = CartSummary.CreateCartSummaryFromItems(Guid.NewGuid(), request.UserId, request.CartItems);
+            var result = _uOW.CartRepository.Add(cartSummaryCreated);
+            var cartCheckoutRequestSentDomainEvent = new CartCheckoutRequestSent(cartSummaryCreated);
+            cartSummaryCreated.ToRaiseDomainEvent(cartCheckoutRequestSentDomainEvent);
             await _uOW.CommitTransactionAsync(transaction);
             return result;
                

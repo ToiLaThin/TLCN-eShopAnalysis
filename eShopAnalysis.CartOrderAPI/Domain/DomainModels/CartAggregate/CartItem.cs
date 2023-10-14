@@ -5,7 +5,8 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate
     public enum DiscountType
     {
         ByValue,
-        ByPercent
+        ByPercent,
+        NoDiscount
     }
 
     //can use record for strongly type but i use value obj for ef core integration support
