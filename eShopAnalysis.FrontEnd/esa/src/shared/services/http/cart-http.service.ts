@@ -40,4 +40,24 @@ export class CartHttpService {
     return this.http.post<ICartConfirmRequest>(`${env.BASEURL}/api/OrderCart/CartAPI/AddCart`, cartConfirmRequest);
   }
 
+  public changeCartItemQuantity(indexInCart: number, newQuantity: number) {
+    let currentItemsInCart = this.itemsInCartSubject.getValue();
+    let toUpdateQuantityItem = currentItemsInCart[indexInCart];
+
+    toUpdateQuantityItem.finalPrice = toUpdateQuantityItem.finalPrice / toUpdateQuantityItem.quantity * newQuantity; //divide by old quantity and multiply by new quantity
+    toUpdateQuantityItem.finalAfterSalePrice = toUpdateQuantityItem.finalAfterSalePrice ? toUpdateQuantityItem.finalAfterSalePrice / toUpdateQuantityItem.quantity * newQuantity 
+                                                                                        : undefined;
+    toUpdateQuantityItem.quantity = newQuantity;
+
+    this.itemsInCartSubject.next(currentItemsInCart);//subject next the updated cart
+    localStorage.setItem(this.itemsInCartKey, JSON.stringify(currentItemsInCart));
+  }
+
+  removeCartItemFromCart(indexInCart: number) {
+    let currentItemsInCart = this.itemsInCartSubject.getValue();
+    currentItemsInCart.splice(indexInCart, 1); //do not assign a var to this, it will be the removed item not the updated cart
+    this.itemsInCartSubject.next(currentItemsInCart);//subject next the updated cart    
+    localStorage.setItem(this.itemsInCartKey, JSON.stringify(currentItemsInCart));
+  }
+
 }
