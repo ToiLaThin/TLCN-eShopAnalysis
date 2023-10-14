@@ -121,12 +121,12 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
         
 
         //this product display sale is of the best sale of its models
-        public Product UpdateProductToOnSale(Guid productModelId, DiscountType discountType, double discountValue)
+        public Product UpdateProductToOnSale(Guid productModelId, Guid saleItemId, DiscountType discountType, double discountValue)
         {
             var updatedModel = this.ProductModels.Where(pm => pm.ProductModelId == productModelId).FirstOrDefault();
             if (updatedModel != null)
             {
-                updatedModel.UpdateThisModelToOnSale(discountType, discountValue);
+                updatedModel.UpdateThisModelToOnSale(saleItemId, discountType, discountValue);
 
                 double minPriceOnSaleOfModels = this.ProductModels.Where(pm => pm.IsOnSaleModel).Min(pm => pm.PriceOnSaleModel);
                 ProductModel bestModelCurrentlyOnSale = ProductModels.Where(pm => pm.IsOnSaleModel)

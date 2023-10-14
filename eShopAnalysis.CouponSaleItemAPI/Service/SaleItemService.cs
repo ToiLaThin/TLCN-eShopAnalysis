@@ -27,7 +27,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
             }
             else
             {
-                var backChannelResponse = await _backChannelProductCatalogService.UpdateProductToSaleAsync(result.ProductId, result.ProductModelId, result.DiscountType, result.DiscountValue);
+                var backChannelResponse = await _backChannelProductCatalogService.UpdateProductToSaleAsync(result.ProductId, result.ProductModelId, result.SaleItemId, result.DiscountType, result.DiscountValue);
                 if (backChannelResponse.IsFailed || backChannelResponse.IsException)
                 {
                     await transaction.RollbackAsync();

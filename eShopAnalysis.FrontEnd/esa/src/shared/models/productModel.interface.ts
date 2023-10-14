@@ -16,6 +16,7 @@ export interface IProductModel {
     cublicPrice?: number;
     price: number;
     isOnSaleModel?: boolean;
+    saleItemId?: string;
     saleValueModel?: number;
     saleType?: DiscountType;
     priceOnSaleModel?: number;

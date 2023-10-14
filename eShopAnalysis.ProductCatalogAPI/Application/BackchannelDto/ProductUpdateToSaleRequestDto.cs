@@ -8,6 +8,8 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto
 
         public Guid ProductModelId { get; set; }
 
+        public Guid SaleItemId { get; set; }
+
         public DiscountType DiscountType { get; set; }
 
         public double DiscountValue { get; set; } 

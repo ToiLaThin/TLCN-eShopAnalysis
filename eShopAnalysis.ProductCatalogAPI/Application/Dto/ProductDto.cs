@@ -61,6 +61,8 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Dto
 
         public bool IsOnSaleModel { get; set; }
 
+        public Guid? SaleItemId { get; set; }
+
         public double SaleValueModel { get; set; }
 
         public DiscountType SaleType { get; set; }

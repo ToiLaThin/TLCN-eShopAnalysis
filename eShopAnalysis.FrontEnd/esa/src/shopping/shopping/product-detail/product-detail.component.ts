@@ -50,6 +50,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
         businessKey: this.product?.businessKey,
         quantity: parseInt(modelQuantity.value),
         isOnSale: model.isOnSaleModel,
+        saleItemId: model.saleItemId,
         saleType: model.saleType,
         saleValue: model.saleValueModel,
         unitPrice: model.price,

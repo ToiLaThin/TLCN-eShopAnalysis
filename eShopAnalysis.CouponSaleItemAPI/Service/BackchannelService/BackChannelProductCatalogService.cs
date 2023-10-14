@@ -18,7 +18,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService
             _baseService = baseService;
             _backChannelUrls = backChannelUrls;
         }
-        public async Task<BackChannelResponseDto<ProductDto>> UpdateProductToSaleAsync(Guid productId, Guid productModelId, DiscountType discountType, double discountValue)
+        public async Task<BackChannelResponseDto<ProductDto>> UpdateProductToSaleAsync(Guid productId, Guid productModelId, Guid saleItemId, DiscountType discountType, double discountValue)
         {
             var result = await _baseService.SendAsync(new BackChannelRequestDto<ProductUpdateToSaleRequestDto>()
             {
@@ -27,6 +27,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService
                 Data = new ProductUpdateToSaleRequestDto() { 
                     DiscountType = discountType, 
                     DiscountValue = discountValue, 
+                    SaleItemId = saleItemId,
                     ProductId = productId, 
                     ProductModelId = productModelId 
                 }
