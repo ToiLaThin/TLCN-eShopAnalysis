@@ -9,5 +9,8 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
         Task<ServiceResponseDto<Coupon>> Delete(Guid coupon);
         ServiceResponseDto<IEnumerable<Coupon>> GetAll();
         ServiceResponseDto<Coupon> GetCoupon(Guid couponId);
+        ServiceResponseDto<IEnumerable<Coupon>> GetCouponUsedByUser(Guid userId);
+        ServiceResponseDto<IEnumerable<Coupon>> GetActiveCouponsNotUsedByUser(Guid userId);
+        Task<ServiceResponseDto<Coupon>> MarkUserUsedCoupon(Guid userId, Guid couponId);
     }
 }

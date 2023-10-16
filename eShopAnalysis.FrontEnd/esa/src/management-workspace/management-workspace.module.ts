@@ -25,7 +25,7 @@ const managementWorkspaceRoutes: Routes = [
         path: 'sale-coupon',
         loadChildren: () => import('./management-workspace/sale-coupon/sale-coupon.module').then(m => m.SaleCouponModule),
         outlet: 'primary',
-      }   
+      }
     ]
   }
 ]

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace eShopAnalysis.CouponSaleItemAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDbPostgres : Migration
+    public partial class initPostgresDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,12 +56,39 @@ namespace eShopAnalysis.CouponSaleItemAPI.Migrations
                     table.PrimaryKey("PK_SaleItem", x => x.SaleItemId);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CouponUser",
+                schema: "Discount",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CouponId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CouponUser", x => new { x.CouponId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_CouponUser_Coupon_CouponId",
+                        column: x => x.CouponId,
+                        principalSchema: "Discount",
+                        principalTable: "Coupon",
+                        principalColumn: "CouponId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Coupon_CouponCode",
                 schema: "Discount",
                 table: "Coupon",
                 column: "CouponCode")
                 .Annotation("Npgsql:IndexInclude", new[] { "CouponStatus" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CouponUser_UserId",
+                schema: "Discount",
+                table: "CouponUser",
+                column: "UserId")
+                .Annotation("Npgsql:IndexInclude", new[] { "CouponId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_SaleItem_ProductId_ProductModelId_BusinessKey",
@@ -75,11 +102,15 @@ namespace eShopAnalysis.CouponSaleItemAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Coupon",
+                name: "CouponUser",
                 schema: "Discount");
 
             migrationBuilder.DropTable(
                 name: "SaleItem",
+                schema: "Discount");
+
+            migrationBuilder.DropTable(
+                name: "Coupon",
                 schema: "Discount");
         }
     }

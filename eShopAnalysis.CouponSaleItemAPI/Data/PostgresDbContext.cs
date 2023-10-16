@@ -10,8 +10,8 @@ namespace eShopAnalysis.CouponSaleItemAPI.Data
     {
         public PostgresDbContext(DbContextOptions dbContextOptions) : base(dbContextOptions) { }
         public DbSet<SaleItem> SaleItems { get; set; }
-
         public DbSet<Coupon> Coupons { get; set; }
+        public DbSet<CouponUser> CouponUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

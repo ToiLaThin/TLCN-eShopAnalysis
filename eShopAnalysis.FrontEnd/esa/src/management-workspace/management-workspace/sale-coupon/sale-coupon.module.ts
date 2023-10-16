@@ -7,6 +7,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { SaleListComponent } from './sale-list/sale-list.component';
 import { SaleListInfoDetailComponent } from './sale-list/sale-list-info-detail/sale-list-info-detail.component';
 import { SaleAddComponent } from './sale-list/sale-add/sale-add.component';
+import { CouponListComponent } from './coupon-list/coupon-list.component';
+import { CouponAddComponent } from './coupon-list/coupon-add/coupon-add.component';
 
 const saleCouponRoutes: Routes = [
   {
@@ -17,6 +19,18 @@ const saleCouponRoutes: Routes = [
       {
         path: 'sale-list',
         component: SaleListComponent,
+        outlet: 'primary',
+        pathMatch: 'full',
+      },
+      {
+        path: 'coupon-list',
+        component: CouponListComponent,
+        outlet: 'primary',
+        pathMatch: 'full',
+      },
+      {
+        path: 'coupon-add',
+        component: CouponAddComponent,
         outlet: 'primary',
         pathMatch: 'full',
       }
@@ -30,7 +44,9 @@ const saleCouponRoutes: Routes = [
     SaleSidenavLinksComponent,
     SaleListComponent,
     SaleListInfoDetailComponent,
-    SaleAddComponent
+    SaleAddComponent,
+    CouponListComponent,
+    CouponAddComponent
   ],
   imports: [
     CommonModule,

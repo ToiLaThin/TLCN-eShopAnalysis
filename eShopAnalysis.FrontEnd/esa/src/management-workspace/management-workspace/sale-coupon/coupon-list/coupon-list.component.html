@@ -1,0 +1,9 @@
+<button (click)="navigateToAddCoupon()" style="border: 1px solid red; padding: 16px; cursor: pointer;">Add new coupon</button>
+<div *ngFor="let coupon of (this.allCoupons$ | async)">
+    <div class="coupon">{{coupon.discountValue}} <span>%</span>
+        <p>For order from: {{coupon.minOrderValueToApply}}</p>
+        <p>From {{coupon.dateAdded}} To {{coupon.dateEnded}}</p>
+        <div>Code : {{coupon.couponCode}}</div>
+    </div>
+</div>
+

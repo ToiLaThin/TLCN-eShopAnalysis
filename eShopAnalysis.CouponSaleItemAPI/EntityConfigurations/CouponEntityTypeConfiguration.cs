@@ -17,6 +17,11 @@ namespace eShopAnalysis.CouponSaleItemAPI.EntityConfigurations
             couponBuilder.HasIndex(c => c.CouponCode)
                          .IncludeProperties(c => c.CouponStatus);
 
+            couponBuilder.HasMany<CouponUser>()
+                         .WithOne(cU => cU.CouponUsed) //specify navigation property, so with couponUser we can retrive all the coupon used
+                         .HasPrincipalKey(c => c.CouponId)
+                         .HasForeignKey(cU => cU.CouponId);
+
             //make sure the minOrderValueToApply Range from 0 - infinite, rewarepointRequire is also limited
             //DateEnded > DateAdded and more than 30 day
 

@@ -7,6 +7,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.UnitOfWork
     {
         public ICouponRepository CouponRepository { get; }
         public ISaleItemRepository SaleItemRepository { get; }
+        public ICouponUserRepository CouponUserRepository { get; }
         IDbContextTransaction GetCurrentTransaction();
 
         bool HasActiveTransaction();
