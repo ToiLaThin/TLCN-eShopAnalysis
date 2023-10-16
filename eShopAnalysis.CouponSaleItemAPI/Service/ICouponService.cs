@@ -12,5 +12,6 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
         ServiceResponseDto<IEnumerable<Coupon>> GetCouponUsedByUser(Guid userId);
         ServiceResponseDto<IEnumerable<Coupon>> GetActiveCouponsNotUsedByUser(Guid userId);
         Task<ServiceResponseDto<Coupon>> MarkUserUsedCoupon(Guid userId, Guid couponId);
+        ServiceResponseDto<Coupon> RetrieveValidCouponWithCode(string couponCode);
     }
 }

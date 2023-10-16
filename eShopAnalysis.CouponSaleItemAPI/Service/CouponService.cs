@@ -96,8 +96,21 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
             }
         }
 
-
-
-
+        public ServiceResponseDto<Coupon> RetrieveValidCouponWithCode(string couponCode)
+        {
+            IEnumerable<Coupon> resultTemp = _uOW.CouponRepository.GetAll()
+                                                  .Where(c => c.CouponCode == couponCode)
+                                                  .Where(c => c.CouponStatus == Status.Active)
+                                                  .Where(c => c.DateEnded >= DateTime.Now)
+                                                  .Select(c => c);
+            if (resultTemp == null ) {
+                return ServiceResponseDto<Coupon>.Failure("no coupon match");
+            }
+            if (resultTemp.Count() > 1) {
+                return ServiceResponseDto<Coupon>.Failure("multiple coupon with the same code");
+            }
+            var result = resultTemp.FirstOrDefault();
+            return ServiceResponseDto<Coupon>.Success(result);
+        }
     }
 }

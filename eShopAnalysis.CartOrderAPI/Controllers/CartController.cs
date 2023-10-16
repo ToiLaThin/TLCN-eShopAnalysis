@@ -25,7 +25,7 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
         //so in controller we received a Dto and create the command
         //TODO we could also use factory to create command with validation the input
         public async Task<CartSummary> AddCart([FromBody] CartConfirmRequestDto cartConfirmRequestDto) { 
-            CartCreateCommand command = new CartCreateCommand(cartConfirmRequestDto.CartItems, cartConfirmRequestDto.UserId);
+            CartCreateCommand command = new CartCreateCommand(cartConfirmRequestDto.CartItems, cartConfirmRequestDto.UserId, cartConfirmRequestDto.CouponCode);
             var result = await _mediator.Send(command);
             return result;
         }

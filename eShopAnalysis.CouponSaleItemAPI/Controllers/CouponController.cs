@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using eShopAnalysis.CouponSaleItemAPI.Application.BackchannelDto;
 using eShopAnalysis.CouponSaleItemAPI.Dto;
 using eShopAnalysis.CouponSaleItemAPI.Models;
 using eShopAnalysis.CouponSaleItemAPI.Service;
@@ -42,7 +43,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
         }
 
         [HttpGet("GetAllActiveCouponsNotUsedByUser")]
-        public IEnumerable<CouponDto> GetAllActiveCouponsNotUsedByUser(Guid userId)
+        public IEnumerable<CouponDto> GetAllActiveCouponsNotUsedByUser([FromQuery] Guid userId)
         {
             var result = _couponService.GetActiveCouponsNotUsedByUser(userId);
             if (result.IsFailed)
@@ -79,6 +80,21 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
             return resultDto;
         }
 
+        [HttpGet("BackChannel/RetrieveCouponWithCode")]
+        public BackChannelResponseDto<CouponDto> RetrieveCouponWithCode([FromBody] RetrieveCouponWithCodeRequestDto retrieveCouponWithCodeRequestDto)
+        {
+            var result = _couponService.RetrieveValidCouponWithCode(retrieveCouponWithCodeRequestDto.CouponCode);
+            if (result.IsFailed)
+            {
+                return BackChannelResponseDto<CouponDto>.Failure(result.Error);
+            }
+            else if (result.IsException)
+            {
+                return BackChannelResponseDto<CouponDto>.Exception(result.Error);
+            }
+            var resultDto = _mapper.Map<CouponDto>(result.Data);
+            return BackChannelResponseDto<CouponDto>.Success(resultDto);
+        }
 
     }
 }
