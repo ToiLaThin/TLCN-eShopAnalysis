@@ -57,6 +57,47 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
             return ServiceResponseDto<Coupon>.Success(result);
         }
 
+        public ServiceResponseDto<IEnumerable<Coupon>> GetCouponUsedByUser(Guid userId)
+        {
+            var result = _uOW.CouponUserRepository.GetAll()
+                                                  .AsQueryable()
+                                                  .Where(x => x.UserId == userId)
+                                                  .Select(c => c.CouponUsed)
+                                                  .ToList();                                                  
+            return ServiceResponseDto<IEnumerable<Coupon>>.Success(result);
+        }
+
+        public ServiceResponseDto<IEnumerable<Coupon>> GetActiveCouponsNotUsedByUser(Guid userId)
+        {
+            var couponUsedByUser = _uOW.CouponUserRepository.GetAll().Where(cU => cU.UserId == userId).Select(cU => cU.CouponUsed);
+            var result = _uOW.CouponRepository.GetAll()
+                                              .AsQueryable()
+                                              .Where(c => c.CouponStatus == Status.Active) //limited the amount of coupon retrived
+                                              .Except(couponUsedByUser) //TODO find if there is any other way https://stackoverflow.com/a/14682518
+                                              .ToList();
+            return ServiceResponseDto<IEnumerable<Coupon>>.Success(result);
+        }
+
+        public async Task<ServiceResponseDto<Coupon>> MarkUserUsedCoupon(Guid userId, Guid couponId)
+        {
+            var transaction = await _uOW.BeginTransactionAsync();
+            CouponUser couponUser = new CouponUser() { CouponId = couponId, UserId = userId };
+            var result = _uOW.CouponUserRepository.Add(couponUser);
+            if (result == null)
+            {
+                await transaction.RollbackAsync();
+                return ServiceResponseDto<Coupon>.Failure("cannot add coupon user");
+            }
+            else
+            {
+                await transaction.CommitAsync();
+                Coupon couponUsed = _uOW.CouponUserRepository.Get(couponId: couponId, userId: userId).CouponUsed; //this have couponUsed since we used include in the repo.Get()
+                return ServiceResponseDto<Coupon>.Success(couponUsed);
+            }
+        }
+
+
+
 
     }
 }

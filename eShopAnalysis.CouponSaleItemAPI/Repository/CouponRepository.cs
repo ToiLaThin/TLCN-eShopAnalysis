@@ -21,7 +21,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Repository
                 _dbContext.SaveChanges();
                 return nCoupon; //luc nay da duoc set , ke ca guid
             }
-            catch { return null; }
+            catch (Exception ex) { throw ex; }
             
         }
 

@@ -29,6 +29,30 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
             return resultDto;
         }
 
+        [HttpGet("GetAllCouponsUsedByUser")]
+        public IEnumerable<CouponDto> GetAllCouponsUsedByUser(Guid userId)
+        {
+            var result = _couponService.GetCouponUsedByUser(userId);
+            if (result.IsFailed)
+            {
+                return null;
+            }
+            var resultDto = _mapper.Map<IEnumerable<CouponDto>>(result.Data);
+            return resultDto;
+        }
+
+        [HttpGet("GetAllActiveCouponsNotUsedByUser")]
+        public IEnumerable<CouponDto> GetAllActiveCouponsNotUsedByUser(Guid userId)
+        {
+            var result = _couponService.GetActiveCouponsNotUsedByUser(userId);
+            if (result.IsFailed)
+            {
+                return null;
+            }
+            var resultDto = _mapper.Map<IEnumerable<CouponDto>>(result.Data);
+            return resultDto;
+        }
+
         [HttpPost("AddCoupon")]
         public async Task<CouponDto> AddCoupon([FromBody] Coupon coupon)
         {
@@ -41,6 +65,20 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
             return resultDto;
         }
 
-        
+        [HttpPost("AddCouponUsedByUser")]
+        //thay vi return CouponUser hay CouponUserDto, ta return Coupon dc foreign toi
+        public async Task<CouponDto> AddCouponUsedByUser([FromQuery] Guid couponId, [FromQuery] Guid userId)
+        {
+            var result = await _couponService.MarkUserUsedCoupon(userId: userId, couponId: couponId);
+            if (result.IsFailed)
+            {
+                return null;
+            }
+            //sẽ trả về null neu repo.Get ko co Include
+            var resultDto = _mapper.Map<CouponDto>(result.Data);
+            return resultDto;
+        }
+
+
     }
 }

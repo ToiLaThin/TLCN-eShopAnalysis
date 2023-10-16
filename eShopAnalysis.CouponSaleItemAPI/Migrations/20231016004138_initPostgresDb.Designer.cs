@@ -12,8 +12,8 @@ using eShopAnalysis.CouponSaleItemAPI.Data;
 namespace eShopAnalysis.CouponSaleItemAPI.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20231010164228_InitDbPostgres")]
-    partial class InitDbPostgres
+    [Migration("20231016004138_initPostgresDb")]
+    partial class initPostgresDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,6 +67,23 @@ namespace eShopAnalysis.CouponSaleItemAPI.Migrations
                     b.ToTable("Coupon", "Discount");
                 });
 
+            modelBuilder.Entity("eShopAnalysis.CouponSaleItemAPI.Models.CouponUser", b =>
+                {
+                    b.Property<Guid>("CouponId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("CouponId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("UserId"), new[] { "CouponId" });
+
+                    b.ToTable("CouponUser", "Discount");
+                });
+
             modelBuilder.Entity("eShopAnalysis.CouponSaleItemAPI.Models.SaleItem", b =>
                 {
                     b.Property<Guid>("SaleItemId")
@@ -107,6 +124,17 @@ namespace eShopAnalysis.CouponSaleItemAPI.Migrations
                     NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("ProductId", "ProductModelId", "BusinessKey"), new[] { "SaleItemStatus" });
 
                     b.ToTable("SaleItem", "Discount");
+                });
+
+            modelBuilder.Entity("eShopAnalysis.CouponSaleItemAPI.Models.CouponUser", b =>
+                {
+                    b.HasOne("eShopAnalysis.CouponSaleItemAPI.Models.Coupon", "CouponUsed")
+                        .WithMany()
+                        .HasForeignKey("CouponId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CouponUsed");
                 });
 #pragma warning restore 612, 618
         }

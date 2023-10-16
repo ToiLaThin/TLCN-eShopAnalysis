@@ -1,0 +1,46 @@
+<form [formGroup]="modelCouponFrmGrp" (submit)="addNewCoupon()">
+    <mat-form-field>
+        <mat-label>Coupon Code</mat-label>
+        <input matInput
+               formControlName="couponCode"
+               type="text"
+        >
+    <mat-form-field>
+        <mat-label>Discount Type:</mat-label>
+        <mat-select formControlName="discountType">
+            <ng-container *ngFor="let type of this.discountTypeKeyValueArr">
+                <mat-option [value]="type.key">
+                    {{type.value}}
+                </mat-option>
+            </ng-container>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Discount Value</mat-label>
+        <input matInput
+               formControlName="discountValue"
+               type="number"
+        >
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Min Order Value To Apply</mat-label>
+        <input matInput
+               formControlName="minOrderValueToApply"
+               type="number" min="0" max="1000"
+        >
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Date Added</mat-label>
+        <input matInput
+               formControlName="dateAdded"
+               type="date"
+        >
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Date Ended</mat-label>
+        <input matInput
+               formControlName="dateEnded"
+               type="date"
+        >
+    </mat-form-field>    
+    <button mat-flat-button color="primary">Submit</button>

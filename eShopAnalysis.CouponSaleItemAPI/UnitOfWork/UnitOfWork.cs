@@ -18,6 +18,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.UnitOfWork
         private PostgresDbContext _dbContext;
         private ICouponRepository _couponRepository;
         private ISaleItemRepository _saleItemRepository;
+        private ICouponUserRepository _couponUserRepository;
         private IDbContextTransaction _currentTransaction;
         public UnitOfWork(PostgresDbContext dbContext) { _dbContext = dbContext; }
 
@@ -30,6 +31,17 @@ namespace eShopAnalysis.CouponSaleItemAPI.UnitOfWork
                     this._couponRepository = new CouponRepository(_dbContext);
                 }
                 return _couponRepository;
+            }
+        }
+
+        public ICouponUserRepository CouponUserRepository
+        {
+            get
+            {
+                if (_couponUserRepository == null) {
+                    this._couponUserRepository = new CouponUserRepository(_dbContext);
+                }
+                return _couponUserRepository;
             }
         }
 
