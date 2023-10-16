@@ -13,12 +13,14 @@ namespace eShopAnalysis.CartOrderAPI.Application.Commands
         //[DataMember]
         public Guid UserId { get; private set; }
 
+        public string CouponCode { get; private set; }
+
         public CartCreateCommand()
         {
             CartItems = new List<CartItem>();
         }
 
-        public CartCreateCommand(IEnumerable<CartItem> cartItemsToAdd, Guid buyerId)
+        public CartCreateCommand(IEnumerable<CartItem> cartItemsToAdd, Guid buyerId, string couponCode)
         {
             //is this ok
             if (buyerId == Guid.Empty || buyerId == default(Guid)) { 
@@ -29,6 +31,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Commands
             }
             this.CartItems = cartItemsToAdd;
             this.UserId = buyerId;
+            this.CouponCode = couponCode;
         }
     }
 }

@@ -58,17 +58,51 @@
             </ng-container>
 
             <div class="totals">
+                <ng-container *ngIf="(this.couponApplied$ | async) === false; else couponRemove">
+                    <div class="totals-item">
+                        <label>Apply coupon</label>
+                        <input type="text" #couponCodeApply 
+                               style="border: 1px solid #ddd; margin-left: 8px;">
+                        <button (click)="applyCoupon()"
+                                style="border: 1px solid #ddd; margin-left: 16px; background-color: lightgray; cursor: pointer;"
+                        >
+                                Apply
+                        </button>
+                    </div>
+                </ng-container>                
+                <ng-template #couponRemove>
+                    <div class="totals-item">
+                        <label>Coupon Applied successfully</label>
+                        <button (click)="removeCoupon()"
+                                style="border: 1px solid red; margin-left: 16px; background-color: red; color: white; cursor: pointer;"
+                        >
+                                Remove
+                        </button>
+                    </div>
+                </ng-template>
                 <div class="totals-item">
                 <label>Subtotal</label>
-                <div class="totals-value" id="cart-subtotal">{{this.subItemsPrice$ | async}}</div>
+                <div class="totals-value">{{this.subItemsPrice$ | async}}</div>
                 </div>
                 <div class="totals-item">
-                <label>Discount amount</label>
-                <div class="totals-value" id="cart-tax">{{this.discountAmount$ | async}}</div>
+                <label>Discount amount by sale</label>
+                <div class="totals-value">{{this.discountAmountSale$ | async}}</div>
+                </div>
+                <div class="totals-item">
+                    <label>Discount amount by coupon</label>
+                    <div class="totals-value">{{this.discountAmountCoupon$ | async}}</div>
+                    </div>
+                <div class="totals-item totals-item-total">
+                <label>Grand Total After Sale</label>
+                <div class="totals-value">{{this.subItemsAfterSalePrice$ | async}}</div>
                 </div>
                 <div class="totals-item totals-item-total">
-                <label>Grand Total</label>
-                <div class="totals-value" id="cart-total">{{this.subItemsAfterSalePrice$ | async}}</div>
+                    <label>Grand Total After Coupon Applied</label>
+                    <div class="totals-value">{{this.subItemsAfterSaleThenCouponPrice$ | async}}</div>
+                </div>
+                <div class="totals-item totals-item-total">
+                    <label>Grand Total</label>
+                    <div class="totals-value">{{this.subItemsAfterSaleThenCouponPrice$ | async}}</div>
                 </div>
             </div>
             <button class="checkout" (click)="confirmCart()">Confirm cart</button>

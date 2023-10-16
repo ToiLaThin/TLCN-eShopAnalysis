@@ -18,4 +18,5 @@ export interface ICartItem {
 export interface ICartConfirmRequest {
     cartItems: ICartItem[];
     userId: string;
+    couponCode?: string;
 }

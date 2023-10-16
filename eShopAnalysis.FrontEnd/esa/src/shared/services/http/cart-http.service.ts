@@ -12,12 +12,18 @@ export class CartHttpService {
   itemsInCartSubject!: BehaviorSubject<ICartItem[]>;
   itemsInCart$!: Observable<ICartItem[]>;
   itemsInCartCount$!: Observable<number>;
+  discountAmountByCoupon$!: BehaviorSubject<number>;  
+  couponApplied$!: BehaviorSubject<boolean>;
+  couponCodeApplied!: BehaviorSubject<string | undefined>;
   itemsInCartKey = 'itemsInCart';
   
   constructor(private http: HttpClient) { 
     this.itemsInCartSubject = new BehaviorSubject<ICartItem[]>(JSON.parse(localStorage.getItem(this.itemsInCartKey) || '[]'));
     this.itemsInCart$ = this.itemsInCartSubject.asObservable();
     this.itemsInCartCount$ = this.itemsInCartSubject.pipe(map(items => items.length));
+    this.discountAmountByCoupon$ = new BehaviorSubject<number>(0);
+    this.couponApplied$ = new BehaviorSubject<boolean>(false);
+    this.couponCodeApplied = new BehaviorSubject<string | undefined>(undefined);
   }
 
   //if item exists in cart, update the quantity and finalPrice, even the finalAfterSalePrice
@@ -58,6 +64,18 @@ export class CartHttpService {
     currentItemsInCart.splice(indexInCart, 1); //do not assign a var to this, it will be the removed item not the updated cart
     this.itemsInCartSubject.next(currentItemsInCart);//subject next the updated cart    
     localStorage.setItem(this.itemsInCartKey, JSON.stringify(currentItemsInCart));
+  }
+
+  applyCouponWithDiscountAmountAndCode(discountAmount: number, couponCode: string) {
+    this.discountAmountByCoupon$.next(discountAmount);
+    this.couponApplied$.next(true);
+    this.couponCodeApplied.next(couponCode);
+  }
+
+  removeCouponApplied() {
+    this.discountAmountByCoupon$.next(0);
+    this.couponApplied$.next(false);
+    this.couponCodeApplied.next(undefined);
   }
 
 }

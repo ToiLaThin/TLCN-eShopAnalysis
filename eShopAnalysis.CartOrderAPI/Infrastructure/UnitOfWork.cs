@@ -72,8 +72,9 @@ namespace eShopAnalysis.CartOrderAPI.Infrastructure
                 await this._orderCartContext.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
-            catch
+            catch (Exception ex)
             {
+                string msg = ex.Message;
                 RollbackTransaction();
                 throw;
             }

@@ -24,6 +24,7 @@ namespace eShopAnalysis.CartOrderAPI.Infrastructure.EntityConfigurations
             cartBuilderConfig.Property(c => c.UserId).IsRequired().ValueGeneratedNever(); //in above layer, please validate so that this not accepting the default value
             cartBuilderConfig.Property(c => c.HaveCouponApplied).HasDefaultValue(false);
             cartBuilderConfig.Property(c => c.HaveAnySaleItem).HasDefaultValue(false);
+            cartBuilderConfig.Property(c => c.CouponId).HasDefaultValue(null);
             cartBuilderConfig.Property(c => c.CouponDiscountType).HasDefaultValue(null);
             cartBuilderConfig.Property(c => c.CouponDiscountAmount).HasDefaultValue(-1);
             cartBuilderConfig.Property(c => c.CouponDiscountValue).HasDefaultValue(-1);

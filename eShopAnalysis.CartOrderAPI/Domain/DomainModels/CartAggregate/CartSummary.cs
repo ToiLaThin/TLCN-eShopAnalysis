@@ -1,6 +1,5 @@
-﻿using Azure.Core;
+﻿using eShopAnalysis.CartOrderAPI.Application.BackchannelDto;
 using eShopAnalysis.CartOrderAPI.Domain.SeedWork;
-using System.Runtime.CompilerServices;
 
 namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate
 {
@@ -22,29 +21,29 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate
 
         //public DateTime DateCompleted { get; set; }
 
-        public bool HaveCouponApplied { get; set; }
-        public Guid? CouponId { get;}
-        public bool HaveAnySaleItem { get; set; }
+        public bool HaveCouponApplied { get; private set; }
+        public Guid? CouponId { get; private set; }
+        public bool HaveAnySaleItem { get; private set; }
         
-        public DiscountType? CouponDiscountType{ get; set; }
+        public DiscountType? CouponDiscountType{ get; private set; }
 
         //IF do not have value, then price default value is -1 eexxcept for TotalPriceOriginal and TotalPriceTotal
 
-        public double CouponDiscountAmount { get; set;} //in value, convert percent to value in case percentage is the discount type , for analytic purpose
+        public double CouponDiscountAmount { get; private set; } //in value, convert percent to value in case percentage is the discount type , for analytic purpose
 
-        public double CouponDiscountValue { get; set; } //in percent or value depend on the type
+        public double CouponDiscountValue { get; private set; } //in percent or value depend on the type
 
-        public double TotalSaleDiscountAmount { get; set; }
+        public double TotalSaleDiscountAmount { get; private set; }
 
-        public double TotalPriceOriginal { get; set; } //even if have any sale item, this is the price IF there is no sale item
+        public double TotalPriceOriginal { get; private set; } //even if have any sale item, this is the price IF there is no sale item
 
-        public double TotalPriceAfterSale { get; set; }
+        public double TotalPriceAfterSale { get; private set; }
 
-        public double TotalPriceAfterCouponApplied { get; set; } //after sale item applied, continue apply coupon discount on the totalPriceAfterSale
+        public double TotalPriceAfterCouponApplied { get; private set; } //after sale item applied, continue apply coupon discount on the totalPriceAfterSale
 
-        public double TotalPriceFinal { get; set;} //might be equal priceAfterCouponApplied, or priceAfterSale, or Original
+        public double TotalPriceFinal { get; private set; } //might be equal priceAfterCouponApplied, or priceAfterSale, or Original
 
-        public List<CartItem> Items { get; set; }
+        public List<CartItem> Items { get; private set; }
 
         private CartSummary(Guid id) : base(id) { }
 
@@ -82,12 +81,39 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate
             }
             if (cartSummary.HaveAnySaleItem)
             {
-                cartSummary.TotalPriceAfterSale = cartSummary.TotalPriceOriginal - cartSummary.TotalSaleDiscountAmount;
-                //TODO coupon check
+                cartSummary.TotalPriceAfterSale = cartSummary.TotalPriceOriginal - cartSummary.TotalSaleDiscountAmount;              
                 cartSummary.TotalPriceFinal = cartSummary.TotalPriceAfterSale;
             }
             return cartSummary;
         }
 
+        //must be call after the CreateCartSummary to have price
+        public bool ApplyCoupon(CouponDto coupon)
+        {
+            //will be less than OR EQUAL TotalPriceOriginal
+            if (this.TotalPriceAfterSale < coupon.MinOrderValueToApply)
+                return false;
+            if (coupon.DiscountType == DiscountType.NoDiscount)
+            {
+                return false;
+                throw new ArgumentException("coupon discount type is not valid");
+            }
+            this.CouponId = coupon.CouponId;
+            this.CouponDiscountValue = coupon.DiscountValue;
+            this.CouponDiscountType = coupon.DiscountType;
+
+            if (coupon.DiscountType == DiscountType.ByPercent) {
+                this.CouponDiscountAmount = this.TotalPriceAfterSale * CouponDiscountValue / 100;
+            } 
+            else {                 
+                this.CouponDiscountAmount = coupon.DiscountValue; //coupon.DiscountType == DiscountType.ByValue
+            }
+            this.TotalPriceAfterCouponApplied = this.TotalPriceAfterSale - this.CouponDiscountAmount;
+            //TODO make sure the coupon discount amount less than TotalPriceAfterSale,
+            //TODO in fe make sure minOrdervalueToApply > discount value if discount type is by value, by percent, make sure it is less than 100%
+            //may need CartCouponStatusReset()
+            this.TotalPriceFinal = this.TotalPriceAfterCouponApplied; //override the value in CreateCartSummaryFromItems
+            return true;
+        }
     }
 }
