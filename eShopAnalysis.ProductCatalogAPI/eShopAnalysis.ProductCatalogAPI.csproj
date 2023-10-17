@@ -19,4 +19,11 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\eShopAnalysis.EventBus\eShopAnalysis.EventBus.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Application\IntegrationEvents\EventHandling\" />
+    <Folder Include="Application\IntegrationEvents\Event\" />
+  </ItemGroup>
 </Project>

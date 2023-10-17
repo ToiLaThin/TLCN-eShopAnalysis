@@ -18,10 +18,15 @@
 
   <ItemGroup>
     <Folder Include="Application\Behaviors\" />
+    <Folder Include="Application\IntegrationEvents\EventHandling\" />
     <Folder Include="Application\Queries\ViewModels\" />
     <Folder Include="Infrastructure\Idempotency\" />
     <Folder Include="Migrations\" />
     <Folder Include="Utilities\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eShopAnalysis.EventBus\eShopAnalysis.EventBus.csproj" />
   </ItemGroup>
 
 </Project>
