@@ -1,9 +1,11 @@
 ﻿using eShopAnalysis.CartOrderAPI.Application.BackchannelDto;
 using eShopAnalysis.CartOrderAPI.Application.BackchannelServices;
+using eShopAnalysis.CartOrderAPI.Application.IntegrationEvents;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.DomainEvents;
 using eShopAnalysis.CartOrderAPI.Infrastructure;
 using eShopAnalysis.CartOrderAPI.Infrastructure.Repositories;
+using eShopAnalysis.EventBus.Abstraction;
 using MediatR;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
@@ -14,10 +16,12 @@ namespace eShopAnalysis.CartOrderAPI.Application.Commands
     {
         IUnitOfWork _uOW;
         IBackChannelCouponSaleItemService _backChannelCouponSaleItemService;
-        public CartCreateCommandHandler(IUnitOfWork uOW, IBackChannelCouponSaleItemService backChannelCouponSaleItemService)
+        IEventBus _eventBus;
+        public CartCreateCommandHandler(IUnitOfWork uOW, IBackChannelCouponSaleItemService backChannelCouponSaleItemService, IEventBus eventBus)
         {
             _uOW = uOW;
             _backChannelCouponSaleItemService = backChannelCouponSaleItemService;
+            _eventBus = eventBus;
         }
         public async Task<CartSummary> Handle(CartCreateCommand request, CancellationToken cancellationToken)
         {
@@ -51,6 +55,21 @@ namespace eShopAnalysis.CartOrderAPI.Application.Commands
             var cartCheckoutRequestSentDomainEvent = new CartCheckoutRequestSent(cartSummaryCreated);
             cartSummaryCreated.ToRaiseDomainEvent(cartCheckoutRequestSentDomainEvent);
             await _uOW.CommitTransactionAsync(transaction); //must use this to dispatch domain events before
+
+            //call event bus to send integration event in case there is a coupon
+            if (couponDtoRetrived != null)
+            {
+                try {
+                    var eventMessage = new UserAppliedCouponToCartIntegrationEvent(userId: request.UserId, couponId: couponDtoRetrived.CouponId);
+                    _eventBus.Publish(eventMessage);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                    _uOW.RollbackTransaction();
+                    return null;
+                }
+            }
             return result;
                
         }

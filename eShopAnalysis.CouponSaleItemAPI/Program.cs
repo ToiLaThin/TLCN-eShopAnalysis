@@ -1,3 +1,5 @@
+using eShopAnalysis.EventBus.Abstraction;
+using eShopAnalysis.EventBus.Extension;
 using eShopAnalysis.CouponSaleItemAPI.Data;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +12,14 @@ using eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService;
 using eShopAnalysis.CouponSaleItemAPI.Service.BackChannelService;
 using eShopAnalysis.CouponSaleItemAPI.Dto.BackchannelDto;
 using eShopAnalysis.Dto.BackchannelDto;
+using eShopAnalysis.CouponSaleItemAPI.Application.IntegrationEvents;
 
 var builder = WebApplication.CreateBuilder(args);
+//this will config all required by event bus, review appsettings.json EventBus section and EventBus Connection string
+//new just subscribe integration event and integration event handler
+builder.Services.AddEventBus(builder.Configuration);
+builder.Services.AddTransient<IIntegrationEventHandler<UserAppliedCouponToCartIntegrationEvent>, UserAppliedCouponToCartIntegrationEventHandling>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -37,6 +45,8 @@ builder.Services.AddSingleton(mapper);
 builder.Services.Configure<BackChannelCommunication>(builder.Configuration.GetSection(nameof(BackChannelCommunication)));
 
 var app = builder.Build();
+var eventBus = app.Services.GetRequiredService<IEventBus>();
+eventBus.Subscribe<UserAppliedCouponToCartIntegrationEvent, IIntegrationEventHandler<UserAppliedCouponToCartIntegrationEvent>>();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -23,4 +23,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\eShopAnalysis.EventBus\eShopAnalysis.EventBus.csproj" />
+  </ItemGroup>
+
 </Project>

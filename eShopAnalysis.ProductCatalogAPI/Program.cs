@@ -1,4 +1,6 @@
 using AutoMapper;
+using eShopAnalysis.EventBus.Abstraction;
+using eShopAnalysis.EventBus.Extension;
 using eShopAnalysis.IdentityServer.Utilities;
 using eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto;
 using eShopAnalysis.ProductCatalogAPI.Application.BackchannelServices;
@@ -15,6 +17,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+//this will config all required by event bus, review appsettings.json EventBus section and EventBus Connection string
+//new just subscribe integration event and integration event handler
+builder.Services.AddEventBus(builder.Configuration);
+//builder.Services.AddTransient<IIntegrationEventHandler<GracePeriodConfirmedIntegrationEvent>, GracePeriodConfirmedIntegrationEventHandler>();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -87,7 +93,8 @@ builder.Services.AddAuthorization(authOption =>
 });
 
 var app = builder.Build();
-
+var eventBus = app.Services.GetRequiredService<IEventBus>();
+//eventBus.Subscribe<UserCheckoutAcceptedIntegrationEvent, IIntegrationEventHandler<UserCheckoutAcceptedIntegrationEvent>>();
 app.UseHttpLogging(); //middleware for logging request and resp https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-logging/?view=aspnetcore-7.0
 
 if (app.Environment.IsDevelopment())
