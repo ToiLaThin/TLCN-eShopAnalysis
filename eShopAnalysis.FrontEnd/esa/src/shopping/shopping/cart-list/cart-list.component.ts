@@ -91,14 +91,24 @@ export class CartListComponent implements OnInit {
       (coupons) => { 
         let coupon = coupons.find(coupon => coupon.couponCode === inputtedCouponCode);
         if (coupon !== undefined) {
-          //TODO: check minimum price now to make sure the coupon the coupon can be applied          
-          this.notifyServiceCouponApplied(coupon);
+          (this.checkCartPriceValidForCoupon(coupon) === true) ? this.notifyServiceCouponApplied(coupon) : console.log("Cart price not valid for coupon");
         } else {
           console.log("No coupon valid");
         }
       }
     );
     subscription.unsubscribe(); //unsubscribe after first emit
+  }
+
+  checkCartPriceValidForCoupon(coupon: ICoupon): boolean {
+    let flag = true;
+    let tempSub = this.subItemsAfterSalePrice$.subscribe(
+      (afterSalePrice) => {
+        if (afterSalePrice >= coupon.minOrderValueToApply) { flag = true; } else { flag = false; }
+      }
+    );
+    tempSub.unsubscribe();
+    return flag;
   }
 
   private notifyServiceCouponApplied(coupon: ICoupon) {
