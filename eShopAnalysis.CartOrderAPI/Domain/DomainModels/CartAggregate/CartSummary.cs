@@ -101,6 +101,7 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate
             this.CouponId = coupon.CouponId;
             this.CouponDiscountValue = coupon.DiscountValue;
             this.CouponDiscountType = coupon.DiscountType;
+            this.HaveCouponApplied = true;
 
             if (coupon.DiscountType == DiscountType.ByPercent) {
                 this.CouponDiscountAmount = this.TotalPriceAfterSale * CouponDiscountValue / 100;
