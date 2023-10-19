@@ -60,7 +60,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Commands
 
 
             //else
-            var cartCheckoutRequestSentDomainEvent = new CartCheckoutRequestSent(cartSummaryCreated);
+            var cartCheckoutRequestSentDomainEvent = new CartCheckoutRequestSentDomainEvent(cartSummaryCreated);
             cartSummaryCreated.ToRaiseDomainEvent(cartCheckoutRequestSentDomainEvent);
             await _uOW.CommitTransactionAsync(transaction); //must use this to dispatch domain events before
 

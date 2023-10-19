@@ -1,0 +1,57 @@
+<form (ngSubmit)="confirmCurrentInfo()" #customerOrderInfoFrm="ngForm">
+    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+        <ng-container *ngIf="(isAddressDefined$ | async) !== true; else InputWithAddress">
+            <div>
+                <span for="phoneNumber">Phone number*</span><br>
+                <input name="phoneNumber"                
+                       style="border: 1px solid lightgrey;" 
+                       required
+                       type="tel"
+                       pattern="[0][0-9]{9}"
+                       maxlength="10"
+                       [(ngModel)]="inputtedPhoneNumber"
+                /><br>
+                <span>Deliver to*</span><br>
+                <input style="border: 1px solid lightgrey;"/><br><br>
+                Or 
+                <button (click)="useGeoLocationApi()"
+                        style="background-color: tomato; color: whitesmoke; cursor: pointer; padding: 18px 16px;"
+                > Use my current location as ordering address
+                </button>
+            </div>
+        </ng-container>
+        <ng-template #InputWithAddress>
+            <div>
+                <span>Phone number*</span><br>
+                <input name="phoneNumber"
+                       style="border: 1px solid lightgrey;" 
+                       required
+                       type="tel"
+                       pattern="[0][0-9]{9}"
+                       maxlength="10"
+                       [(ngModel)]="inputtedPhoneNumber"
+                /><br>
+                <span>Deliver to*</span><br>
+                <input style="border: 1px solid lightgrey;"
+                       [value]="(this.inputedAddress$ | async) || ''"
+                       disabled
+                /><br><br>
+                Or 
+                <button (click)="removeMyAddress()"
+                        style="background-color: tomato; color: whitesmoke; cursor: pointer; padding: 18px 16px;"
+                > Remove my address
+                </button>
+            </div>
+        </ng-template>
+        <img *ngIf="(isAddressDefined$ | async) !== true;else markedMap"  
+                src="/assets/images/static-map.png">
+        <ng-template #markedMap>
+            <img src="/assets/images/marked-map.png">
+        </ng-template>
+    </div>
+    <div>
+        <button type="submit"
+                style="background-color: tomato; color: whitesmoke; cursor: pointer; padding: 18px 16px;"
+        >This is my correct info</button>
+    </div>
+</form>

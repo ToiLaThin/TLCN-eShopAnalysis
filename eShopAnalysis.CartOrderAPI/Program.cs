@@ -7,6 +7,7 @@ using eShopAnalysis.CartOrderAPI.Infrastructure.Repositories;
 using eShopAnalysis.CartOrderAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using eShopAnalysis.CartOrderAPI.Application.Queries;
 
 var builder = WebApplication.CreateBuilder(args);
 //this will config all required by event bus, review appsettings.json EventBus section and EventBus Connection string
@@ -34,6 +35,10 @@ builder.Services.AddHttpClient(); //resolve IHttpClientFactory
 builder.Services.AddScoped<IBackChannelBaseService<RetrieveCouponWithCodeRequestDto, CouponDto>, BackChannelBaseService<RetrieveCouponWithCodeRequestDto, CouponDto>>();
 builder.Services.AddScoped<IBackChannelCouponSaleItemService, BackChannelCouponSaleItemService>();
 
+//config dapper
+builder.Services.AddScoped<IOrderQueries>(sp => 
+    new OrderQueries(builder.Configuration.GetConnectionString("OrderCartDb"))
+);
 var app = builder.Build();
 var eventBus = app.Services.GetRequiredService<IEventBus>();
 //eventBus.Subscribe<UserCheckoutAcceptedIntegrationEvent, IIntegrationEventHandler<UserCheckoutAcceptedIntegrationEvent>>();

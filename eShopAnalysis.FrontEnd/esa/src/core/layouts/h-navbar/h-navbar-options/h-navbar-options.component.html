@@ -31,6 +31,7 @@
         </p>
         <p *ngIf="(this.authStatus$| async) === AuthStatus.Anonymouse" (click)="login()"><a>Login</a></p>
         <p *ngIf="(this.authStatus$| async) === AuthStatus.Authenticated" (click)="logout()"><a>Logout</a></p>
+        <p><a routerLink="/shopping/order-draft-list">My Draft Orders</a></p>
         <p><a href="">Hello</a></p>
     </esa-dropdown-menu>
 </ng-template>

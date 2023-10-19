@@ -3,11 +3,11 @@ using eShopAnalysis.CartOrderAPI.Domain.SeedWork;
 
 namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.DomainEvents
 {
-    public class CartCheckoutRequestSent : IDomainEvent
+    public class CartCheckoutRequestSentDomainEvent : IDomainEvent
     {
         public CartSummary Cart { get; private set; }
 
-        public CartCheckoutRequestSent(CartSummary cart)
+        public CartCheckoutRequestSentDomainEvent(CartSummary cart)
         {
             Cart = cart;
         }
