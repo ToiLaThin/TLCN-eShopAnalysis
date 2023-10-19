@@ -7,15 +7,15 @@ using eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate;
 namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.DomainEventHandlers
 {
     //TODO  fix all the business logic, may rename all these event name
-    public class CartCheckoutRequestSentHandler : INotificationHandler<CartCheckoutRequestSent>
+    public class CartCheckoutRequestSentDomainEventHandler : INotificationHandler<CartCheckoutRequestSentDomainEvent>
     {
         private IOrderRepository _orderRepo; //do not inject UoW here because we do not anyone start an transaction or commit anything here
-        public CartCheckoutRequestSentHandler(IOrderRepository orderRepo)
+        public CartCheckoutRequestSentDomainEventHandler(IOrderRepository orderRepo)
         {
             _orderRepo = orderRepo;
         }
 
-        public Task Handle(CartCheckoutRequestSent notification, CancellationToken cancellationToken)
+        public Task Handle(CartCheckoutRequestSentDomainEvent notification, CancellationToken cancellationToken)
         {
             var orderCreated = Order.CreateOrderFromCart(Guid.NewGuid(), Guid.NewGuid() ,notification.Cart);
             _orderRepo.Add(orderCreated);

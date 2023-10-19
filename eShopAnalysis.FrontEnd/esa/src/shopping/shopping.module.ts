@@ -8,6 +8,9 @@ import { ProductListCardComponent } from './shopping/product-list/product-list-c
 import { ProductDetailComponent } from './shopping/product-detail/product-detail.component';
 import { CartListComponent } from './shopping/cart-list/cart-list.component';
 import { AuthenticatedGuard } from 'src/shared/guards/authenticated.guard';
+import { OrderingInfoConfirmComponent } from './shopping/ordering-process/ordering-info-confirm/ordering-info-confirm.component';
+import { OrderDraftListComponent } from './shopping/ordering-process/order-draft-list/order-draft-list.component';
+import { PickPaymentMethodComponent } from './shopping/ordering-process/pick-payment-method/pick-payment-method.component';
 
 const shoppingRoutes: Routes = [
   {
@@ -31,6 +34,24 @@ const shoppingRoutes: Routes = [
     path: 'cart-list',
     component: CartListComponent,
     pathMatch: 'full'
+  },
+  {    
+    canActivate: [AuthenticatedGuard],
+    path: 'ordering-info-confirm/:orderId',
+    component: OrderingInfoConfirmComponent,
+    pathMatch: 'full'
+  },
+  {
+    canActivate: [AuthenticatedGuard],
+    path: 'order-draft-list',
+    component: OrderDraftListComponent,
+    pathMatch: 'full'
+  },
+  {
+    canActivate: [AuthenticatedGuard],
+    path: 'pick-payment-method',
+    component: PickPaymentMethodComponent,
+    pathMatch: 'full'
   }
 ]
 
@@ -40,7 +61,10 @@ const shoppingRoutes: Routes = [
     ProductListComponent,
     ProductListCardComponent,
     ProductDetailComponent,
-    CartListComponent
+    CartListComponent,
+    OrderingInfoConfirmComponent,
+    OrderDraftListComponent,
+    PickPaymentMethodComponent
   ],
   imports: [
     CommonModule,

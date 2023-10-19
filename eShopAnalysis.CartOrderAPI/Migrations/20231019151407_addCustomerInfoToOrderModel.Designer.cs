@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eShopAnalysis.CartOrderAPI.Infrastructure;
 
@@ -11,9 +12,11 @@ using eShopAnalysis.CartOrderAPI.Infrastructure;
 namespace eShopAnalysis.CartOrderAPI.Migrations
 {
     [DbContext(typeof(OrderCartContext))]
-    partial class OrderCartContextModelSnapshot : ModelSnapshot
+    [Migration("20231019151407_addCustomerInfoToOrderModel")]
+    partial class addCustomerInfoToOrderModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

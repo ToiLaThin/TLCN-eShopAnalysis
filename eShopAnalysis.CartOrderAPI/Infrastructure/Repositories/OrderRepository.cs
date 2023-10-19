@@ -20,13 +20,14 @@ namespace eShopAnalysis.CartOrderAPI.Infrastructure.Repositories
         public async Task<Order> GetOrder(Guid orderId)
         {
             Order order = await _context.Orders.Include(c => c.Cart)
-                                                   .FirstOrDefaultAsync(c => c.Id == orderId);
+                                               .Include(c => c.Address)
+                                               .FirstOrDefaultAsync(c => c.Id == orderId);
             if (order != null)
             {
                 await _context.Entry(order)
                               .Reference(c => c.Cart)
                               .LoadAsync();
-            }
+            }            
             return order;
         }
 
