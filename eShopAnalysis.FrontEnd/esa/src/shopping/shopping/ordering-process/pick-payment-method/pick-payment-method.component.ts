@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { PaymentMethod } from 'src/shared/models/ui-models/paymentMethod.enum';
+import { OrderHttpService } from 'src/shared/services/http/order-http.service';
 
 @Component({
   selector: 'esa-pick-payment-method',
@@ -7,9 +10,47 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PickPaymentMethodComponent implements OnInit {
 
-  constructor() { }
+  constructor(private orderService: OrderHttpService,
+              private router: Router) { }
 
   ngOnInit(): void {
+    alert('Please choose a payment method');
+  }
+
+  paymentMethodKeyArr = Object.keys(PaymentMethod).map(p => parseInt(p)).filter(x => !isNaN(x));
+  paymentMethodKeyValueArr = this.paymentMethodKeyArr.map((key) => {
+    return {
+      key,
+      value: PaymentMethod[key]
+    }
+  });
+
+  chooseThisPaymentMethod() {
+    let chosenPaymentMethodInput = document.querySelector('input[name="payment-methods"]:checked') as HTMLInputElement;
+    if (chosenPaymentMethodInput === null) {
+      alert('Please choose a payment method');
+      return;
+    }
+    if (this.orderService.trackingOrderId === null) { 
+      alert('There is an error. Please try again later'); 
+      return;
+    }
+
+    let selectedPaymentMethod = this.paymentMethodKeyValueArr.find(p => p.key === parseInt(chosenPaymentMethodInput.value));
+    switch(selectedPaymentMethod?.key) {
+      case PaymentMethod.COD:
+        //TODO: add an route guard before navigating to this component to make sure that the orderId is not undefined
+        this.orderService.pickPaymentMethodCOD(this.orderService.trackingOrderId).subscribe(() =>
+          this.router.navigate(['shopping/notify-customer-observe-order'])
+        );
+        break;
+      case PaymentMethod.Momo:
+        console.log('MOMO chosen');
+        break;
+      case PaymentMethod.CreditCard:
+        console.log('Credit Card chosen');
+        break;
+    }
   }
 
 }

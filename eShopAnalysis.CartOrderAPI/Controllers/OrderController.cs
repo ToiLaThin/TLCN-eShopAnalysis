@@ -37,5 +37,14 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
             var result = await _mediator.Send(command);
             return result;
         }
+
+        [HttpPut("PickPaymentMethodCOD")]
+        public async Task<OrderViewModel> PickPaymentMethodCOD([FromQuery] Guid orderId)
+        {
+            PickPaymentMethodCODCommand command = new PickPaymentMethodCODCommand(orderId);
+            var result = await _mediator.Send(command);
+            return result;
+        }
+
     }
 }

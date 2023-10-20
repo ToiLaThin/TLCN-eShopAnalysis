@@ -21,6 +21,7 @@ namespace eShopAnalysis.CartOrderAPI.Infrastructure.EntityConfigurations
             //orderBuilderConfig.Property(o => o.Address).IsRequired(false).HasDefaultValue(null);
             orderBuilderConfig.Property(o => o.PhoneNumber).IsRequired(false).HasDefaultValue(null);
             orderBuilderConfig.Property(o => o.Revision).HasDefaultValue(1);
+            orderBuilderConfig.Property(o => o.PaymentMethod).IsRequired(false).HasDefaultValue(null);
             orderBuilderConfig.Property(o => o.OrdersStatus).IsRequired().HasDefaultValue(OrderStatus.CreatedDraft);
             orderBuilderConfig.Property(o => o.DateCustomerInfoConfirmed).ValueGeneratedNever().IsRequired(false);
             orderBuilderConfig.Property(o => o.DateCheckouted).ValueGeneratedNever().IsRequired(false);

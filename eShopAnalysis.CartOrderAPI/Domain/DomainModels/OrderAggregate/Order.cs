@@ -3,6 +3,12 @@ using eShopAnalysis.CartOrderAPI.Domain.SeedWork;
 
 namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate
 {
+    public enum PaymentMethod {
+        COD = 0,
+        Momo = 1,
+        CreditCard = 2
+    }
+    //status is customerInfoConfirmed and payment method is COD can still be load on the UI for admin to handle
     public enum OrderStatus
     {
         CreatedDraft = 0,
@@ -36,7 +42,7 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate
 
         public string? PhoneNumber { get; private set; }
 
-        //public PaymentMethod PaymentMethod { get; set; }
+        public PaymentMethod? PaymentMethod { get; set; }
 
         public OrderStatus OrdersStatus { get; set; }
 
@@ -102,5 +108,34 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate
             return false;
         }
 
+
+        private bool MarkAsPaidOnline()
+        {
+            if (this.OrdersStatus != OrderStatus.CustomerInfoConfirmed)
+                return false;
+            this.DateCheckouted = DateTime.Now;
+            this.OrdersStatus = OrderStatus.Checkouted;
+            return true;
+        }
+
+        private bool MarkAsPaidCOD()
+        {
+            //TODO change this to an reasonable condition, currently i am not very sure
+            //if (this.OrdersStatus != OrderStatus.CustomerInfoConfirmed)
+            //    return false;
+            this.DateCheckouted = DateTime.Now;
+            this.OrdersStatus = OrderStatus.Checkouted;
+            return true;
+        }
+
+        public bool PickPaymentMethodCOD()
+        {
+            bool canDoThis = this.MarkAsPaidCOD();
+            if (canDoThis) { 
+                this.PaymentMethod = OrderAggregate.PaymentMethod.COD;
+                return true;
+            }
+            return false;
+        }
     }
 }

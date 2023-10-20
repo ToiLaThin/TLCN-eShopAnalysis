@@ -11,6 +11,7 @@ import { AuthenticatedGuard } from 'src/shared/guards/authenticated.guard';
 import { OrderingInfoConfirmComponent } from './shopping/ordering-process/ordering-info-confirm/ordering-info-confirm.component';
 import { OrderDraftListComponent } from './shopping/ordering-process/order-draft-list/order-draft-list.component';
 import { PickPaymentMethodComponent } from './shopping/ordering-process/pick-payment-method/pick-payment-method.component';
+import { NotifyCustomerObserveOrderComponent } from './shopping/ordering-process/notify-customer-observe-order/notify-customer-observe-order.component';
 
 const shoppingRoutes: Routes = [
   {
@@ -48,9 +49,13 @@ const shoppingRoutes: Routes = [
     pathMatch: 'full'
   },
   {
-    canActivate: [AuthenticatedGuard],
     path: 'pick-payment-method',
     component: PickPaymentMethodComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'notify-customer-observe-order',
+    component: NotifyCustomerObserveOrderComponent,
     pathMatch: 'full'
   }
 ]
@@ -64,7 +69,8 @@ const shoppingRoutes: Routes = [
     CartListComponent,
     OrderingInfoConfirmComponent,
     OrderDraftListComponent,
-    PickPaymentMethodComponent
+    PickPaymentMethodComponent,
+    NotifyCustomerObserveOrderComponent
   ],
   imports: [
     CommonModule,
