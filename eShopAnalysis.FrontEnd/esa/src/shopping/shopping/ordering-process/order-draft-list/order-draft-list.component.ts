@@ -20,6 +20,7 @@ export class OrderDraftListComponent implements OnInit {
   }
 
   confirmOderingInfo(orderId: string) {
-    this.router.navigate(['/shopping/ordering-info-confirm', orderId], { replaceUrl: true});
+    this.orderService.trackOrder(orderId);
+    this.router.navigate(['/shopping/ordering-info-confirm', orderId], { replaceUrl: true});    
   }
 }

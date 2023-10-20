@@ -1,1 +1,15 @@
-<p>pick-payment-method works!</p>
+<h2>Pick your payment methods:</h2>
+
+<form (submit)="chooseThisPaymentMethod()">
+    <div class="payment-methods">
+      <div class="payment-method" *ngFor="let paymentMethod of paymentMethodKeyValueArr">
+        <input type="radio" name="payment-methods" [value]="paymentMethod.key">
+        <label>{{paymentMethod.value}}</label>
+      </div>
+    </div>
+    <button type="submit"
+            style="padding: 12px 16px; background-color: red; color: white;">
+            I am sure about my decision
+    </button>
+</form>
+
