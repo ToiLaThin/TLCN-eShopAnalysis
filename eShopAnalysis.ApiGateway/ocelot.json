@@ -69,6 +69,20 @@
       "UpstreamPathTemplate": "/api/OrderCart/{any}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "Priority": 0
+    },
+    {
+      "DownstreamPathTemplate": "/api/PaymentAPI/{any}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7007
+
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Payment/{any}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "Priority": 0
     }
 
     //oidc client make a request of https://localhost:7003/Auth/IdentityServer/.well-known/openid-configuration
