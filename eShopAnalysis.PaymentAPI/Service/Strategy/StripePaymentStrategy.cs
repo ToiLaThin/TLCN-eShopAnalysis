@@ -16,18 +16,35 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
         public StripePaymentStrategy(IOptions<StripeSetting> settings) { 
             _settings = settings;
         }
+
+        public async Task<object> AddPaymentTransactionAsync(PaymentIntent infoObj, IPaymentTransactionRepository transactionRepo)
+        {
+            if (transactionRepo is StripePaymentTransactionRepository transRepo) {
+                string orderIdStr = string.Empty;
+                bool haveOrderId = infoObj.Metadata.TryGetValue(_settings.Value.MetaOrderKey, out orderIdStr);
+
+                if (haveOrderId == true) {
+                    orderIdStr = infoObj.Metadata[_settings.Value.MetaOrderKey];
+                }
+                else { 
+                    return null; 
+                }
+
+                var result = await transRepo.AddStripeTransactionAsync(infoObj.Id, Guid.Parse(orderIdStr), infoObj.CustomerId, infoObj.PaymentMethodId, Convert.ToDouble(infoObj.AmountReceived));
+                return result;
+            }
+            else { throw new Exception("unknown error, please inspect more"); }
+        }
+
         public bool CancelPayment(Guid userId, Guid orderId, IUserCustomerMappingRepository mapping)
         {
             throw new NotImplementedException();
         }
 
-        public string? MakePayment(Guid userId, Guid orderId, double amount, IUserCustomerMappingRepository mapping)
+        public string? MakePayment(Guid userId, Guid orderId, double subTotal, double discount, string cardId, IUserCustomerMappingRepository mapping)
         {
             StripeConfiguration.ApiKey = _settings.Value.SecretKey; //require no matter what
-            if (userId == null) { throw new ArgumentNullException("userId"); }
-            if (orderId == null) { throw new ArgumentNullException("orderId"); }
-            if (amount == null) { throw new ArgumentNullException("amount"); }
-            if (mapping == null) { throw new ArgumentNullException("uOW"); }
+            if (mapping == null) { throw new ArgumentNullException("mapping"); }
 
             string customerId = mapping.GetCustomerIdOfUser(userId);
             //neu chua co thi create mapping 
@@ -45,11 +62,20 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
                     UserId = userId,
                 });
             }
-            //if cartId then call customerService to update default card
-            //CustomerUpdateOptions customerUpdateOptions = new()
-            //{
-            //    DefaultSource = cardId
-            //}
+
+            //if cartId exist then call customerService to update default card(also retrive the list of card to validate if cardId is valid)(last 4 can be used to render on UI)
+            if (!cardId.IsNullOrEmpty()) {
+                CardService cardService = new ();
+                CardListOptions cardListOptions = new () { Limit = 5 };
+                var cards = cardService.List(parentId: customerId, cardListOptions);
+
+                bool cardIsValid = cards.Any(c => c.Id == cardId);
+                if (cardIsValid) {
+                    CustomerUpdateOptions customerUpdateOptions = new() { DefaultSource = cardId };
+                    CustomerService customerService = new();
+                    customerService.Update(customerId, customerUpdateOptions);
+                }
+            }
 
             //programatically register webhook endpoint
             //phai public access dc, hoac co the local nhung phai dung stripe CLI stripe listen --forward-to localhost:7001/api/Payment/StripeAPI/WebHook/PaymentSucceed
@@ -66,7 +92,7 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
 
             var metaDict = new Dictionary<string, string>
             {
-                { "orderId", orderId.ToString() }
+                { _settings.Value.MetaOrderKey , orderId.ToString() }
             };
             var sessionOptions = new Stripe.Checkout.SessionCreateOptions
             {
@@ -75,18 +101,19 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
                 Customer = customerId.ToString(), //do not use mapping.GetCustomerIdOfUser(userId) because it still not saved to db
                 Mode = "payment",
                 PaymentMethodTypes = new List<string>() { "card" },
-                Metadata = metaDict,
                 LineItems = new List<SessionLineItemOptions>
                 {
                   new SessionLineItemOptions {
                     Quantity = 1,
                     PriceData = new SessionLineItemPriceDataOptions {
-                        UnitAmountDecimal = Convert.ToDecimal(amount),
+                        UnitAmountDecimal = Convert.ToDecimal(subTotal - discount),
                         Currency = "USD",
-                        ProductData = new SessionLineItemPriceDataProductDataOptions { Name = "Order" + orderId }
+                        ProductData = new SessionLineItemPriceDataProductDataOptions { Name = "Order" + orderId },
                     }
                   },
                 },
+                //this session checkout will create and complete a payment intent, so i attact the meta to that payment intent, not the checkout session since we use webhook with payment intent succeed
+                PaymentIntentData = new SessionPaymentIntentDataOptions() { Metadata = metaDict },
             };
             var sessionService = new SessionService();
             Session session = sessionService.Create(sessionOptions);
@@ -99,5 +126,7 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
             return session.Url;
 
         }
+
+
     }
 }

@@ -10,6 +10,8 @@ namespace eShopAnalysis.PaymentAPI.UnitOfWork
         private PaymentContext _dbContext;
         private IDbContextTransaction _currentTransaction;
         private IUserCustomerMappingRepository _userCustomerMappingRepository;
+        private IStripePaymentTransactionRepository _stripePaymentTransactionRepository;
+        private IMomoPaymentTransactionRepository _momoPaymentTransactionRepository;
         public IUserCustomerMappingRepository UserCustomerMappingRepository {
             get
             {
@@ -19,6 +21,28 @@ namespace eShopAnalysis.PaymentAPI.UnitOfWork
                 return this._userCustomerMappingRepository;
             }
         }
+
+        public IStripePaymentTransactionRepository StripePaymentTransactionRepository
+        {
+            get {
+                if (_stripePaymentTransactionRepository == null) {
+                    _stripePaymentTransactionRepository = new StripePaymentTransactionRepository(this._dbContext);
+                }
+                return _stripePaymentTransactionRepository;
+            }
+        }
+
+        public IMomoPaymentTransactionRepository MomoPaymentTransactionRepository
+        {
+            get {
+                if (_momoPaymentTransactionRepository == null)
+                {
+                    _momoPaymentTransactionRepository = new MomoPaymentTransactionRepository(this._dbContext);
+                }
+                return _momoPaymentTransactionRepository;
+            }
+        }
+
         public UnitOfWork(PaymentContext dbContext) { _dbContext = dbContext; }
 
         public void Dispose()

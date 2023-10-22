@@ -6,6 +6,8 @@ namespace eShopAnalysis.PaymentAPI.UnitOfWork
     public interface IUnitOfWork: IDisposable
     {
         public IUserCustomerMappingRepository UserCustomerMappingRepository { get; }
+        public IStripePaymentTransactionRepository StripePaymentTransactionRepository { get; }
+        public IMomoPaymentTransactionRepository MomoPaymentTransactionRepository { get; }
         IDbContextTransaction GetCurrentTransaction();
 
         bool HasActiveTransaction();
