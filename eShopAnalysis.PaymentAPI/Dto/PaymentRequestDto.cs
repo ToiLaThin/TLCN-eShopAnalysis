@@ -2,14 +2,14 @@
 {
     public record PaymentRequestDto
     {
-        public Guid UserId { get; }
+        public Guid UserId { get; set; }
 
-        public Guid OrderId { get; }
+        public Guid OrderId { get; set; }
 
-        public string? CardId { get; }
+        public string? CardId { get; set; }
 
-        public double SubTotal { get; }
+        public double SubTotal { get; set; }
 
-        public double TotalDiscount { get; }
+        public double TotalDiscount { get; set; }
     }
 }

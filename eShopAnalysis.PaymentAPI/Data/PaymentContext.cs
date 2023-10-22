@@ -12,6 +12,7 @@ namespace eShopAnalysis.PaymentAPI.Data
 
         public DbSet<MomoTransaction> MomoTransactions { get; set; }
 
+        public DbSet<StripeTransaction> StripeTransactions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
