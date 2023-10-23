@@ -77,6 +77,7 @@ export class OrderingInfoConfirmComponent implements OnInit {
     this.orderService.confirmOrderCustomerInfo(this.customerInfoAddressConfirmedReq).subscribe(
       (resultFromServer) => {
         console.log("Info confirm result", resultFromServer);
+        this.orderService.markCurrentTrackingOrderAsConfirmedInfo();
         this.router.navigate(['/shopping/pick-payment-method'], { replaceUrl: true});
       }
     )

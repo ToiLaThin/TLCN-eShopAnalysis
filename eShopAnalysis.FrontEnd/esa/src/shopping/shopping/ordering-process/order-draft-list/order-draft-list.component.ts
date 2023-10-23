@@ -19,8 +19,9 @@ export class OrderDraftListComponent implements OnInit {
     this.orderService.getOrderDraftOfCustomer().subscribe(res => console.log(res));
   }
 
-  confirmOderingInfo(orderId: string) {
-    this.orderService.trackOrder(orderId);
-    this.router.navigate(['/shopping/ordering-info-confirm', orderId], { replaceUrl: true});    
+  //what if no any order draft?
+  confirmOrderingInfo(orderDraft: IOrderDraftViewModel) {
+    this.orderService.beginTrackingOrder(orderDraft);
+    this.router.navigate(['/shopping/ordering-info-confirm', orderDraft.orderId], { replaceUrl: true});    
   }
 }
