@@ -37,7 +37,7 @@ namespace eShopAnalysis.PaymentAPI.Service
             } else if (_paymentStrategy is StripePaymentStrategy) {
                 paymentTransactionRepoToValidatePayment = _uOW.StripePaymentTransactionRepository;
             } else { throw  new Exception("unknown payment strategy or cannot parse the type"); }
-            string? paymentRedirectUrl = _paymentStrategy.MakePayment(userId, orderId, subTotal, discount, cardId, _uOW.UserCustomerMappingRepository, paymentTransactionRepoToValidatePayment);
+            string? paymentRedirectUrl = await _paymentStrategy.MakePaymentAsync(userId, orderId, subTotal, discount, cardId, _uOW.UserCustomerMappingRepository, paymentTransactionRepoToValidatePayment);
             if (!paymentRedirectUrl.IsNullOrEmpty()) 
             {
                 _uOW.CommitTransactionAsync(transaction);

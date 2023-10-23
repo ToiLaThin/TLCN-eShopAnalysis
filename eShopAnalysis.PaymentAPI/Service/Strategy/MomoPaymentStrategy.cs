@@ -31,7 +31,8 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
         }
 
         //in momo we won't use cardId, so we just pass it in and do nothing with it
-        public string? MakePayment(Guid userId, Guid orderId, double subTotal, double discount, string cardId, IUserCustomerMappingRepository mapping, IPaymentTransactionRepository paymentTransactionRepository)
+        //TODO refacetor this to async(not just the name but the code inside too)
+        public async Task<string?> MakePaymentAsync(Guid userId, Guid orderId, double subTotal, double discount, string cardId, IUserCustomerMappingRepository mapping, IPaymentTransactionRepository paymentTransactionRepository)
         {
             //kiem tra da co user mapping chua, neu chua thi phai tao
             if (mapping == null) { throw new ArgumentNullException("uOW"); }

@@ -7,7 +7,7 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
 {
     public interface IPaymentStrategy
     {
-        string? MakePayment(Guid userId, Guid orderId, double subTotal, double discount, string cardId, IUserCustomerMappingRepository mapping, IPaymentTransactionRepository paymentTransactionRepository);
+        Task<string?> MakePaymentAsync(Guid userId, Guid orderId, double subTotal, double discount, string cardId, IUserCustomerMappingRepository mapping, IPaymentTransactionRepository paymentTransactionRepository);
 
         bool CancelPayment(Guid userId, Guid orderId, IUserCustomerMappingRepository mapping);
 

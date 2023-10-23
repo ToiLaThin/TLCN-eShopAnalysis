@@ -1,5 +1,7 @@
 ﻿using eShopAnalysis.PaymentAPI.Data;
 using eShopAnalysis.PaymentAPI.Models;
+using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 namespace eShopAnalysis.PaymentAPI.Repository
 {
@@ -29,6 +31,25 @@ namespace eShopAnalysis.PaymentAPI.Repository
             _context.StripeTransactions.Add(transaction);
             _context.SaveChanges();
             return await _context.StripeTransactions.FindAsync(paymentIntentId);
+        }
+
+        public StripeTransaction Get(string paymentIntentId)
+        {
+            var result = _context.StripeTransactions.Find(paymentIntentId);
+            return result;
+        }
+        public async Task<StripeTransaction> GetAsync(string paymentIntentId)
+        {
+            var result = await _context.StripeTransactions.FindAsync(paymentIntentId);
+            return result;
+        }
+
+        //https://stackoverflow.com/a/26677047
+        //we should not return all by calling ToListAsync(even async), but on the service , we will add some filtering(where) and then call to list async
+        public IQueryable<StripeTransaction> GetAll()
+        {
+            var result = _context.StripeTransactions.AsQueryable();
+            return result;
         }
     }
 }
