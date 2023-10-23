@@ -1,4 +1,5 @@
 ﻿using Azure;
+using eShopAnalysis.PaymentAPI.Dto;
 using eShopAnalysis.PaymentAPI.Models;
 using eShopAnalysis.PaymentAPI.Repository;
 using eShopAnalysis.PaymentAPI.Utilities;
@@ -17,20 +18,27 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
             _settings = settings;
         }
 
-        public async Task<object> AddPaymentTransactionAsync(PaymentIntent infoObj, IPaymentTransactionRepository transactionRepo)
+        public async Task<object> AddPaymentTransactionAsync(AddPaymentTransactionRequestDto addPaymentTransactionRequest, IPaymentTransactionRepository transactionRepo)
         {
             if (transactionRepo is StripePaymentTransactionRepository transRepo) {
                 string orderIdStr = string.Empty;
-                bool haveOrderId = infoObj.Metadata.TryGetValue(_settings.Value.MetaOrderKey, out orderIdStr);
+                bool haveOrderId = addPaymentTransactionRequest.StripePaymentIntentMeta.TryGetValue(_settings.Value.MetaOrderKey, out orderIdStr);
 
                 if (haveOrderId == true) {
-                    orderIdStr = infoObj.Metadata[_settings.Value.MetaOrderKey];
+                    orderIdStr = addPaymentTransactionRequest.StripePaymentIntentMeta[_settings.Value.MetaOrderKey];
                 }
                 else { 
                     return null; 
                 }
 
-                var result = await transRepo.AddStripeTransactionAsync(infoObj.Id, Guid.Parse(orderIdStr), infoObj.CustomerId, infoObj.PaymentMethodId, Convert.ToDouble(infoObj.AmountReceived));
+                var result = await transRepo.AddStripeTransactionAsync(
+                    paymentIntentId: addPaymentTransactionRequest.StripePaymentIntentId, 
+                    orderId: Guid.Parse(orderIdStr), 
+                    customerId: addPaymentTransactionRequest.CustomerId, 
+                    cardId: addPaymentTransactionRequest.StripeCardId, 
+                    subTotal: Convert.ToDouble(addPaymentTransactionRequest.SubTotal),
+                    discount: addPaymentTransactionRequest.Discount);
+
                 return result;
             }
             else { throw new Exception("unknown error, please inspect more"); }
@@ -41,7 +49,7 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
             throw new NotImplementedException();
         }
 
-        public string? MakePayment(Guid userId, Guid orderId, double subTotal, double discount, string cardId, IUserCustomerMappingRepository mapping)
+        public string? MakePayment(Guid userId, Guid orderId, double subTotal, double discount, string cardId, IUserCustomerMappingRepository mapping, IPaymentTransactionRepository paymentTransactionRepository)
         {
             StripeConfiguration.ApiKey = _settings.Value.SecretKey; //require no matter what
             if (mapping == null) { throw new ArgumentNullException("mapping"); }
@@ -61,6 +69,16 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
                     CustomerId = customerId,
                     UserId = userId,
                 });
+            }
+
+            if (paymentTransactionRepository is StripePaymentTransactionRepository transRepo)
+            {
+                //TODO validate if this order have already been paid(pend) or completed() or cancelled
+                //if it does then return null to make this fail
+                //transRepo
+            }
+            else {
+                throw new Exception("cannot resolve the type");
             }
 
             //if cartId exist then call customerService to update default card(also retrive the list of card to validate if cardId is valid)(last 4 can be used to render on UI)
@@ -106,7 +124,7 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
                   new SessionLineItemOptions {
                     Quantity = 1,
                     PriceData = new SessionLineItemPriceDataOptions {
-                        UnitAmountDecimal = Convert.ToDecimal(subTotal - discount),
+                        UnitAmount = Convert.ToInt64(subTotal - discount),
                         Currency = "USD",
                         ProductData = new SessionLineItemPriceDataProductDataOptions { Name = "Order" + orderId },
                     }

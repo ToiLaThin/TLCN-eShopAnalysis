@@ -18,7 +18,7 @@ namespace eShopAnalysis.PaymentAPI.Controllers
         }
 
         [HttpPost("MakePayment")]
-        public async Task<IActionResult> MakePayment(PaymentRequestDto paymentRequest)
+        public async Task<PaymentResponseDto> MakePayment(PaymentRequestDto paymentRequest)
         {
             if (paymentRequest == null) { throw new ArgumentNullException(nameof(paymentRequest)); }
             var payUrl = await _paymentService.MakePayment(userId: paymentRequest.UserId,
@@ -27,8 +27,10 @@ namespace eShopAnalysis.PaymentAPI.Controllers
                                                            discount: paymentRequest.TotalDiscount,
                                                            cardId: paymentRequest.CardId);
 
-            if (payUrl.IsNullOrEmpty()) { return BadRequest("try again"); }
-            return Redirect(payUrl);
+            if (payUrl.IsNullOrEmpty()) { 
+                return new PaymentResponseDto() { PayUrl = String.Empty }; 
+            }
+            return new PaymentResponseDto() { PayUrl = payUrl };
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using eShopAnalysis.PaymentAPI.Models;
+﻿using eShopAnalysis.PaymentAPI.Dto;
+using eShopAnalysis.PaymentAPI.Models;
 using eShopAnalysis.PaymentAPI.Repository;
 using eShopAnalysis.PaymentAPI.UnitOfWork;
 using eShopAnalysis.PaymentAPI.Utilities;
@@ -19,7 +20,7 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
             _setting = settings;
         }
 
-        public Task<object> AddPaymentTransactionAsync(PaymentIntent infoObj, IPaymentTransactionRepository transactionRepo)
+        public Task<object> AddPaymentTransactionAsync(AddPaymentTransactionRequestDto addPaymentTransactionRequest, IPaymentTransactionRepository transactionRepo)
         {
             throw new NotImplementedException();
         }
@@ -30,7 +31,7 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
         }
 
         //in momo we won't use cardId, so we just pass it in and do nothing with it
-        public string? MakePayment(Guid userId, Guid orderId, double subTotal, double discount, string cardId, IUserCustomerMappingRepository mapping)
+        public string? MakePayment(Guid userId, Guid orderId, double subTotal, double discount, string cardId, IUserCustomerMappingRepository mapping, IPaymentTransactionRepository paymentTransactionRepository)
         {
             //kiem tra da co user mapping chua, neu chua thi phai tao
             if (mapping == null) { throw new ArgumentNullException("uOW"); }
@@ -49,6 +50,8 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
                     CustomerId = createdCustomer.Id, UserId = userId 
                 });
             }
+            //TODO check this orderId have been peaid yet(status is Pending | ,...) to know to return null
+
             //the method to send a request to momo
             string responseFromMomo = this.PrepareAndSendPaymentRequest(orderId, subTotal - discount);
 

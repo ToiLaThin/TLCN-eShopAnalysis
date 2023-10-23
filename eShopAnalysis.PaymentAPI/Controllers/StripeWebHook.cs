@@ -1,4 +1,5 @@
-﻿using eShopAnalysis.PaymentAPI.Service;
+﻿using eShopAnalysis.PaymentAPI.Dto;
+using eShopAnalysis.PaymentAPI.Service;
 using eShopAnalysis.PaymentAPI.Service.Strategy;
 using eShopAnalysis.PaymentAPI.Utilities;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +50,12 @@ namespace eShopAnalysis.PaymentAPI.Controllers
         }
         private async Task<object> HandlePaymentIntentSucceedAsync(PaymentIntent paymentIntent)
         {
-            var result = await _paymentService.AddPaymentTransactionAsync(paymentIntent);
+            //TODO since we must only store the amount received = subTotal - discount in the payment intent(review make payment process in the strategy), we have two option
+            //1: change db to only store amount received only not subtotal and discount
+            //2: store the discount amount and paid amount on the meta
+            //the  paymentIntent.AmountReceived will actually store in the subTotal column of the StripePaymentTransaction table
+            var addPaymentTransactionReq = AddPaymentTransactionRequestDto.CreateStripeInstance(paymentIntent.Id, paymentIntent.Metadata, paymentIntent.PaymentMethodId, paymentIntent.CustomerId, paymentIntent.AmountReceived, 0);
+            var result = await _paymentService.AddPaymentTransactionAsync(addPaymentTransactionReq);
             return result;
         }
     }

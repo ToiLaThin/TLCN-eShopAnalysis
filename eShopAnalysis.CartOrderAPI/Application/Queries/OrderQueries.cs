@@ -15,7 +15,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
         public async Task<IEnumerable<OrderDraftViewModel>> GetUserDraftOrders(Guid userId)
         {
             using var connection = new SqlConnection(_connString);
-            string sql = @"SELECT o.Id As OrderId
+            string sql = @"SELECT o.Id As OrderId, c.TotalPriceOriginal As SubTotal, c.CouponDiscountAmount + c.TotalSaleDiscountAmount As TotalDiscount
                            FROM Orders o
                            INNER JOIN Cart c ON o.CartId = c.Id 
                            WHERE c.UserId = @UserId AND o.OrdersStatus = @OrdersStatus";
