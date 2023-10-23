@@ -11,6 +11,12 @@ namespace eShopAnalysis.PaymentAPI.Repository
     {
         //this should be async (and have Async in it name), because even if the parent method(lower in stack trace) is async, if this is synchrous, it could still lock the thread
         Task<StripeTransaction?> AddStripeTransactionAsync(string paymentIntentId, Guid orderId, string customerId, string cardId, double subTotal, double discount = 0);
+
+        IQueryable<StripeTransaction> GetAll();
+
+        StripeTransaction Get(string paymentIntentId);
+
+        Task<StripeTransaction> GetAsync(string paymentIntentId);
     }
     public interface IMomoPaymentTransactionRepository : IPaymentTransactionRepository 
     {

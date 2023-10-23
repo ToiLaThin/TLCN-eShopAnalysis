@@ -4,6 +4,7 @@ using eShopAnalysis.PaymentAPI.Models;
 using eShopAnalysis.PaymentAPI.Repository;
 using eShopAnalysis.PaymentAPI.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Stripe;
@@ -49,43 +50,46 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
             throw new NotImplementedException();
         }
 
-        public string? MakePayment(Guid userId, Guid orderId, double subTotal, double discount, string cardId, IUserCustomerMappingRepository mapping, IPaymentTransactionRepository paymentTransactionRepository)
+        public async Task<string?> MakePaymentAsync(Guid userId, Guid orderId, double subTotal, double discount, string cardId, IUserCustomerMappingRepository mapping, IPaymentTransactionRepository paymentTransactionRepository)
         {
             StripeConfiguration.ApiKey = _settings.Value.SecretKey; //require no matter what
             if (mapping == null) { throw new ArgumentNullException("mapping"); }
 
             string customerId = mapping.GetCustomerIdOfUser(userId);
-            //neu chua co thi create mapping 
             if (customerId.IsNullOrEmpty())
             {
                 var customerServiceOptions = new CustomerCreateOptions {
                     Description = "My First Test Customer (created for API docs at https://www.stripe.com/docs/api)",
                 };
                 var customerService = new CustomerService();
-                var createdCustomer = customerService.Create(customerServiceOptions);
+                var createdCustomer = await customerService.CreateAsync(customerServiceOptions);
                 customerId = createdCustomer.Id;
                 mapping.AddUserCustomerMapping(new UserCustomerMapping
                 {
                     CustomerId = customerId,
                     UserId = userId,
                 });
+            } 
+            else { //this is not the first time payment, then we check, but we did not check if this is paid in momo
+                if (paymentTransactionRepository is not StripePaymentTransactionRepository transRepo) { 
+                    throw new Exception("cannot resolve the type"); 
+                }
+                bool anyTransactionExistedForThisOrder = await transRepo.GetAll()
+                                                                        .Where(trans => trans.CustomerId == customerId)
+                                                                        .AnyAsync(trans => trans.OrderId == orderId);
+                //if the paymentTransaction is cancelled(refunded), we will still mark ti as Existed and will not create a checkout session for order with this ORDERID
+                if (anyTransactionExistedForThisOrder) {
+                    return null;
+                }
+
             }
 
-            if (paymentTransactionRepository is StripePaymentTransactionRepository transRepo)
-            {
-                //TODO validate if this order have already been paid(pend) or completed() or cancelled
-                //if it does then return null to make this fail
-                //transRepo
-            }
-            else {
-                throw new Exception("cannot resolve the type");
-            }
 
             //if cartId exist then call customerService to update default card(also retrive the list of card to validate if cardId is valid)(last 4 can be used to render on UI)
             if (!cardId.IsNullOrEmpty()) {
                 CardService cardService = new ();
                 CardListOptions cardListOptions = new () { Limit = 5 };
-                var cards = cardService.List(parentId: customerId, cardListOptions);
+                var cards = await cardService.ListAsync(parentId: customerId, cardListOptions);
 
                 bool cardIsValid = cards.Any(c => c.Id == cardId);
                 if (cardIsValid) {
@@ -134,7 +138,7 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
                 PaymentIntentData = new SessionPaymentIntentDataOptions() { Metadata = metaDict },
             };
             var sessionService = new SessionService();
-            Session session = sessionService.Create(sessionOptions);
+            Session session = await sessionService.CreateAsync(sessionOptions);
 
             //another way to redirect in controller
             //Response.Headers.Add("Location", session.Url);
