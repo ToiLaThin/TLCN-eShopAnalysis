@@ -19,6 +19,11 @@
 
   <ItemGroup>
     <Folder Include="Controllers\IPNs\" />
+    <Folder Include="IntegrationEvents\EventHandling\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eShopAnalysis.EventBus\eShopAnalysis.EventBus.csproj" />
   </ItemGroup>
 
 </Project>

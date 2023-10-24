@@ -66,8 +66,10 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate
             //TODO please review this
             //this means you can not use this func if order is already completed or cancelled,..
             //and this method is only callable in the CreateOrderFromCart factory method
-            if (this.OrdersStatus != null || this.OrdersStatus != OrderStatus.CustomerInfoConfirmed)
+            //default value is createdDraft
+            if (this.OrdersStatus != OrderStatus.CreatedDraft) {
                 return false;
+            }
             this.DateCreatedDraft = DateTime.Now;
             this.OrdersStatus = OrderStatus.CreatedDraft;
             //check logic to see if we can created draft
@@ -76,7 +78,7 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate
         public static Order CreateOrderFromCart(Guid orderId, Guid businessKey, CartSummary cart)
         {
             var orderToCreate = new Order(orderId, businessKey, cart);
-            orderToCreate.MarkCreatedDraft();
+            bool canDo = orderToCreate.MarkCreatedDraft();
             return orderToCreate;
         }
 
@@ -113,7 +115,6 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate
         {
             if (this.OrdersStatus != OrderStatus.CustomerInfoConfirmed)
                 return false;
-            this.DateCheckouted = DateTime.Now;
             this.OrdersStatus = OrderStatus.Checkouted;
             return true;
         }
@@ -133,6 +134,19 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate
             bool canDoThis = this.MarkAsPaidCOD();
             if (canDoThis) { 
                 this.PaymentMethod = OrderAggregate.PaymentMethod.COD;
+                return true;
+            }
+            return false;
+        }
+
+        public bool SetAsCheckoutedOnlineByMethod(PaymentMethod paymentMethod, DateTime dateCheckouted)
+        {
+            bool canDoThis = this.MarkAsPaidOnline();
+            if (canDoThis)
+            {
+                this.PaymentMethod = paymentMethod;
+                //avoid delay between when the integration event is sent and when we received
+                this.DateCheckouted = dateCheckouted;
                 return true;
             }
             return false;
