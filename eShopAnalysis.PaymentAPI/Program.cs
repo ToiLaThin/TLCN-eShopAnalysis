@@ -5,9 +5,16 @@ using eShopAnalysis.PaymentAPI.Service.Strategy;
 using eShopAnalysis.PaymentAPI.UnitOfWork;
 using eShopAnalysis.PaymentAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
+using eShopAnalysis.EventBus.Extension;
 using Stripe;
+using eShopAnalysis.EventBus.Abstraction;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//this will config all required by event bus, review appsettings.json EventBus section and EventBus Connection string
+//new just subscribe integration event and integration event handler
+builder.Services.AddEventBus(builder.Configuration);
+//builder.Services.AddTransient<IIntegrationEventHandler<GracePeriodConfirmedIntegrationEvent>, GracePeriodConfirmedIntegrationEventHandler>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -27,14 +34,16 @@ builder.Services.AddScoped<IPaymentService<MomoPaymentStrategy>>(sp =>
     //MomoPaymentStrategy is implementaton of IPaymentStrategy
     IUnitOfWork unitOfWork = sp.GetService<IUnitOfWork>();
     MomoPaymentStrategy momoPaymentStrategy = sp.GetService<MomoPaymentStrategy>(); 
-    return new PaymentService<MomoPaymentStrategy>(unitOfWork, momoPaymentStrategy);
+    IEventBus eventBus = sp.GetService<IEventBus>();
+    return new PaymentService<MomoPaymentStrategy>(unitOfWork, momoPaymentStrategy, eventBus);
 });
 builder.Services.AddScoped<IPaymentService<StripePaymentStrategy>>(sp =>
 {
     //MomoPaymentStrategy is implementaton of IPaymentStrategy
     IUnitOfWork unitOfWork = sp.GetService<IUnitOfWork>();
     StripePaymentStrategy stripePaymentStrategy = sp.GetService<StripePaymentStrategy>();
-    return new PaymentService<StripePaymentStrategy>(unitOfWork, stripePaymentStrategy);
+    IEventBus eventBus = sp.GetService<IEventBus>();
+    return new PaymentService<StripePaymentStrategy>(unitOfWork, stripePaymentStrategy, eventBus);
 });
 
 builder.Services.AddScoped<IUserCustomerMappingRepository, UserCustomerMappingRepository>();
@@ -45,14 +54,15 @@ builder.Services.AddDbContext<PaymentContext>(ctxOption =>
 });
 StripeConfiguration.ApiKey = "sk_test_51MKzuQK5g3RpaRBrDoRZF32WRPWdGWDF5uUsJNX8hLl7ruXj2hA5B23UXlhCEPMnqJ2k75Ah4Zl1Aw3niu2SRfdV00E9hnzp67";
 var app = builder.Build();
-
+var eventBus = app.Services.GetRequiredService<IEventBus>();
+//eventBus.Subscribe<UserCheckoutAcceptedIntegrationEvent, IIntegrationEventHandler<UserCheckoutAcceptedIntegrationEvent>>();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection(); //for redirect to stripe? but now we do not redirect , do we still need this
 
 app.UseAuthorization();
 

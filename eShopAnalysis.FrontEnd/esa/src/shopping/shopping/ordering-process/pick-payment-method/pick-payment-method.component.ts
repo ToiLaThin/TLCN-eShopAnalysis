@@ -49,8 +49,19 @@ export class PickPaymentMethodComponent implements OnInit {
         );
         break;
       case PaymentMethod.Momo:
-        console.log('MOMO chosen');
-        break;
+        this.orderService.pickPaymentMethodEWallet()?.subscribe((paymentResponse) => {
+          console.log('Momo response came backed from server');
+          if (paymentResponse === null) {
+            alert('There is an error. Please try again later');
+            return;
+          } else if (paymentResponse.payUrl === null || paymentResponse.payUrl === "") {
+            alert('There is an error. Payment failed. Please try again later');
+            return;
+          }
+          window.location.href = paymentResponse.payUrl; //go to stripe host checkotu page
+        }
+      );
+      break;
       case PaymentMethod.CreditCard:
         this.orderService.pickPaymentMethodCreditCard()?.subscribe((paymentResponse) => {
             console.log('Credit card chosen come backed from server');

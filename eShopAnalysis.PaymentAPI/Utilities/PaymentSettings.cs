@@ -4,6 +4,8 @@
 
     public class MomoSetting
     {
+        public string ApiEndpoint { get; set; }
+
         public string PartnerCode { get; set; }
 
         public string PartnerName { get; set; }

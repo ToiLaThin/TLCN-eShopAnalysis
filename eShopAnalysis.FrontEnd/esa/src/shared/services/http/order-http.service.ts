@@ -52,7 +52,7 @@ export class OrderHttpService {
       subTotal: order.subTotal,
       totalDiscount: order.totalDiscount
     }
-    return this.http.post<IOrderViewModel>(`${env.BASEURL}/api/Payment/MomoAPI/MakePayment`, paymentRequest);
+    return this.http.post<IPaymentResponse>(`${env.BASEURL}/api/Payment/MomoAPI/MakePayment`, paymentRequest);
   }
 
   //TODO vì việc thanh toán thành công được xử lý ở webhook và webhook trả kq về cho stripe server => 

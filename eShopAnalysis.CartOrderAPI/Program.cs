@@ -8,12 +8,14 @@ using eShopAnalysis.CartOrderAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using eShopAnalysis.CartOrderAPI.Application.Queries;
+using eShopAnalysis.CartOrderAPI.IntegrationEvents;
+using eShopAnalysis.CartOrderAPI.Application.IntegrationEvents.EventHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 //this will config all required by event bus, review appsettings.json EventBus section and EventBus Connection string
 //new just subscribe integration event and integration event handler
 builder.Services.AddEventBus(builder.Configuration);
-//builder.Services.AddTransient<IIntegrationEventHandler<GracePeriodConfirmedIntegrationEvent>, GracePeriodConfirmedIntegrationEventHandler>();
+builder.Services.AddTransient<IIntegrationEventHandler<OrderPaymentTransactionCompletedIntegrationEvent>, OrderPaymentTransactionCompletedIntegrationEventHandling>();
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<OrderCartContext>(ctxOption =>
@@ -41,7 +43,7 @@ builder.Services.AddScoped<IOrderQueries>(sp =>
 );
 var app = builder.Build();
 var eventBus = app.Services.GetRequiredService<IEventBus>();
-//eventBus.Subscribe<UserCheckoutAcceptedIntegrationEvent, IIntegrationEventHandler<UserCheckoutAcceptedIntegrationEvent>>();
+eventBus.Subscribe<OrderPaymentTransactionCompletedIntegrationEvent, IIntegrationEventHandler<OrderPaymentTransactionCompletedIntegrationEvent>>();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

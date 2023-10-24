@@ -67,7 +67,7 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
 
         private string PrepareAndSendPaymentRequest(Guid orderId, double amount)
         {
-            string endpoint = "https://payment.momo.vn/v2/gateway/api/create";
+            string endpoint = _setting.Value.ApiEndpoint;
             string partnerCode = _setting.Value.PartnerCode;
             string accessKey = _setting.Value.AccessKey;
             string serectkey = _setting.Value.SecretKey;

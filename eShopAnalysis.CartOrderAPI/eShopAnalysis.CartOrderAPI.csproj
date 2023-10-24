@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Folder Include="Application\Behaviors\" />
-    <Folder Include="Application\IntegrationEvents\EventHandling\" />
     <Folder Include="Infrastructure\Idempotency\" />
     <Folder Include="Migrations\" />
     <Folder Include="Utilities\" />
