@@ -18,7 +18,7 @@ export class AppComponent {
     private router: Router,
     private titleService: Title,
     @Inject(DOCUMENT) private document: Document) {
-    this.handleRouteEvents();    
+      this.handleRouteEvents();    
   }
 
   handleRouteEvents() {

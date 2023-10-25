@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace eShopAnalysis.CartOrderAPI.IntegrationEvents
 {
-    //sent to CouponSaleItem API to mark user applied this coupon
+    //received from payment API to handle changing order status and payment method
     public record OrderPaymentTransactionCompletedIntegrationEvent: IntegrationEvent
     {
         [JsonProperty]

@@ -25,6 +25,9 @@ import { GgAnalyticsService } from './services/gg-analytics.service';
 import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SignalrService } from './services/signalr.service';
 @NgModule({
   declarations: [
     DropdownMenuComponent,
@@ -53,7 +56,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatCheckboxModule,
     MatListModule,
     MatGridListModule,
-    MatMenuModule
+    MatMenuModule,    
   ],
   exports: [
     DropdownMenuComponent,
@@ -83,7 +86,8 @@ import { MatMenuModule } from '@angular/material/menu';
     MatMenuModule
   ],
   providers: [
-    GgAnalyticsService
+    GgAnalyticsService,
+    SignalrService
   ]
 })
 export class SharedModule { }

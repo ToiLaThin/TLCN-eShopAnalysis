@@ -11,6 +11,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoadingInterceptor } from 'src/shared/interceptors/loading.interceptor';
 import { UnAuthorizedInterceptor } from 'src/shared/interceptors/un-authorized.interceptor';
 import { TokenInterceptor } from 'src/shared/interceptors/token.interceptor';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -19,10 +20,16 @@ import { TokenInterceptor } from 'src/shared/interceptors/token.interceptor';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule,
+    BrowserAnimationsModule, // ToastrModule added
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      closeButton: true,
+    }), // required animations module
     CoreModule,
     SharedModule,
-    AuthModule
+    AuthModule,
   ],
   providers: [
     {

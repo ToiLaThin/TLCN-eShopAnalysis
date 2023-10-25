@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SignalrService } from 'src/shared/services/signalr.service';
 
 @Component({
   selector: 'esa-shopping',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ShoppingComponent implements OnInit {
 
-  constructor() { }
-
+  constructor(private signalrService: SignalrService) {
+  }
+  
   ngOnInit(): void {
+    this.signalrService.initConnection();
   }
 
 }
