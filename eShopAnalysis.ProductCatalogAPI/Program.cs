@@ -65,7 +65,7 @@ builder.Services.AddScoped<LoggingBehaviorActionFilter>();
 builder.Services.AddAuthentication()
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOption =>
                 {
-                    jwtOption.Authority = "http://localhost:7002";
+                    jwtOption.Authority = builder.Configuration.GetSection("OpenIdConnectAuthority:IdentityServerBaseUri").Value.ToString();
                     jwtOption.SaveToken = true;
                     jwtOption.TokenValidationParameters = new TokenValidationParameters()
                     {

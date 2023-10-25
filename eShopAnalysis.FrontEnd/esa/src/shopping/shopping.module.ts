@@ -12,6 +12,7 @@ import { OrderingInfoConfirmComponent } from './shopping/ordering-process/orderi
 import { OrderDraftListComponent } from './shopping/ordering-process/order-draft-list/order-draft-list.component';
 import { PickPaymentMethodComponent } from './shopping/ordering-process/pick-payment-method/pick-payment-method.component';
 import { NotifyCustomerObserveOrderComponent } from './shopping/ordering-process/notify-customer-observe-order/notify-customer-observe-order.component';
+import { CheckoutRedirectComponent } from './shopping/ordering-process/checkout-redirect/checkout-redirect.component';
 
 const shoppingRoutes: Routes = [
   {
@@ -54,6 +55,11 @@ const shoppingRoutes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'checkout-redirect',
+    component: CheckoutRedirectComponent,
+    pathMatch: 'full'
+  },
+  {
     path: 'notify-customer-observe-order',
     component: NotifyCustomerObserveOrderComponent,
     pathMatch: 'full'
@@ -70,7 +76,8 @@ const shoppingRoutes: Routes = [
     OrderingInfoConfirmComponent,
     OrderDraftListComponent,
     PickPaymentMethodComponent,
-    NotifyCustomerObserveOrderComponent
+    NotifyCustomerObserveOrderComponent,
+    CheckoutRedirectComponent
   ],
   imports: [
     CommonModule,
