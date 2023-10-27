@@ -1,8 +1,10 @@
 ﻿using eShopAnalysis.CartOrderAPI.Application.Commands;
 using eShopAnalysis.CartOrderAPI.Application.Dto;
 using eShopAnalysis.CartOrderAPI.Application.Queries;
+using eShopAnalysis.CartOrderAPI.Application.Result;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate;
+using eShopAnalysis.CartOrderAPI.Services.BackchannelDto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,6 +46,19 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
             PickPaymentMethodCODCommand command = new PickPaymentMethodCODCommand(orderId);
             var result = await _mediator.Send(command);
             return result;
+        }
+
+        //return minial orders with items quantity to aggregate api gateway
+        //if swagger cannot get schema, view debug console to fix
+        [HttpPost("BackChannel/GetToApprovedOrders")]
+        public async Task<BackChannelResponseDto<IEnumerable<OrderItemsResponseDto>>> GetToApprovedOrders([FromBody] PagingOrderRequestDto pagingOrderRequest)
+        {
+            var result = await _orderQueries.GetToApprovedOrders(pagingOrderRequest.Limit);
+            if (result == null)
+            {
+                return BackChannelResponseDto<IEnumerable<OrderItemsResponseDto>>.Failure("data have errors");
+            }
+            return BackChannelResponseDto<IEnumerable<OrderItemsResponseDto>>.Success(result);
         }
 
     }
