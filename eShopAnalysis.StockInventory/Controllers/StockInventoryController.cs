@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace eShopAnalysis.StockInventory.Controllers
 {
     using AutoMapper;
+    using eShopAnalysis.ApiGateway.Services.BackchannelDto;
     using eShopAnalysis.StockInventory.Models;
     using eShopAnalysis.StockInventoryAPI.Dto;
     using eShopAnalysis.StockInventoryAPI.Services;
     using eShopAnalysis.StockInventoryAPI.Utilities.Result;
+    using System.Collections.Generic;
 
     [Route("api/StockInventoryAPI/StockSnapshotAPI")]
     [ApiController]
@@ -52,6 +54,16 @@ namespace eShopAnalysis.StockInventory.Controllers
             }
             var stockInventoryDto = _mapper.Map<StockInventoryDto>(result.Data);
             return BackChannelResponseDto<StockInventoryDto>.Success(stockInventoryDto);
+        }
+
+        [HttpPost("BackChannel/GetStockOfModels")]
+        public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> GetStockOfModels([FromBody] OrderItemsStockRequestDto orderItemsStockReq)
+        {
+            var result = _service.GetStockOfModels(orderItemsStockReq.ProductModelIds);
+            if (result.IsFailed) {
+                return null;
+            }
+            return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result.Data);
         }
     }
 }

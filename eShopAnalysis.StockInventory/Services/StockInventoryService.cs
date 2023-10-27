@@ -2,6 +2,7 @@
 
 namespace eShopAnalysis.StockInventoryAPI.Services
 {
+    using eShopAnalysis.ApiGateway.Services.BackchannelDto;
     using eShopAnalysis.StockInventory.Models;
     using eShopAnalysis.StockInventory.Repository;
     using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace eShopAnalysis.StockInventoryAPI.Services
 
         ServiceResponseDto<IEnumerable<StockInventory>> GetAll();
 
-
+        ServiceResponseDto<IEnumerable<ItemStockResponseDto>> GetStockOfModels(IEnumerable<Guid> modelIds);
     }
 
 
@@ -57,6 +58,20 @@ namespace eShopAnalysis.StockInventoryAPI.Services
         {
             var result = _repo.GetAll();
             return ServiceResponseDto<IEnumerable<StockInventory>>.Success(result);
+        }
+
+        public ServiceResponseDto<IEnumerable<ItemStockResponseDto>> GetStockOfModels(IEnumerable<Guid> modelIds)
+        {            
+            var stockOfModelIds = _repo.GetAll().Where(st => modelIds.Any(m => m == Guid.Parse(st.ProductModelId)));
+            List<ItemStockResponseDto> result = new List<ItemStockResponseDto>();
+            foreach (var stockOfModel in stockOfModelIds) {
+                ItemStockResponseDto returnItemStock = new() {
+                    ProductModelId = Guid.Parse(stockOfModel.ProductModelId),
+                    CurrentQuantity = stockOfModel.CurrentQuantity
+                };
+                result.Add(returnItemStock);
+            }
+            return ServiceResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result);
         }
     }
 }

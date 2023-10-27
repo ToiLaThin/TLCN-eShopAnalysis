@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate;
+using eShopAnalysis.CartOrderAPI.Services.BackchannelDto;
 using Microsoft.Data.SqlClient;
+//using OrderStatus = eShopAnalysis.CartOrderAPI.Services.BackchannelDto.OrderStatus;
 
 namespace eShopAnalysis.CartOrderAPI.Application.Queries
 {
@@ -12,6 +14,42 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
         {
             _connString = !string.IsNullOrWhiteSpace(connString) ? connString : throw new ArgumentNullException(nameof(connString));
         }
+
+        //ref: https://www.learndapper.com/relationships
+        public async Task<IEnumerable<OrderItemsResponseDto>> GetToApprovedOrders(int limit)
+        {
+            using var connection = new SqlConnection(_connString);
+            string sql = @"SELECT o.Id AS OrderId, o.OrdersStatus AS OrderStatus, o.PaymentMethod, c.TotalPriceFinal As TotalPriceFinal, 
+                                  cI.ProductModelId AS ProductModelId, cI.Quantity As Quantity
+                           FROM Orders o
+                           INNER JOIN Cart c on o.CartId = c.Id
+                           INNER JOIN CartItem cI ON c.Id = cI.CartId                            
+                          ";
+            object paramsSql = new { };
+            //need to be group since now each orderItems is with a single ItemQty
+            var orderItemsEntry = await connection.QueryAsync<OrderItemsResponseDto, OrderItemQuantityDto, OrderItemsResponseDto>(
+                command: new CommandDefinition(sql,paramsSql), 
+                map: (orderItems, itemQty) =>
+                {
+                    if (orderItems.OrderItemsQty == null) {
+                        orderItems.OrderItemsQty = new List<OrderItemQuantityDto>();
+                    }
+                    orderItems.OrderItemsQty.Add(itemQty);
+                    return orderItems;
+                },
+                splitOn: "ProductModelId");
+
+            //group orderItems with same id and return a single orderItems with itemQty is list of all order of that group
+            var orderItemsGrp = orderItemsEntry.GroupBy(o => o.OrderId).Select(g =>
+            {
+                //from group of orderItemsEntry, pickone with OrderItemsQty is List of 
+                var groupedOrderItems = g.First();
+                groupedOrderItems.OrderItemsQty = g.Select(g => g.OrderItemsQty.Single()).ToList(); //necessary
+                return groupedOrderItems;
+            });
+            return orderItemsGrp;
+        }
+
         public async Task<IEnumerable<OrderDraftViewModel>> GetUserDraftOrders(Guid userId)
         {
             using var connection = new SqlConnection(_connString);
