@@ -40,11 +40,11 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
                 splitOn: "ProductModelId");
 
             //group orderItems with same id and return a single orderItems with itemQty is list of all order of that group
-            var orderItemsGrp = orderItemsEntry.GroupBy(o => o.OrderId).Select(g =>
+            IEnumerable<OrderItemsResponseDto> orderItemsGrp = orderItemsEntry.GroupBy(o => o.OrderId).Select(g =>
             {
                 //from group of orderItemsEntry, pickone with OrderItemsQty is List of 
                 var groupedOrderItems = g.First();
-                groupedOrderItems.OrderItemsQty = g.Select(g => g.OrderItemsQty.Single()).ToList(); //necessary
+                groupedOrderItems.OrderItemsQty = g.Select(g => g.OrderItemsQty.First()).ToList(); //necessary
                 return groupedOrderItems;
             });
             return orderItemsGrp;

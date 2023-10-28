@@ -1,10 +1,10 @@
-﻿using eShopAnalysis.ApiGateway.Result;
+﻿using eShopAnalysis.Aggregator.Result;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Text;
 
-namespace eShopAnalysis.ApiGateway.Services.BackchannelServices
+namespace eShopAnalysis.Aggregator.Services.BackchannelServices
 {
     //two generic arg is type of request and response, we will specify them in sub class, or in the call
     public class BackChannelBaseService<S, D> : IBackChannelBaseService<S, D> where S : class where D : class

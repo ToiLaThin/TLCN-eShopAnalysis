@@ -1,8 +1,8 @@
 ﻿
-using eShopAnalysis.ApiGateway.Result;
-using eShopAnalysis.ApiGateway.Services.BackchannelDto;
+using eShopAnalysis.Aggregator.Result;
+using eShopAnalysis.Aggregator.Services.BackchannelDto;
 
-namespace eShopAnalysis.ApiGateway.Services.BackchannelServices
+namespace eShopAnalysis.Aggregator.Services.BackchannelServices
 {
     public interface IBackChannelStockInventoryService
     {

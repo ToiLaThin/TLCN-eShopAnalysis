@@ -1,4 +1,4 @@
-﻿namespace eShopAnalysis.ApiGateway.Result
+﻿namespace eShopAnalysis.Aggregator.Result
 {
     public enum ResultType
     {

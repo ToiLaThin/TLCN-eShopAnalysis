@@ -1,11 +1,11 @@
-﻿using eShopAnalysis.ApiGateway.Models.Dto;
-using eShopAnalysis.ApiGateway.Services.BackchannelServices;
-using Microsoft.AspNetCore.Http;
+﻿
+using eShopAnalysis.Aggregator.Models.Dto;
+using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eShopAnalysis.ApiGateway.Controllers
 {
-    [Route("api/Aggregate")]
+    [Route("api/AggregateAPI/AggregateOrderItemStock")]
     [ApiController]
     public class AggregateController : ControllerBase
     {
@@ -20,29 +20,39 @@ namespace eShopAnalysis.ApiGateway.Controllers
             _backChannelStockInventoryService = backChannelStockInventoryService;
             _backChannelCartOrderService = backChannelCartOrderService;
         }
-        [HttpGet("GetOrderToApprovedWithStock")]
+        [HttpGet("GetOrderToApproveWithStock")]
         public async Task<OrderItemAndStockAggregateDto> GetOrderToApprovedWithStock()
         {
             var approvedOrdersResult = await _backChannelCartOrderService.GetToApprovedOrders();
             if (approvedOrdersResult.IsSuccess)
             {
-                var allItemsInOrdersIds = approvedOrdersResult.Data.OrderItemsQty.Select(oIQ => oIQ.ProductModelId);
+                //https://stackoverflow.com/a/34883995
+                var allItemsInOrdersIds = approvedOrdersResult.Data.SelectMany(o => o.OrderItemsQty)
+                                                                   .DistinctBy(oIQ => oIQ.ProductModelId)
+                                                                   .Select(oIQ => oIQ.ProductModelId)
+                                                                   .ToList();
                 var allItemsStockResult = await _backChannelStockInventoryService.GetOrderItemsStock(allItemsInOrdersIds);
                 if (allItemsStockResult.IsSuccess) {
-                    var orderItems = approvedOrdersResult.Data;
+                    var ordersToApprovedResp = approvedOrdersResult.Data;
                     Dictionary<string, int> itemsStock = new Dictionary<string, int>();
                     foreach (var item in allItemsStockResult.Data) {
                         itemsStock.Add(item.ProductModelId.ToString(), item.CurrentQuantity);
                     }
-                    return new OrderItemAndStockAggregateDto() {
-                        OrderItems = new OrderItemsDto()
+
+                    var ordersToApproved = new List<OrderItemsDto>();
+                    foreach (var orderResp in  ordersToApprovedResp)
+                    {
+                        ordersToApproved.Add(new OrderItemsDto()
                         {
-                            OrderId = orderItems.OrderId,
-                            OrderStatus = orderItems.OrderStatus,
-                            PaymentMethod = orderItems.PaymentMethod,
-                            TotalPriceFinal = orderItems.TotalPriceFinal,
-                            OrderItemsQty = orderItems.OrderItemsQty,
-                        },
+                            OrderId = orderResp.OrderId,
+                            OrderStatus = orderResp.OrderStatus,
+                            PaymentMethod = orderResp.PaymentMethod,
+                            TotalPriceFinal = orderResp.TotalPriceFinal,
+                            OrderItemsQty = orderResp.OrderItemsQty,
+                        });
+                    }
+                    return new OrderItemAndStockAggregateDto() {
+                        OrderItems = ordersToApproved,
                         ItemsStock = itemsStock
                     };
                 }
