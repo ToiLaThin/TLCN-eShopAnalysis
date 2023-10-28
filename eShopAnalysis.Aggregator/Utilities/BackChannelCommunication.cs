@@ -1,4 +1,4 @@
-﻿namespace eShopAnalysis.ProductCatalogAPI.Utilities
+﻿namespace eShopAnalysis.Aggregator.Utilities
 {
     public class BackChannelCommunication
     {

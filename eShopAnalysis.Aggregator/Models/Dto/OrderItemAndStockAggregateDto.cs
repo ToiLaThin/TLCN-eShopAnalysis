@@ -1,6 +1,7 @@
-﻿using eShopAnalysis.ApiGateway.Services.BackchannelDto;
+﻿
+using eShopAnalysis.Aggregator.Services.BackchannelDto;
 
-namespace eShopAnalysis.ApiGateway.Models.Dto
+namespace eShopAnalysis.Aggregator.Models.Dto
 {
     public class ItemStockDto
     {
@@ -24,7 +25,7 @@ namespace eShopAnalysis.ApiGateway.Models.Dto
     //the data sent to the frontend
     public class OrderItemAndStockAggregateDto
     {
-        public OrderItemsDto OrderItems { get; set; }
+        public IEnumerable<OrderItemsDto> OrderItems { get; set; }
 
         public Dictionary<string, int> ItemsStock { get; set; }
     }
