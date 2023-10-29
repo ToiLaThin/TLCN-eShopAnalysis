@@ -1,4 +1,10 @@
-import { ISubCatalog } from "./subcatalog.interface";
+
+export interface ISubCatalog {
+    subCatalogId?: string;
+    subCatalogName: string;    
+    subCatalogDescription: string;
+    subCatalogImage?: string;
+}
 
 export interface ICatalog {
     catalogId?: string;

@@ -7,9 +7,10 @@ namespace eShopAnalysis.StockInventory.Repository
         Task<StockInventory> AddAsync(StockInventory stockInventory);
         StockInventory Add(StockInventory stockInventory);
 
-        StockInventory Update(StockInventory stockInventory);
-
         IEnumerable<StockInventory> GetAll();
 
+        public Task UpdateAsync(StockInventory stockInventory);
+
+        public void Update(StockInventory stockInventory);
     }
 }

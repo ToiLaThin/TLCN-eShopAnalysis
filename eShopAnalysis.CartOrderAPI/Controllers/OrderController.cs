@@ -48,6 +48,20 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
             return result;
         }
 
+        [HttpPut("BackChannel/BulkApproveOrder")]
+        public async Task<BackChannelResponseDto<IEnumerable<Guid>>> BulkApproveOrder([FromBody] IEnumerable<Guid> orderIdsToApprove)
+        {
+            if (orderIdsToApprove == null) { 
+                throw new ArgumentNullException(nameof(orderIdsToApprove)); 
+            }
+            OrderApproveCommand command = new OrderApproveCommand(orderIdsToApprove);
+            var result = await _mediator.Send(command);
+            if (result == null) {
+                return BackChannelResponseDto<IEnumerable<Guid>>.Failure("data have errors");
+            }
+            return BackChannelResponseDto<IEnumerable<Guid>>.Success(result);
+        }
+
         //return minial orders with items quantity to aggregate api gateway
         //if swagger cannot get schema, view debug console to fix
         [HttpPost("BackChannel/GetToApprovedOrders")]

@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ISubCatalog } from 'src/shared/models/subcatalog.interface';
 import { CatalogHttpService } from 'src/shared/services/http/catalog-http.service';
 import { Observable } from 'rxjs';
-import { ICatalog } from 'src/shared/models/catalog.interface';
+import { ICatalog, ISubCatalog } from 'src/shared/models/catalog.interface';
 
 @Component({
   selector: 'esa-subcatalog-add',

@@ -54,14 +54,15 @@ namespace eShopAnalysis.StockInventory.Repository
             }
         }
 
-        public StockInventory Update(StockInventory stockInventory)
+        //must find then update the returned stockInventory
+        public async Task UpdateAsync(StockInventory stockInventory)
         {
-            //var stockToUpdate = _redisContext.StockInventoryCollection.SingleOrDefault(st => st.StockInventoryId == stockInventory.StockInventoryId);
-            //if (stockToUpdate != null)
-            //{
-                
-            //}
-            throw new NotImplementedException();
+            await _redisContext.StockInventoryCollection.UpdateAsync(stockInventory);
+        }
+
+        public void Update(StockInventory stockInventory)
+        {
+            _redisContext.StockInventoryCollection.Update(stockInventory);
         }
     }
 }

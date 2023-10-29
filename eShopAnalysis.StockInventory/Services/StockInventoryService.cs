@@ -5,7 +5,7 @@ namespace eShopAnalysis.StockInventoryAPI.Services
     using eShopAnalysis.ApiGateway.Services.BackchannelDto;
     using eShopAnalysis.StockInventory.Models;
     using eShopAnalysis.StockInventory.Repository;
-    using Microsoft.AspNetCore.Mvc;
+    using eShopAnalysis.StockInventoryAPI.Dto.BackchannelDto;
 
     public interface IStockInventoryService
     {
@@ -16,6 +16,8 @@ namespace eShopAnalysis.StockInventoryAPI.Services
         ServiceResponseDto<IEnumerable<StockInventory>> GetAll();
 
         ServiceResponseDto<IEnumerable<ItemStockResponseDto>> GetStockOfModels(IEnumerable<Guid> modelIds);
+
+        ServiceResponseDto<IEnumerable<ItemStockResponseDto>> DecreaseStockItems(IEnumerable<StockDecreaseRequestDto> itemStocks);
     }
 
 
@@ -72,6 +74,43 @@ namespace eShopAnalysis.StockInventoryAPI.Services
                 result.Add(returnItemStock);
             }
             return ServiceResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result);
+        }
+
+        public ServiceResponseDto<IEnumerable<ItemStockResponseDto>> DecreaseStockItems(IEnumerable<StockDecreaseRequestDto> decreaseReqs)
+        {
+            var requestedModelIds = decreaseReqs.Select(req => req.ProductModelId).ToList();
+            var stocksToDecrease = _repo.GetAll()
+                                        .Where(st => requestedModelIds
+                                        .Contains(Guid.Parse(st.ProductModelId)));
+
+            if (stocksToDecrease != null) {
+                foreach (var stock in stocksToDecrease)
+                {
+                    //TODO unit of work for stock to make sure all are updated or none
+                    //if multiple decrease req for one single stockItem(with same ProductModelId)
+                    //will have error => we must group in the aggregator controller, also , this help reduce the payload
+                    var req = decreaseReqs.Single(req => req.ProductModelId == Guid.Parse(stock.ProductModelId));
+                    if (req == null) { 
+                        throw new Exception("Critical error"); 
+                    }
+                    stock.CurrentQuantity -= req.QuantityToDecrease;
+                    _repo.Update(stock);
+                }
+                //get result after update
+                IEnumerable<ItemStockResponseDto> result = _repo.GetAll()
+                                        .Where(st => requestedModelIds
+                                        .Contains(Guid.Parse(st.ProductModelId)))
+                                        .Select(st => {
+                                            return new ItemStockResponseDto
+                                            {
+                                                ProductModelId = Guid.Parse(st.ProductModelId),
+                                                CurrentQuantity = st.CurrentQuantity,
+                                            };
+                                        });
+
+                return ServiceResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result);
+            }
+            return ServiceResponseDto<IEnumerable<ItemStockResponseDto>>.Failure("Error");
         }
     }
 }

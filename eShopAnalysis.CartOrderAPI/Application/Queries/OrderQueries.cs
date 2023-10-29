@@ -23,9 +23,14 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
                                   cI.ProductModelId AS ProductModelId, cI.Quantity As Quantity
                            FROM Orders o
                            INNER JOIN Cart c on o.CartId = c.Id
-                           INNER JOIN CartItem cI ON c.Id = cI.CartId                            
+                           INNER JOIN CartItem cI ON c.Id = cI.CartId   
+                           WHERE o.OrdersStatus = @oStCheckedout OR ( o.OrdersStatus = @oStCustomerInfoConfirmed AND o.PaymentMethod = @pMthCOD)
                           ";
-            object paramsSql = new { };
+            object paramsSql = new { 
+                oStCheckedout = OrderStatus.Checkouted,
+                oStCustomerInfoConfirmed = OrderStatus.CustomerInfoConfirmed,
+                pMthCOD = PaymentMethod.COD
+            };
             //need to be group since now each orderItems is with a single ItemQty
             var orderItemsEntry = await connection.QueryAsync<OrderItemsResponseDto, OrderItemQuantityDto, OrderItemsResponseDto>(
                 command: new CommandDefinition(sql,paramsSql), 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { PaymentMethod } from 'src/shared/models/ui-models/paymentMethod.enum';
+import { PaymentMethod } from 'src/shared/types/paymentMethod.enum';
 import { OrderHttpService } from 'src/shared/services/http/order-http.service';
 
 @Component({
