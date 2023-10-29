@@ -2,11 +2,10 @@ import { Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } fro
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map, Observable, Subscription } from 'rxjs';
-import { IProduct } from 'src/shared/models/product.interface';
-import { ISubCatalog } from 'src/shared/models/subcatalog.interface';
+import { CublicType, IProduct } from 'src/shared/models/product.interface';
 import { CatalogHttpService } from 'src/shared/services/http/catalog-http.service';
 import { ProductHttpService } from 'src/shared/services/http/product-http.service';
-import { CublicType } from 'src/shared/models/productModel.interface';
+import { ISubCatalog } from 'src/shared/models/catalog.interface';
 
 @Component({
   selector: 'esa-product-add',

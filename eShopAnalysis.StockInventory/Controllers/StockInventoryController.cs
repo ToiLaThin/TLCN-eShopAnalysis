@@ -8,6 +8,7 @@ namespace eShopAnalysis.StockInventory.Controllers
     using eShopAnalysis.ApiGateway.Services.BackchannelDto;
     using eShopAnalysis.StockInventory.Models;
     using eShopAnalysis.StockInventoryAPI.Dto;
+    using eShopAnalysis.StockInventoryAPI.Dto.BackchannelDto;
     using eShopAnalysis.StockInventoryAPI.Services;
     using eShopAnalysis.StockInventoryAPI.Utilities.Result;
     using System.Collections.Generic;
@@ -60,6 +61,17 @@ namespace eShopAnalysis.StockInventory.Controllers
         public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> GetStockOfModels([FromBody] OrderItemsStockRequestDto orderItemsStockReq)
         {
             var result = _service.GetStockOfModels(orderItemsStockReq.ProductModelIds);
+            if (result.IsFailed) {
+                return null;
+            }
+            return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result.Data);
+        }
+
+        [HttpPost("BackChannel/DecreaseStockItems")]
+        public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> DecreaseStockItems([FromBody] IEnumerable<StockDecreaseRequestDto> stockDecreaseReqs)
+        {
+            if (stockDecreaseReqs == null) { throw new ArgumentNullException(nameof(stockDecreaseReqs)); }
+            var result = _service.DecreaseStockItems(stockDecreaseReqs);
             if (result.IsFailed) {
                 return null;
             }

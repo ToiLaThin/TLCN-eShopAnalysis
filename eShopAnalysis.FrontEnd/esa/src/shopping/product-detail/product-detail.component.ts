@@ -1,10 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CartHttpService } from 'src/shared/services/http/cart-http.service';
-import { IProduct } from 'src/shared/models/product.interface';
+import { IProduct, IProductModel } from 'src/shared/models/product.interface';
 import { ProductHttpService } from 'src/shared/services/http/product-http.service';
 import { Subscription, map } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { IProductModel } from 'src/shared/models/productModel.interface';
 
 @Component({
   selector: 'esa-product-detail',

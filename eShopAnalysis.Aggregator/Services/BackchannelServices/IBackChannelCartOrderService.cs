@@ -8,5 +8,6 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
     {
         //will introduce paging later
         Task<BackChannelResponseDto<IEnumerable<OrderItemsResponseDto>>> GetToApprovedOrders(int limit = 15);
+        Task<BackChannelResponseDto<IEnumerable<Guid>>> BulkApproveOrder(IEnumerable<Guid> orderIdsToApprove);
     }
 }

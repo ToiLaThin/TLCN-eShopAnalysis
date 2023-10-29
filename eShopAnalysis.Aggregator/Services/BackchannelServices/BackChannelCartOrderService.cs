@@ -9,11 +9,17 @@ namespace eShopAnalysis.ApiGateway.Services.BackchannelServices
     public class BackChannelCartOrderService : IBackChannelCartOrderService
     {
         private readonly IBackChannelBaseService<PagingOrderRequestDto, IEnumerable<OrderItemsResponseDto>> _baseService;
+        private readonly IBackChannelBaseService<IEnumerable<Guid>, IEnumerable<Guid>> _baseApproveService;
         private readonly IOptions<BackChannelCommunication> _backChannelUrls;
-        public BackChannelCartOrderService(IBackChannelBaseService<PagingOrderRequestDto, IEnumerable<OrderItemsResponseDto>> baseService, IOptions<BackChannelCommunication> backChannelUrls)
+        public BackChannelCartOrderService(
+            IBackChannelBaseService<PagingOrderRequestDto, IEnumerable<OrderItemsResponseDto>> baseService,
+            IOptions<BackChannelCommunication> backChannelUrls,
+            IBackChannelBaseService<IEnumerable<Guid>, IEnumerable<Guid>> baseApproveService
+            )
         {
             _baseService = baseService;
             _backChannelUrls = backChannelUrls;
+            _baseApproveService = baseApproveService;
         }
 
         public async Task<BackChannelResponseDto<IEnumerable<OrderItemsResponseDto>>> GetToApprovedOrders(int limit = 15)
@@ -23,6 +29,17 @@ namespace eShopAnalysis.ApiGateway.Services.BackchannelServices
                 ApiType = ApiType.POST,
                 Url = $"{_backChannelUrls.Value.OrderAPIBaseUri}/GetToApprovedOrders",
                 Data = new PagingOrderRequestDto(limit)
+            });
+            return result;
+        }
+
+        public async Task<BackChannelResponseDto<IEnumerable<Guid>>> BulkApproveOrder(IEnumerable<Guid> orderIdsToApprove)
+        {
+            var result = await _baseApproveService.SendAsync(new BackChannelRequestDto<IEnumerable<Guid>>()
+            {
+                ApiType = ApiType.PUT,
+                Url = $"{_backChannelUrls.Value.OrderAPIBaseUri}/BulkApproveOrder",
+                Data = orderIdsToApprove
             });
             return result;
         }

@@ -1,0 +1,40 @@
+<table>
+    <tr>
+        <th>ModelId</th>
+        <th>StockQuantity</th>
+    </tr>
+    <tr *ngFor="let item of (this.itemsStockLookUp$ | async)">
+        <td>{{item.productModelId}}</td>
+        <td>{{item.quantity}}</td>
+    </tr>
+    <!-- To do a click button that can view the affect each order make on the stock of all product -->
+</table>
+
+
+<table>
+    <tr>
+        <th>OrderId</th>
+        <th>PaymentMethod</th>
+        <th>TotalPriceFinal</th>
+        <th>OrderStatus</th>
+        <th>Actions</th>
+    </tr>
+    <tr *ngFor="let o of (this.ordersToApprove$ | async)">
+        <td>{{o.orderId}}</td>
+        <td>{{PaymentMethod[o.paymentMethod]}}</td>
+        <td>{{o.totalPriceFinal}}</td>
+        <td>{{OrderStatus[o.orderStatus]}}</td>
+        <!-- To do a click button that can view the detail -->
+        <td>
+            <button mat-flat-button 
+                    color="primary"
+                    (click)="approveOrder(o.orderId)"
+                    >
+                    Approve
+            </button>
+            <button mat-flat-button color="accent">View Detail</button>
+        </td>
+</table>
+
+<button mat-flat-button color="primary" (click)="confirm()">Confirm</button>
+<button mat-flat-button color="accent" (click)="reset()">Reset</button>

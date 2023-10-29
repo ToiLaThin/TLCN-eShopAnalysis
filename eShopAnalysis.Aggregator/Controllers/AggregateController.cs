@@ -1,5 +1,6 @@
 ﻿
 using eShopAnalysis.Aggregator.Models.Dto;
+using eShopAnalysis.Aggregator.Services.BackchannelDto;
 using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -58,6 +59,40 @@ namespace eShopAnalysis.ApiGateway.Controllers
                 }
             }
             return null;
+        }
+
+
+        [HttpPost("ApproveOrdersAndModifyStocks")]
+        public async Task<IEnumerable<ItemStockResponseDto>> ApproveOrdersAndModifyStocks([FromBody] IEnumerable<OrderApprovedAggregate> orderApprovedAggregates)
+        {
+            //convert this to sequential update stock first then update orders status , if failed then put the update
+            //order status to event bus, this is more reliable, since put is idempotency
+            //and this is immediate consistency first, if not then it's eventual, but becareful as this can caused that order to appear in the next batch
+
+            if (orderApprovedAggregates == null)
+                throw new ArgumentNullException(nameof(orderApprovedAggregates));
+
+            var stockDecreaseReqs = orderApprovedAggregates.SelectMany(o => o.OrderItemsStockToChange)
+                                                                 .GroupBy(req => req.ProductModelId)
+                                                                 .Select(grp => {
+                                                                     return new StockDecreaseRequestDto
+                                                                     {
+                                                                         ProductModelId = grp.Key,
+                                                                         QuantityToDecrease = grp.Sum(grp => grp.QuantityToDecrease),
+                                                                     };
+                                                                 });
+            //TODO add validate and return failed if update make stock goes below a threshhold
+            var resultStockUpdate = await _backChannelStockInventoryService.DecreaseStockItems(stockDecreaseReqs);
+            if (resultStockUpdate.IsSuccess) {
+                IEnumerable<Guid> orderIdsToStockConfirmed = orderApprovedAggregates.Select(x => x.OrderId);
+                var resultBulkApprove = await _backChannelCartOrderService.BulkApproveOrder(orderIdsToStockConfirmed);
+                if (resultBulkApprove.IsSuccess) {
+                    return resultStockUpdate.Data;
+                }
+                //else use eventual consistency, rsult.isFailed mean orderstatus not set
+            }
+            return null;
+
         }
     }
 }

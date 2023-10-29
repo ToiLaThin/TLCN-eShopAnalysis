@@ -2,8 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { environment as env } from 'src/environments/environment';
-import { ICatalog } from 'src/shared/models/catalog.interface';
-import { ISubCatalog } from 'src/shared/models/subcatalog.interface';
+import { ICatalog, ISubCatalog } from 'src/shared/models/catalog.interface';
 
 @Injectable({
   providedIn: 'root'

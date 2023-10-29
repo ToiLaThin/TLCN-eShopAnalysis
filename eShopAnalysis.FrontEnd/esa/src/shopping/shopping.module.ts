@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ShoppingComponent } from './shopping/shopping.component';
 import { RouterModule, Routes } from '@angular/router';
-import { ProductListComponent } from './shopping/product-list/product-list.component';
 import { SharedModule } from 'src/shared/shared.module';
-import { ProductListCardComponent } from './shopping/product-list/product-list-card/product-list-card.component';
-import { ProductDetailComponent } from './shopping/product-detail/product-detail.component';
-import { CartListComponent } from './shopping/cart-list/cart-list.component';
 import { AuthenticatedGuard } from 'src/shared/guards/authenticated.guard';
-import { OrderingInfoConfirmComponent } from './shopping/ordering-process/ordering-info-confirm/ordering-info-confirm.component';
-import { OrderDraftListComponent } from './shopping/ordering-process/order-draft-list/order-draft-list.component';
-import { PickPaymentMethodComponent } from './shopping/ordering-process/pick-payment-method/pick-payment-method.component';
-import { NotifyCustomerObserveOrderComponent } from './shopping/ordering-process/notify-customer-observe-order/notify-customer-observe-order.component';
-import { CheckoutRedirectComponent } from './shopping/ordering-process/checkout-redirect/checkout-redirect.component';
+import { ProductListComponent } from './product-list/product-list.component';
+import { ProductDetailComponent } from './product-detail/product-detail.component';
+import { CartListComponent } from './cart-list/cart-list.component';
+import { OrderingInfoConfirmComponent } from './ordering-process/ordering-info-confirm/ordering-info-confirm.component';
+import { OrderDraftListComponent } from './ordering-process/order-draft-list/order-draft-list.component';
+import { PickPaymentMethodComponent } from './ordering-process/pick-payment-method/pick-payment-method.component';
+import { CheckoutRedirectComponent } from './ordering-process/checkout-redirect/checkout-redirect.component';
+import { NotifyCustomerObserveOrderComponent } from './ordering-process/notify-customer-observe-order/notify-customer-observe-order.component';
+import { ShoppingComponent } from './shopping.component';
+import { ProductListCardComponent } from './product-list/product-list-card/product-list-card.component';
 
 const shoppingRoutes: Routes = [
   {

@@ -151,5 +151,23 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate
             }
             return false;
         }
+
+        public bool MarkAsStockConfirmed()
+        {
+            bool validStatusToStockConfirmed = this.OrdersStatus == OrderStatus.Checkouted ||
+                                                 (this.OrdersStatus == OrderStatus.CustomerInfoConfirmed && 
+                                                 this.PaymentMethod == OrderAggregate.PaymentMethod.COD);
+            if (!validStatusToStockConfirmed) 
+                return false;
+            this.DateStockConfirmed = DateTime.Now;
+            this.OrdersStatus = OrderStatus.StockConfirmed;
+            return true;
+        }
+
+        public bool ApproveOrder()
+        {
+            bool canDoThis = this.MarkAsStockConfirmed();
+            return canDoThis;
+        }
     }
 }
