@@ -3,11 +3,8 @@ using eShopAnalysis.ProductCatalogAPI.Application.BackchannelServices;
 using eShopAnalysis.ProductCatalogAPI.Application.Result;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
-using eShopAnalysis.ProductCatalogAPI.Infrastructure;
+using eShopAnalysis.ProductCatalogAPI.Domain.Specification;
 using eShopAnalysis.ProductCatalogAPI.Infrastructure.Contract;
-using eShopAnalysis.ProductCatalogAPI.Utilities;
-using Microsoft.Extensions.Options;
-using System.Diagnostics.Eventing.Reader;
 using static eShopAnalysis.ProductCatalogAPI.Domain.Models.ProductModel;
 
 namespace eShopAnalysis.ProductCatalogAPI.Application.Services
@@ -61,6 +58,23 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
         {
             var result = _unitOfWork.ProductRepository.GetAll();
             return ServiceResponseDto<IEnumerable<Product>>.Success(result);
+
+            //TODO change the implementation so this work for mongo db provider, and add some more spec, composite spec
+            //https://www.mongodb.com/docs/realm/sdk/dotnet/crud/filter/
+            //currently have error in SpecificationEvaluator, cannot parse the expression, only on in another provider
+            //THIS IS FOR TESTING
+            //var originalQuery = _unitOfWork.ProductRepository.GetAllAsQueryable();
+            //var cublicFilterSpecByM = new CublicTypeFilterSpecification(CublicType.M);
+            //var cublicFilterSpecByV = new CublicTypeFilterSpecification(CublicType.V);
+            //var onSaleFilterSpec = new OnSaleFilterSpecification();
+            //var salePriceInRangFilterSpec = new InRangeSalePriceFilterSpecification(2, 100);
+            //var finalCublicFilter = salePriceInRangFilterSpec.And(onSaleFilterSpec);
+
+            //var orderSpec = new SaleDisplayPriceOrderSpecification(OrderType.Ascending);
+            //var paginateSpec = new PaginateSpecification(1, 1);
+            //var result = SpecificationEvaluator<Product>.GetQuery(originalQuery, finalCublicFilter, orderSpec)
+            //                                            .AsEnumerable();
+            //return ServiceResponseDto<IEnumerable<Product>>.Success(result);
         }
         public async Task<ServiceResponseDto<Product>> AddProduct(Product product)
         {
