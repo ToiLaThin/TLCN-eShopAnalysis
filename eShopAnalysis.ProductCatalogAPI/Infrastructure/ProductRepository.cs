@@ -13,13 +13,6 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure
             _context = context;
         }
 
-        public Product Add(Product product)
-        {
-            _context.ProductCollection.InsertOne(product);
-            Product resultIns = _context.ProductCollection.Find(c => c.ProductId == product.ProductId).FirstOrDefault();
-            return resultIns;
-        }
-
         public Product Get(Guid id)
         {
             Product result = _context.ProductCollection.AsQueryable().Where(p => p.ProductId== id).FirstOrDefault();
@@ -38,34 +31,56 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure
             return result;
         }
 
-        public bool Replace(Product newProduct)
+        public void Add(Product product, IClientSessionHandle sessionHandle = null)
         {
-            var filter = Builders<Product>.Filter.Eq(oldPro => oldPro.ProductId, newProduct.ProductId);
+            if (sessionHandle != null) {
+                if (!sessionHandle.IsInTransaction) throw new InvalidOperationException("used not correctly");
+                _context.ProductCollection.InsertOne(session: sessionHandle, product);
+            }
+            else {
+                _context.ProductCollection.InsertOne(product);
+            }
+        }
 
-            var updateResult = _context.ProductCollection.ReplaceOne(filter, newProduct);
-            if (updateResult.ModifiedCount > 0)
-            {
+        public bool Replace(Product newProduct, IClientSessionHandle sessionHandle = null)
+        {
+            bool sessionIsNull = sessionHandle == null;
+            if (!sessionIsNull && !sessionHandle.IsInTransaction) 
+                throw new InvalidOperationException("used not correctly");
+
+            var filter = Builders<Product>.Filter.Eq(oldPro => oldPro.ProductId, newProduct.ProductId);
+            var updateResult = sessionIsNull ? _context.ProductCollection.ReplaceOne(filter, newProduct) :
+                                               _context.ProductCollection.ReplaceOne(session: sessionHandle, filter, newProduct);
+            if (updateResult.ModifiedCount > 0) {
                 return true;
             }
             else { return false; }
         }
 
-        public bool Delete(Product productDel)
+        public bool Delete(Product productDel, IClientSessionHandle sessionHandle = null)
         {
+            bool sessionIsNull = sessionHandle == null;
+            if (!sessionIsNull && !sessionHandle.IsInTransaction)
+                throw new InvalidOperationException("used not correctly");
+
             var filter = Builders<Product>.Filter.Eq(oldPro => oldPro.ProductId, productDel.ProductId);
-            var deleteResult = _context.ProductCollection.DeleteOne(filter);
-            if (deleteResult.DeletedCount > 0)
-            {
+            var deleteResult = sessionIsNull ? _context.ProductCollection.DeleteOne(filter) :
+                                               _context.ProductCollection.DeleteOne(session: sessionHandle, filter);
+            if (deleteResult.DeletedCount > 0) {
                 return true;
             }
             else { return false; }
         }
 
-        public bool SaveChanges(Product newProduct)
+        public bool SaveChanges(Product newProduct, IClientSessionHandle sessionHandle = null)
         {
-            var filter = Builders<Product>.Filter.Eq(oldPro => oldPro.ProductId, newProduct.ProductId);
+            bool sessionIsNull = sessionHandle == null;
+            if (!sessionIsNull && !sessionHandle.IsInTransaction)
+                throw new InvalidOperationException("used not correctly");
 
-            var updateResult = _context.ProductCollection.ReplaceOne(filter, newProduct);
+            var filter = Builders<Product>.Filter.Eq(oldPro => oldPro.ProductId, newProduct.ProductId);
+            var updateResult = sessionIsNull ? _context.ProductCollection.ReplaceOne(filter, newProduct) :
+                                               _context.ProductCollection.ReplaceOne(session: sessionHandle, filter, newProduct);
             if (updateResult.ModifiedCount > 0)
             {
                 return true;
@@ -73,7 +88,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure
             else { return false; }
         }
 
-        public void SaveChanges()
+        public void SaveChanges(IClientSessionHandle sessionHandle = null)
         {
             throw new NotImplementedException();
         }

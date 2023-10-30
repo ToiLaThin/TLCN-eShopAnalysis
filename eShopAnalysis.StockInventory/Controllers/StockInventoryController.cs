@@ -50,8 +50,9 @@ namespace eShopAnalysis.StockInventory.Controllers
         public BackChannelResponseDto<StockInventoryDto> AddNew([FromBody] StockInventoryDto stockInventoryDtoToAdd)
         {
             var result = _service.AddNew(stockInventoryDtoToAdd.ProductId, stockInventoryDtoToAdd.ProductModelId, stockInventoryDtoToAdd.ProductBusinessKey);
-            if (result.IsFailed) {
-                return null;
+            if (result.IsFailed)
+            {
+                return BackChannelResponseDto<StockInventoryDto>.Failure(result.Error);
             }
             var stockInventoryDto = _mapper.Map<StockInventoryDto>(result.Data);
             return BackChannelResponseDto<StockInventoryDto>.Success(stockInventoryDto);

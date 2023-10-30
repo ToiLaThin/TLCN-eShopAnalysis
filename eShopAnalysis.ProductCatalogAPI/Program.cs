@@ -9,6 +9,7 @@ using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.FactoryMethod;
 using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.Mediator;
 using eShopAnalysis.ProductCatalogAPI.Infrastructure;
+using eShopAnalysis.ProductCatalogAPI.Infrastructure.Contract;
 using eShopAnalysis.ProductCatalogAPI.Infrastructure.Data;
 using eShopAnalysis.ProductCatalogAPI.Utilities;
 using eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors;
@@ -37,11 +38,11 @@ builder.Services.Configure<BackChannelCommunication>(builder.Configuration.GetSe
 builder.Services.AddScoped<MongoDbContext>();
 
 
-builder.Services.AddScoped<ICatalogService, CatalogService>();
-builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
-
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICatalogService, CatalogService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IBackChannelStockInventoryService, BackChannelStockInventoryService>();
 

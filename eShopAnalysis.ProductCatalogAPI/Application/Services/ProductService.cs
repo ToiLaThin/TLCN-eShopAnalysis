@@ -4,6 +4,7 @@ using eShopAnalysis.ProductCatalogAPI.Application.Result;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
 using eShopAnalysis.ProductCatalogAPI.Infrastructure;
+using eShopAnalysis.ProductCatalogAPI.Infrastructure.Contract;
 using eShopAnalysis.ProductCatalogAPI.Utilities;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.Eventing.Reader;
@@ -33,20 +34,20 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
     }
     public class ProductService : IProductService
     {
-        private readonly IProductRepository _productRepository;
-        private readonly ICatalogRepository _catalogRepository;
+        //unit of work can commit transaction, rollback(in case back channel service failed,
+        //and mediator so we can communicate with CatalogRepo)
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IBackChannelStockInventoryService _backChannelStockInventoryService;        
-        public ProductService(IProductRepository productRepository, ICatalogRepository catalogRepository, IBackChannelStockInventoryService backChannelStockInventoryService)
+        public ProductService(IUnitOfWork unitOfWork, IBackChannelStockInventoryService backChannelStockInventoryService)
         {
-            _productRepository = productRepository;
-            _catalogRepository = catalogRepository;
+            _unitOfWork = unitOfWork;
             _backChannelStockInventoryService = backChannelStockInventoryService;            
         }
         #region Product Services
 
         public ServiceResponseDto<Product> Get(Guid productId)
         {
-            var result = _productRepository.Get(productId);
+            var result = _unitOfWork.ProductRepository.Get(productId);
             if (result == null) {
               return ServiceResponseDto<Product>.Failure("productId do not match any product");
             } 
@@ -58,40 +59,38 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
 
       public ServiceResponseDto<IEnumerable<Product>> GetAll()
         {
-            var result = _productRepository.GetAll();
+            var result = _unitOfWork.ProductRepository.GetAll();
             return ServiceResponseDto<IEnumerable<Product>>.Success(result);
         }
         public async Task<ServiceResponseDto<Product>> AddProduct(Product product)
         {
-            var result = _productRepository.Add(product);
-            if (result != null)
-            {
-                foreach (var productModel in result.ProductModels)
-                {
-                    var backChannelResponse = await _backChannelStockInventoryService.AddNewStockInventory(result.ProductId.ToString(), productModel.ProductModelId.ToString(), result.BusinessKey.ToString());
-                    if (backChannelResponse.IsFailed || backChannelResponse.IsException) {
-                        var isDeleted = _productRepository.Delete(product); //ok
-                        // retry Polly if (!isDeleted) { }
-                        //if retry failed could delete all added stock of product models
-                        return ServiceResponseDto<Product>.Failure(backChannelResponse.Error);
-                    }
+            _unitOfWork.BeginTransactionAsync();
+            //pass in the sessionHandle to add product in the current transaction 
+            _unitOfWork.ProductRepository.Add(product, _unitOfWork.GetClientSessionHandle());
+
+            foreach (var productModel in product.ProductModels) {
+                var backChannelResponse = await _backChannelStockInventoryService.AddNewStockInventory(product.ProductId.ToString(), 
+                                                                                                       productModel.ProductModelId.ToString(),
+                                                                                                       product.BusinessKey.ToString());
+                if (backChannelResponse.IsFailed || backChannelResponse.IsException) {
+                    _unitOfWork.RollbackTransaction();//do not need to delete the add product
+                    return ServiceResponseDto<Product>.Failure(backChannelResponse.Error);
                 }
-                return ServiceResponseDto<Product>.Success(result);
             }
-            return ServiceResponseDto<Product>.Failure("Insert product into mongo db failed");
+            _unitOfWork.CommitTransaction();
+            return ServiceResponseDto<Product>.Success(product);
         }
 
         //todo,every time update, we have to create a new row in db which is the same info but have different id
         //nen lam 1 Model ProductToUpdate vi neu update subcatalog roi update gia thi no se tao ra 2 row mới liên tục
         public ServiceResponseDto<Product> UpdateSubCatalog(Guid productId, Guid subCatalogId, string subCatalogName) {
-            var productFound = _productRepository.Get(productId);
-            //TODO refactor this
-            var subCatalogFound = _catalogRepository.GetAllAsQueryable()
+            var productFound = _unitOfWork.ProductRepository.Get(productId);
+            var subCatalogFound = _unitOfWork.CatalogRepository.GetAllAsQueryable()
                                                     .Any(c => c.SubCatalogs.Any(sc => sc.SubCatalogId == subCatalogId && sc.SubCatalogName == subCatalogName));
 
             if (productFound != null && subCatalogFound is true) {
                 productFound.UpdateSubCatalog(subCatalogId, subCatalogName);
-                _productRepository.SaveChanges(productFound);
+                _unitOfWork.ProductRepository.SaveChanges(productFound);
                 return ServiceResponseDto<Product>.Success(productFound);
             }
             return ServiceResponseDto<Product>.Failure("subcatalog not found or product not found");
@@ -102,9 +101,8 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
         #region Product Model Services
         public ServiceResponseDto<IEnumerable<ProductModel>> GetAllProductModels(Guid productId)
         {
-            var product = _productRepository.Get(productId);
-            if (product == null)
-            {
+            var product = _unitOfWork.ProductRepository.Get(productId);
+            if (product == null) {
                 return ServiceResponseDto<IEnumerable<ProductModel>>.Failure("product do not exist or not found");
             }
             var models = product.ProductModels;
@@ -113,9 +111,8 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
 
         public ServiceResponseDto<ProductModel> GetProductModel(Guid productId, Guid pModelId)
         {
-            var product = _productRepository.Get(productId);
-            if (product == null)
-            {
+            var product = _unitOfWork.ProductRepository.Get(productId);
+            if (product == null) {
                 return ServiceResponseDto<ProductModel>.Failure("product do not exist or not found");
             }
             var model = product.ProductModels.Where(m => m.ProductModelId == pModelId).FirstOrDefault();
@@ -125,15 +122,13 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
 
         public ServiceResponseDto<ProductModel> AddNewProductModel(Guid productId, ProductModel newModel)
         {
-            var product = _productRepository.Get(productId);
-            if (product == null)
-            {
+            var product = _unitOfWork.ProductRepository.Get(productId);
+            if (product == null) {
                 return ServiceResponseDto<ProductModel>.Failure("product do not exist or not found");
             }
             product.AddNewProductModel(newModel);
-            bool isSuccess = _productRepository.SaveChanges(product);//since we need to replace the old STATE of product with new one having new model
-            if (isSuccess)
-            {
+            bool isSuccess = _unitOfWork.ProductRepository.SaveChanges(product);//since we need to replace the old STATE of product with new one having new model
+            if (isSuccess) {
                 return ServiceResponseDto<ProductModel>.Success(product.ProductModels.Last());
             }
             return ServiceResponseDto<ProductModel>.Failure("cannot save changes adding product model to mongo db");
@@ -141,19 +136,18 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
 
         public ServiceResponseDto<Product> UpdateProductToOnSale(Guid productId, Guid productModelId, Guid saleItemId, DiscountType discountType, double discountValue)
         {
-            var product = _productRepository.Get(productId);
+            var product = _unitOfWork.ProductRepository.Get(productId);
             if (product == null) { 
                 return ServiceResponseDto<Product>.Failure("product cannot be found"); 
             }
 
             var updatedProduct = product.UpdateProductToOnSale(productModelId, saleItemId, discountType, discountValue);
-            if (updatedProduct != null)
-            {
-                var result = ServiceResponseDto<Product>.Success(updatedProduct);
-                _productRepository.SaveChanges(updatedProduct);
-                return result;
+            if (updatedProduct == null) {
+                return ServiceResponseDto<Product>.Failure("product model cannot be found or updated");
             }
-            return ServiceResponseDto<Product>.Failure("product model cannot be found or updated");
+            var result = ServiceResponseDto<Product>.Success(updatedProduct);
+            _unitOfWork.ProductRepository.SaveChanges(updatedProduct);
+            return result;
         }
         #endregion
 
