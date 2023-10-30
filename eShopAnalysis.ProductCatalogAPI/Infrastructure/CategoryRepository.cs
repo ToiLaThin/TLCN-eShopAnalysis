@@ -15,24 +15,45 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure
         {
             _context = context;
         }
-        public Catalog Add(Catalog catalog)
+
+        //if adding with transaction, find will return null, because the record not really saved to db
+        //so if used this with trans, change it to void and do not find the inserted one
+        public Catalog Add(Catalog catalog, IClientSessionHandle sessionHandle = null)
         {
-            _context.CatalogCollection.InsertOne(catalog);
+            bool sessionIsNull = sessionHandle == null;
+            if (!sessionIsNull && !sessionHandle.IsInTransaction)
+                throw new InvalidOperationException("used not correctly");
+
+            if (sessionIsNull) {
+                _context.CatalogCollection.InsertOne(catalog);
+            }
+            _context.CatalogCollection.InsertOne(session: sessionHandle ,catalog);
+
             Catalog result = _context.CatalogCollection.Find(c => c.CatalogId == catalog.CatalogId).FirstOrDefault();
             return result;
+
         }
 
-        public IEnumerable<Catalog> AddRange(IEnumerable<Catalog> catalogs)
+        //if adding with transaction, find will return null, because the record not really saved to db
+        //so if used this with trans, change it to void and do not find the inserted one
+        public IEnumerable<Catalog> AddRange(IEnumerable<Catalog> catalogs, IClientSessionHandle sessionHandle = null)
         {
-            _context.CatalogCollection.InsertMany(catalogs);
+            bool sessionIsNull = sessionHandle == null;
+            if (!sessionIsNull && !sessionHandle.IsInTransaction)
+                throw new InvalidOperationException("used not correctly");
+
+            if (sessionIsNull) {
+                _context.CatalogCollection.InsertMany(catalogs);
+            }
+            _context.CatalogCollection.InsertMany(session: sessionHandle ,catalogs);
+            
             IEnumerable<Catalog> result = new List<Catalog>();
-            foreach (var catalog in catalogs)
-            {
+            foreach (var catalog in catalogs) {
                 Catalog catalogInserted = _context.CatalogCollection.Find(c => c.CatalogId == catalog.CatalogId).FirstOrDefault();
-                if (catalogInserted != null)
-                    result.Append(catalogInserted);
-                else
+                if (catalogInserted == null) {
                     return null;
+                }
+                result.Append(catalogInserted);
             }
             return result;
         }
@@ -67,9 +88,16 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure
             return result;
         }
 
-        public bool Remove(Guid catalogToRevId)
+        public bool Remove(Guid catalogToRevId, IClientSessionHandle sessionHandle = null)
         {
-            var result = _context.CatalogCollection.FindOneAndDelete(c => c.CatalogId == catalogToRevId);
+            bool sessionIsNull = sessionHandle == null;
+            if (!sessionIsNull && !sessionHandle.IsInTransaction)
+                throw new InvalidOperationException("used not correctly");
+
+            var result = sessionIsNull ? _context.CatalogCollection.FindOneAndDelete(
+                                                c => c.CatalogId == catalogToRevId) :
+                                         _context.CatalogCollection.FindOneAndDelete(session: sessionHandle, 
+                                                c => c.CatalogId == catalogToRevId);
             return result != null ? true : false;
 
             //var filter = Builders<Catalog>.Filter
@@ -78,19 +106,24 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure
             //if (result.DeletedCount == 0) { return false; }
             //else { return true; }
         }
-        public void SaveChanges()
+
+        public void SaveChanges(IClientSessionHandle sessionHandle = null)
         {
             throw new NotImplementedException();
         }
 
-        public bool Update(Catalog newCat)
+        public bool Update(Catalog newCat, IClientSessionHandle sessionHandle = null)
         {
+            bool sessionIsNull = sessionHandle == null;
+            if (!sessionIsNull && !sessionHandle.IsInTransaction)
+                throw new InvalidOperationException("used not correctly");
+
             var filter = Builders<Catalog>.Filter.Eq(oldCat => oldCat.CatalogId, newCat.CatalogId);
             //var update = Builders<Catalog>.Update.Set(oldCat => oldCat, newCat); just for update one, set field by field
 
-            var updateResult = _context.CatalogCollection.ReplaceOne(filter, newCat);
-            if (updateResult.ModifiedCount > 0)
-            {
+            var updateResult = sessionIsNull ? _context.CatalogCollection.ReplaceOne(filter, newCat) :
+                                                _context.CatalogCollection.ReplaceOne(session: sessionHandle, filter, newCat);
+            if (updateResult.ModifiedCount > 0) {
                 return true;
             }
             else { return false; }

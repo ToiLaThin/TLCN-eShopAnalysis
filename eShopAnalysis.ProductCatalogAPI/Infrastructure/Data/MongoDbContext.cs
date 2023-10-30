@@ -13,13 +13,13 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure.Data
     public class MongoDbContext
     {
         private readonly IMongoDatabase _db = null;
+        private readonly IMongoClient _mongoClient;
         public MongoDbContext(IOptions<MongoDbSettings> settings)
         {
-            var mongoClient = new MongoClient(settings.Value.ConnectionString);
-            if (mongoClient is not null)
+            _mongoClient = new MongoClient(settings.Value.ConnectionString);
+            if (_mongoClient is not null)
             {
-                _db = mongoClient.GetDatabase(settings.Value.DatabaseName);
-
+                _db = _mongoClient.GetDatabase(settings.Value.DatabaseName);
                 //learn later
                 //var indexKeysDefinition = Builders<Product>.IndexKeys.Combine(
                 //        Builders<Product>.IndexKeys.Ascending(p => p.ProductId),
@@ -29,6 +29,11 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure.Data
                 //var productCollectionIndexModel = new CreateIndexModel<Product>(indexKeysDefinition);
                 //_db.GetCollection<Product>("ProductCollection").Indexes.CreateOne(productCollectionIndexModel);
             }
+        }
+        public IClientSessionHandle GetClientSession()
+        {
+            var clientSession = _mongoClient.StartSession();
+            return clientSession;
         }
 
         public IMongoCollection<Catalog> CatalogCollection

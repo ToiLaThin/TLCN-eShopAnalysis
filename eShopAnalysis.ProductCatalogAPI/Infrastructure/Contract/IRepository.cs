@@ -1,10 +1,11 @@
-﻿using System.Linq.Expressions;
+﻿using MongoDB.Driver;
+using System.Linq.Expressions;
 
 namespace eShopAnalysis.ProductCatalogAPI.Infrastructure
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        
-        void SaveChanges();
+
+        void SaveChanges(IClientSessionHandle sessionHandle = null);
     }
 }
