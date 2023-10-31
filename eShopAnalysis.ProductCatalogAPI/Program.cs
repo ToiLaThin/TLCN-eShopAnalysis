@@ -1,3 +1,6 @@
+﻿using App.Metrics;
+using App.Metrics.Counter;
+using App.Metrics.Registry;
 using AutoMapper;
 using eShopAnalysis.EventBus.Abstraction;
 using eShopAnalysis.EventBus.Extension;
@@ -15,22 +18,24 @@ using eShopAnalysis.ProductCatalogAPI.Utilities;
 using eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Reflection;
-
 var builder = WebApplication.CreateBuilder(args);
 //this will config all required by event bus, review appsettings.json EventBus section and EventBus Connection string
 //new just subscribe integration event and integration event handler
 builder.Services.AddEventBus(builder.Configuration);
 //builder.Services.AddTransient<IIntegrationEventHandler<GracePeriodConfirmedIntegrationEvent>, GracePeriodConfirmedIntegrationEventHandler>();
-
+builder.Host.UseSerilog((context, config) => {
+    config.ReadFrom.Configuration(context.Configuration);
+});
 // Add services to the container.
 builder.Services.AddControllers();
 //config http logging for logging request
-builder.Services.AddHttpLogging(configLog =>
-{
-    //configLog.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponseBody;
-    configLog.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
-});
+//builder.Services.AddHttpLogging(configLog =>
+//{
+//    //configLog.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponseBody;
+//    configLog.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
+//});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection(nameof(MongoDbSettings)));
@@ -93,18 +98,46 @@ builder.Services.AddAuthorization(authOption =>
     });
 });
 
+var metricsBuilder = new MetricsBuilder();
+metricsBuilder.Configuration.Configure(b =>
+{
+    b.DefaultContextLabel = "ProductCatalog";
+    b.Enabled = true;
+    b.ReportingEnabled = true;
+});
+var metrics = metricsBuilder.Build();
+metrics.Measure.Counter.Increment(MetricsRegistry.SampleCounter);
+metrics.Measure.Gauge.SetValue(MetricsRegistry.Errors, 1);
+metrics.Measure.Histogram.Update(MetricsRegistry.SampleHistogram, 1);
+metrics.Measure.Meter.Mark(MetricsRegistry.SampleMeter, 1);
+using (metrics.Measure.Timer.Time(MetricsRegistry.SampleTimer)){
+    // Do something
+}
+using (metrics.Measure.Apdex.Track(MetricsRegistry.SampleApdex)) {
+    // Do something
+}
+
+builder.Services.AddMetrics(metrics);
+builder.Services.AddMetricsEndpoints(setUp =>
+{
+    setUp.MetricsEndpointEnabled = true; 
+    setUp.MetricsTextEndpointEnabled = true;
+    setUp.EnvironmentInfoEndpointEnabled = true;
+    //can navigate to localhost/7003/metrics or /metrics-text and see metrics registered☻
+});
+
 var app = builder.Build();
 var eventBus = app.Services.GetRequiredService<IEventBus>();
 //eventBus.Subscribe<UserCheckoutAcceptedIntegrationEvent, IIntegrationEventHandler<UserCheckoutAcceptedIntegrationEvent>>();
-app.UseHttpLogging(); //middleware for logging request and resp https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-logging/?view=aspnetcore-7.0
-
+//app.UseHttpLogging(); //middleware for logging request and resp https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-logging/?view=aspnetcore-7.0
+app.UseSerilogRequestLogging(); //override httplogging middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-//app.UseHttpsRedirection();
+app.UseMetricsAllEndpoints();
+app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
