@@ -33,36 +33,36 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         //not use as attribute but to get the service from DI container
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         //FOR TESTING STRUCTURE LOGGING USING ACITON FILTER
-        //public ServiceResponseDto<string> GetAll()
-        //{
-        //    var result = _service.GetAll();
-        //    //IEnumerable<CatalogDto> resultDto = _mapper.Map<IEnumerable<CatalogDto>>(result);
-        //    //if (resultDto != null)
-        //    //{
-        //    //    return resultDto;
-
-        //    //}
-        //    //return new List<CatalogDto> { };
-        //    if (result.IsSuccess)
-        //    {
-        //        IEnumerable<CatalogDto> resultDto = _mapper.Map <IEnumerable<CatalogDto>>(result.Data);
-        //        string jsonResult = JsonConvert.SerializeObject(resultDto);
-        //        return ServiceResponseDto<string>.Success(jsonResult);
-        //    }
-        //    else 
-        //        return ServiceResponseDto<string>.Failure("No catalog");
-        //}
-        public IEnumerable<CatalogDto> GetAll()
+        public ServiceResponseDto<string> GetAll()
         {
             var result = _service.GetAll();
+            //IEnumerable<CatalogDto> resultDto = _mapper.Map<IEnumerable<CatalogDto>>(result);
+            //if (resultDto != null)
+            //{
+            //    return resultDto;
+
+            //}
+            //return new List<CatalogDto> { };
             if (result.IsSuccess)
             {
                 IEnumerable<CatalogDto> resultDto = _mapper.Map<IEnumerable<CatalogDto>>(result.Data);
-                return resultDto;
+                string jsonResult = JsonConvert.SerializeObject(resultDto);
+                return ServiceResponseDto<string>.Success(jsonResult);
             }
             else
-                return null;
+                return ServiceResponseDto<string>.Failure("No catalog");
         }
+        //public IEnumerable<CatalogDto> GetAll()
+        //{
+        //    var result = _service.GetAll();
+        //    if (result.IsSuccess)
+        //    {
+        //        IEnumerable<CatalogDto> resultDto = _mapper.Map<IEnumerable<CatalogDto>>(result.Data);
+        //        return resultDto;
+        //    }
+        //    else
+        //        return null;
+        //}
 
 
         [HttpGet("GetOneCatalog")]
