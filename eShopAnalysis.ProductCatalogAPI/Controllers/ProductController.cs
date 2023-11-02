@@ -6,6 +6,7 @@ using eShopAnalysis.ProductCatalogAPI.Application.Result;
 using eShopAnalysis.ProductCatalogAPI.Application.Services;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
+using eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
