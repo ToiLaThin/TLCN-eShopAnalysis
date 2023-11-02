@@ -28,52 +28,78 @@ namespace eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors
             var actionDescriptor = context.ActionDescriptor;
             var actionName = actionDescriptor.DisplayName;
             var actionRoute = actionDescriptor.AttributeRouteInfo.Template;
-            var responseDtoTryCast  = (context.Result as ObjectResult).Value as ServiceResponseDto<string>; //unboxing but with check https://stackoverflow.com/a/13405826
+            var responseDtoTryCast  = (context.Result as ObjectResult).Value as BackChannelResponseDto<string>; //unboxing but with check https://stackoverflow.com/a/13405826
             if (responseDtoTryCast != null) //can be cast to ResponseDto
             {
             
 
-                if (responseDtoTryCast.IsFailed)
-                {
+                if (responseDtoTryCast.IsFailed) {
                     _logger.LogError(
-                        "Request {@ControllerName} \nAt action {@ActionName} \nAt route {@RouteName} \nError: {@Error} \nAt {@DateTime}",
+                        "Request {@ControllerName} " +
+                        "\nAt action {@ActionName} " +
+                        "\nAt route {@RouteName} " +
+                        "\nError: {@Error} " +
+                        "\nAt {@DateTime}",
                         controllerName,
                         actionName,
                         actionRoute,
                         responseDtoTryCast.Error,
                         DateTime.UtcNow
                     );
+                    return;
                 }
-                if (responseDtoTryCast.IsException)
-                {
+                if (responseDtoTryCast.IsException) {
                     _logger.LogCritical(
-                        "Request {@ControllerName} \nAt action {@ActionName} \nAt route {@RouteName} \nException: {@ExceptionError} \nAt {@DateTime}",
+                        "Request {@ControllerName} " +
+                        "\nAt action {@ActionName} " +
+                        "\nAt route {@RouteName} " +
+                        "\nException: {@ExceptionError} " +
+                        "\nAt {@DateTime}",
                         controllerName,
                         actionName,
                         actionRoute,
                         responseDtoTryCast.Error,
                         DateTime.UtcNow
                     );
+                    return;
                 }
 
                 _logger.LogInformation(
-                    "Completed controller {@ControllerName} \nAt action {@ActionName} \nAt route {@RouteName} \nAt {@DateTime}",
+                    "Completed controller {@ControllerName} " +
+                    "\nAt action {@ActionName} " +
+                    "\nAt route {@RouteName} " +
+                    "\nAt {@DateTime}",
                     controllerName,
                     actionName,
                     actionRoute,
                     DateTime.UtcNow
                     );
+                return;
             }
-            else
-            {
+            if ((context.Result as ObjectResult).Value != null) {
                 _logger.LogInformation(
-                    "Done controller {@ControllerName} \nAt action {@ActionName} \nAt route {@RouteName} \nAt {@DateTime} without knowing successful or not",
+                    "Done controller {@ControllerName} " +
+                    "\nAt action {@ActionName} " +
+                    "\nAt route {@RouteName} " +
+                    "\nAt {@DateTime} without knowing successful or not",
                     controllerName,
                     actionName,
                     actionRoute,
                     DateTime.UtcNow
                     );
+                return;
             }
+            _logger.LogError(
+                        "Request {@ControllerName} " +
+                        "\nAt action {@ActionName} " +
+                        "\nAt route {@RouteName} " +
+                        "\nError: Please debug to know " +
+                        "\nAt {@DateTime}",
+                        controllerName,
+                        actionName,
+                        actionRoute,
+                        DateTime.UtcNow
+                    );
             //todo check context.Result with different type to find a way to know if this have error or not for structure loggin
         }
 
@@ -85,8 +111,14 @@ namespace eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors
             var actionName = actionDescriptor.DisplayName;
             var actionRoute = actionDescriptor.AttributeRouteInfo.Template;
             _logger.LogInformation(
-                "Handling request from controller {@ControllerName} \nAt action {@ActionName} \nAt route {@RouteName} \nAt {@DateTime}",
-                controllerName, actionName, actionRoute,DateTime.UtcNow
+                "Handling request from controller {@ControllerName} " +
+                "\nAt action {@ActionName} " +
+                "\nAt route {@RouteName} " +
+                "\nAt {@DateTime}",
+                controllerName, 
+                actionName, 
+                actionRoute,
+                DateTime.UtcNow
                 );
         }
     }

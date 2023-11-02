@@ -98,7 +98,10 @@ builder.Services.AddAuthorization(authOption =>
     });
 });
 
-var metricsBuilder = new MetricsBuilder();
+var metricsBuilder = new MetricsBuilder().Report
+                                         .ToInfluxDb("http://localhost:8086", "HealthCheckDb")
+                                         .OutputMetrics
+                                         .AsPrometheusPlainText();
 metricsBuilder.Configuration.Configure(b =>
 {
     b.DefaultContextLabel = "ProductCatalog";
@@ -118,6 +121,7 @@ using (metrics.Measure.Apdex.Track(MetricsRegistry.SampleApdex)) {
 }
 
 builder.Services.AddMetrics(metrics);
+builder.Services.AddMetricsTrackingMiddleware();
 builder.Services.AddMetricsEndpoints(setUp =>
 {
     setUp.MetricsEndpointEnabled = true; 
@@ -136,6 +140,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMetricsAllMiddleware();
 app.UseMetricsAllEndpoints();
 app.UseHttpsRedirection();
 app.UseAuthorization();
