@@ -1,4 +1,4 @@
-﻿namespace eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.FactoryMethod
+﻿namespace eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.Factory
 {
     public interface IDomainEventFactory
     {

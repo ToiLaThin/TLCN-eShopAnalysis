@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using eShopAnalysis.ProductCatalogAPI.Application.Dto;
-using eShopAnalysis.ProductCatalogAPI.Application.Result;
 using eShopAnalysis.ProductCatalogAPI.Application.Services;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Infrastructure.Data;
@@ -13,6 +12,7 @@ using MongoDB.Driver;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors;
+using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
 
 namespace eShopAnalysis.ProductCatalogAPI.Controllers
 {
@@ -30,145 +30,149 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
 
         #region Catalog Api
         [HttpGet("GetAllCatalog")]
-        //not use as attribute but to get the service from DI container
-        //[ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        //FOR TESTING STRUCTURE LOGGING USING ACITON FILTER
-        //public ServiceResponseDto<string> GetAll()
-        //{
-        //    var result = _service.GetAll();
-        //    //IEnumerable<CatalogDto> resultDto = _mapper.Map<IEnumerable<CatalogDto>>(result);
-        //    //if (resultDto != null)
-        //    //{
-        //    //    return resultDto;
-
-        //    //}
-        //    //return new List<CatalogDto> { };
-        //    if (result.IsSuccess)
-        //    {
-        //        IEnumerable<CatalogDto> resultDto = _mapper.Map<IEnumerable<CatalogDto>>(result.Data);
-        //        string jsonResult = JsonConvert.SerializeObject(resultDto);
-        //        return ServiceResponseDto<string>.Success(jsonResult);
-        //    }
-        //    else
-        //        return ServiceResponseDto<string>.Failure("No catalog");
-        //}
-        public IEnumerable<CatalogDto> GetAll()
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(IEnumerable<CatalogDto>), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<IEnumerable<CatalogDto>>> GetAll()
         {
-            var result = _service.GetAll();
-            if (result.IsSuccess)
-            {
-                IEnumerable<CatalogDto> resultDto = _mapper.Map<IEnumerable<CatalogDto>>(result.Data);
-                return resultDto;
+            var serviceResult = _service.GetAll();
+            var resultDto = _mapper.Map<IEnumerable<Catalog>, IEnumerable<CatalogDto>>(serviceResult.Data);
+            if (resultDto?.Count() > 0) {
+                return Ok(resultDto);
             }
-            else
-                return null;
+            return NotFound();
         }
 
 
         [HttpGet("GetOneCatalog")]
-        public CatalogDto GetOne([FromHeader] Guid catalogId)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(CatalogDto), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<CatalogDto>> GetOne([FromHeader] Guid catalogId)
         {
-            var result = _service.Get(catalogId);
-            CatalogDto resultDto = _mapper.Map<CatalogDto>(result);
-            if (resultDto != null)
-            {
-                return resultDto;
-
-            }
-            return null;
+            var serviceResult = _service.Get(catalogId);
+            ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
+                                         Ok(_mapper.Map<Catalog, CatalogDto>(serviceResult.Data)) :
+                                         NotFound(serviceResult.Error);
+            return actionResultDto;
         }
 
         [HttpPost("CreateCatalog")]
-        public CatalogDto CreateCatalog([FromBody] Catalog newCatalog)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(CatalogDto), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<CatalogDto>> CreateCatalog([FromBody] Catalog newCatalog)
         {
-            var result = _service.AddCatalog(newCatalog);
-            var resultDto = _mapper.Map<CatalogDto>(result);
-            if (resultDto != null)
-            {
-                return resultDto;
+            var serviceResult = _service.AddCatalog(newCatalog);
+            if (serviceResult.IsFailed || serviceResult.IsException) {
+                return NotFound(serviceResult.Error);
             }
-            return null;
+            var resultDto = _mapper.Map<CatalogDto>(serviceResult.Data);
+            return Ok(resultDto);
         }
 
         [HttpPut("UpdateCatalog")]
-        public CatalogDto UpdateCatalog([FromBody] Catalog updateCatalog)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(CatalogDto), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<CatalogDto>> UpdateCatalog([FromBody] Catalog updateCatalog)
         {
-            var result = _service.UpdateCatalog(updateCatalog);
-            var resultDto = _mapper.Map<CatalogDto>(result);
-            if (resultDto != null)
+            var serviceResult = _service.UpdateCatalog(updateCatalog);
+            if (serviceResult.IsFailed || serviceResult.IsException)
             {
-                return resultDto;
+                return NotFound(serviceResult.Error);
             }
-            return null;
+            var resultDto = _mapper.Map<CatalogDto>(serviceResult.Data);
+            return Ok(resultDto);
         }
 
         [HttpDelete("DeleteCatalog")]
-        public string DeleteCatalog([FromBody] Guid deleteCatalogId)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<string>> DeleteCatalog([FromBody] Guid deleteCatalogId)
         {
-            var result = _service.DeleteCatalog(deleteCatalogId);
-            if (result == true)
-            {
-                return "deleted";
+            var serviceResult = _service.DeleteCatalog(deleteCatalogId);
+            if (serviceResult == false) {
+                return NotFound("not deleted success");
             }
-            return "not deleted success";
+            return Ok("deleted");
         }
         #endregion
 
 
         #region SubCatalog Api
         [HttpGet("GetAllSubCatalogs")]
-        public IEnumerable<SubCatalogDto> GetAllSubCatalogs([FromHeader] Guid catalogId)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(IEnumerable<SubCatalogDto>), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<IEnumerable<SubCatalogDto>>> GetAllSubCatalogs([FromHeader] Guid catalogId)
         {
-            var result = _service.GetAllSubCatalogs(catalogId);
-            var resultDto = _mapper.Map<IEnumerable<SubCatalogDto>>(result);
-            if (resultDto is not null)
-            {
-                return resultDto;
+            var serviceResult = _service.GetAllSubCatalogs(catalogId);
+            if (serviceResult.IsException || serviceResult.IsFailed) {
+                return NotFound(serviceResult.Error);
             }
-            return null;
+            var resultDto = _mapper.Map<IEnumerable<SubCatalogDto>>(serviceResult.Data);
+            if (resultDto is null || resultDto.Count() == 0) {
+                return NoContent();
+            }
+            return Ok(resultDto);
         }
 
         [HttpGet("GetOneSubCatalog")]
-        public SubCatalogDto GetOneSubCatalog([FromHeader] Guid catalogId, [FromHeader] Guid subCatalogId)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(SubCatalogDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<SubCatalogDto>> GetOneSubCatalog([FromHeader] Guid catalogId, [FromHeader] Guid subCatalogId)
         {
-            var result = _service.GetSubCatalog(catalogId, subCatalogId);
-            var resultDto = _mapper.Map<SubCatalogDto>(result);
-            if (resultDto is not null)
-            {
-                return resultDto;
+            var serviceResult = _service.GetSubCatalog(catalogId, subCatalogId);
+            if (serviceResult.IsFailed || serviceResult.IsException) {
+                return NotFound(serviceResult.Error);
             }
-            return null;
+            var resultDto = _mapper.Map<SubCatalogDto>(serviceResult.Data);
+            return Ok(resultDto);
         }
 
         [HttpPost("CreateSubCatalog")]
-        public bool CreateSubCatalog([FromBody] SubCatalog newSubCatalog, [FromHeader] Guid catalogId)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<string>> CreateSubCatalog([FromBody] SubCatalog newSubCatalog, [FromHeader] Guid catalogId)
         {
-            var result = _service.AddNewSubCatalog(catalogId, newSubCatalog);
-            return result;
+            var serviceResult = _service.AddNewSubCatalog(catalogId, newSubCatalog);
+            if (serviceResult == false) {
+                return NotFound("cannot add subcatalog");
+            }
+            return Ok("catalog added");
         }
 
         [HttpDelete("DeleteSubCatalog")]
-        public SubCatalogDto DeleteSubCatalog([FromHeader] Guid catalogId, [FromHeader] Guid subCatalogId)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(SubCatalogDto), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<SubCatalogDto>> DeleteSubCatalog([FromHeader] Guid catalogId, [FromHeader] Guid subCatalogId)
         {
-            var result = _service.DeleteSubCatalog(catalogId, subCatalogId);
-            var resultDto = _mapper.Map<SubCatalogDto>(result);
-            if (resultDto != null)
-            {
-                return resultDto;
+            var serviceResult = _service.DeleteSubCatalog(catalogId, subCatalogId);
+            if (serviceResult.IsFailed) {
+                return NotFound(serviceResult.Error);
             }
-            return null;
+            var resultDto = _mapper.Map<SubCatalogDto>(serviceResult.Data);
+            return Ok(resultDto);
         }
 
         [HttpPost("UpdateSubCatalog")]
-        public SubCatalogDto UpdateSubCatalog([FromHeader] Guid catalogId, [FromBody] SubCatalog newSubCatalog)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(SubCatalogDto), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<SubCatalogDto>> UpdateSubCatalog([FromHeader] Guid catalogId, [FromBody] SubCatalog newSubCatalog)
         {
-            var result = _service.UpdateSubCatalog(catalogId, newSubCatalog);
-            var resultDto = _mapper.Map<SubCatalogDto>(result);
-            if (resultDto != null)
+            var serviceResult = _service.UpdateSubCatalog(catalogId, newSubCatalog);
+            if (serviceResult.IsFailed)
             {
-                return resultDto;
+                return NotFound(serviceResult.Error);
             }
-            return null;
+            var resultDto = _mapper.Map<SubCatalogDto>(serviceResult.Data);
+            return Ok(resultDto);
         }
         #endregion
 

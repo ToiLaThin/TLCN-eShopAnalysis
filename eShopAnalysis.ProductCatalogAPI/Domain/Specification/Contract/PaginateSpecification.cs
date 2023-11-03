@@ -6,7 +6,8 @@
         private readonly int _page;
         private readonly int _pageSize;
 
-        public PaginateSpecification(int page, int pageSize) {
+        public PaginateSpecification(int page, int pageSize)
+        {
             if (page <= 0) { throw new ArgumentOutOfRangeException("page is invalid"); }
             if (page <= 0) { throw new ArgumentOutOfRangeException("pageSize is invalid"); }
             _page = page;

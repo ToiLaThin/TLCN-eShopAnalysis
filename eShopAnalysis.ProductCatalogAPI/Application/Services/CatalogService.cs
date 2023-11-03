@@ -9,19 +9,19 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
 
     public interface ICatalogService
     {
-        Catalog Get(Guid catalogGuid);
+        ServiceResponseDto<Catalog> Get(Guid catalogGuid);
         ServiceResponseDto<IEnumerable<Catalog>> GetAll();
-        Catalog AddCatalog(Catalog catalog);
+        ServiceResponseDto<Catalog> AddCatalog(Catalog catalog);
         bool DeleteCatalog(Guid catalogId);
-        Catalog UpdateCatalog(Catalog catalog); //for testing only
-        Catalog UpdateCatalogInfo(Catalog catalog);//only modify name and info
+        ServiceResponseDto<Catalog> UpdateCatalog(Catalog catalog); //for testing only
+        ServiceResponseDto<Catalog> UpdateCatalogInfo(Catalog catalog);//only modify name and info
 
         //SubCatalog manipulate from catalog
-        SubCatalog GetSubCatalog(Guid catalogId, Guid subCatalogId);
-        IEnumerable<SubCatalog> GetAllSubCatalogs(Guid catalogId);
+        ServiceResponseDto<SubCatalog> GetSubCatalog(Guid catalogId, Guid subCatalogId);
+        ServiceResponseDto<IEnumerable<SubCatalog>> GetAllSubCatalogs(Guid catalogId);
         bool AddNewSubCatalog(Guid catalogId, SubCatalog subCatalog);
-        SubCatalog UpdateSubCatalog(Guid catalogId, SubCatalog subCatalog );
-        SubCatalog DeleteSubCatalog(Guid catalogId,Guid subCatalogId);
+        ServiceResponseDto<SubCatalog> UpdateSubCatalog(Guid catalogId, SubCatalog subCatalog );
+        ServiceResponseDto<SubCatalog> DeleteSubCatalog(Guid catalogId,Guid subCatalogId);
     }
 
     public class CatalogService : ICatalogService
@@ -38,28 +38,32 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             return ServiceResponseDto<IEnumerable<Catalog>>.Success(result);
         }
 
-        public Catalog Get(Guid catalogGuid)
+        public ServiceResponseDto<Catalog> Get(Guid catalogGuid)
         {
             var result = _unitOfWork.CatalogRepository.Get(catalogGuid);
-            return result;
+            if (result == null)
+            {
+                return ServiceResponseDto<Catalog>.Failure("cannot find catalog");
+            }
+            return ServiceResponseDto<Catalog>.Success(result);
         }
 
-        public Catalog AddCatalog(Catalog catalog)
+        public ServiceResponseDto<Catalog> AddCatalog(Catalog catalog)
         {
             var result = _unitOfWork.CatalogRepository.Add(catalog);
-            return result;
+            return ServiceResponseDto<Catalog>.Success(result);
         }
 
-        public Catalog UpdateCatalog(Catalog catalog)
+        public ServiceResponseDto<Catalog> UpdateCatalog(Catalog catalog)
         {
             bool success = _unitOfWork.CatalogRepository.Update(catalog);
             if (success == true) {
                 return Get(catalog.CatalogId);
             }
-            return null;
+            return ServiceResponseDto<Catalog>.Failure("Update catalog failed");
         }
 
-        public Catalog UpdateCatalogInfo(Catalog catalog)
+        public ServiceResponseDto<Catalog> UpdateCatalogInfo(Catalog catalog)
         {
             throw new NotImplementedException();
         }
@@ -73,26 +77,26 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             return false;
         }
 
-        public SubCatalog GetSubCatalog(Guid catalogId, Guid subCatalogId)
+        public ServiceResponseDto<SubCatalog> GetSubCatalog(Guid catalogId, Guid subCatalogId)
         {
             Catalog catalogToGet = _unitOfWork.CatalogRepository.Find(c => c.CatalogId == catalogId).First();
             if (catalogToGet is null) {
-                return null;
+                return ServiceResponseDto<SubCatalog>.Failure("cannot find catalog to update subcatalog");
             }
             SubCatalog subCatalog = catalogToGet.SubCatalogs.Where(sc => sc.SubCatalogId == subCatalogId).FirstOrDefault();
-            if (subCatalog is null) { 
-                return null;
+            if (subCatalog is null) {
+                return ServiceResponseDto<SubCatalog>.Failure("cannot find subcatalog to update");
             }
-            return subCatalog;
+            return ServiceResponseDto<SubCatalog>.Success(subCatalog);
         }
 
-        public IEnumerable<SubCatalog> GetAllSubCatalogs(Guid catalogId)
+        public ServiceResponseDto<IEnumerable<SubCatalog>> GetAllSubCatalogs(Guid catalogId)
         {
             Catalog catalogToGet = _unitOfWork.CatalogRepository.Find(c => c.CatalogId == catalogId).First();
             if (catalogToGet is null) {
-                return null;
+                return ServiceResponseDto<IEnumerable<SubCatalog>>.Failure("cannot find catalog to get all subcatalog");
             }
-            return catalogToGet.SubCatalogs;
+            return ServiceResponseDto<IEnumerable<SubCatalog>>.Success(catalogToGet.SubCatalogs);
         }
 
         public bool AddNewSubCatalog(Guid catalogId, SubCatalog subCatalog)
@@ -107,38 +111,41 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             return result;
         }
         
-        public SubCatalog UpdateSubCatalog(Guid catalogId, SubCatalog subCatalog)
+        public ServiceResponseDto<SubCatalog> UpdateSubCatalog(Guid catalogId, SubCatalog subCatalog)
         {
             //check if catalog exist: now how to remove this duplication
             var catalogToAddSubTo = _unitOfWork.CatalogRepository.Get(catalogId);
             if (catalogToAddSubTo == null) {
-                return null;
+                return ServiceResponseDto<SubCatalog>.Failure("cannot find catalog to update subcatalog");
             }
-            else {
-                SubCatalog updateSubCatalog = catalogToAddSubTo.UpdateExistingSubCatalog(subCatalog); //the domain driven design help simplify the logic here, we do not have to find then check then remove then update
-                if (updateSubCatalog != null) {
-                    var result = _unitOfWork.CatalogRepository.Update(catalogToAddSubTo);
-                    if (result == true) {
-                        return updateSubCatalog;
-                    }
-                }
-                return null;
+            SubCatalog updateSubCatalog = catalogToAddSubTo.UpdateExistingSubCatalog(subCatalog); //the domain driven design help simplify the logic here, we do not have to find then check then remove then update
+            if (updateSubCatalog == null) {
+                return ServiceResponseDto<SubCatalog>.Failure("cannot find subcatalog to update");
             }
+            var result = _unitOfWork.CatalogRepository.Update(catalogToAddSubTo);
+            if (result == false) {
+                return ServiceResponseDto<SubCatalog>.Failure("cannot update subcatalog");
+            }
+            return ServiceResponseDto<SubCatalog>.Success(updateSubCatalog);
         }
 
-        public SubCatalog DeleteSubCatalog(Guid catalogId, Guid subCatalogId)
+        public ServiceResponseDto<SubCatalog> DeleteSubCatalog(Guid catalogId, Guid subCatalogId)
         {
             //check if catalog exist: now how to remove this duplication
             var catalogToAddSubTo = _unitOfWork.CatalogRepository.Get(catalogId);
             if (catalogToAddSubTo == null) {
-                return null;
+                return ServiceResponseDto<SubCatalog>.Failure("cannot find catalog to delete subcatalog");
             }
             SubCatalog deleteCatalog = catalogToAddSubTo.RemoveExistingSubCatalog(subCatalogId);
-            if (deleteCatalog is null) { return null; }
+            if (deleteCatalog is null) { 
+                return ServiceResponseDto<SubCatalog>.Failure("cannot remove subcatalog from catalog in model"); 
+            }
 
             var result = _unitOfWork.CatalogRepository.Update(catalogToAddSubTo);
-            if (result == false) { return null; }
-            return deleteCatalog;
+            if (result == false) {
+                return ServiceResponseDto<SubCatalog>.Failure("cannot remove subcatalog from catalog");
+            }
+            return ServiceResponseDto<SubCatalog>.Success(deleteCatalog);
 
         }
     }

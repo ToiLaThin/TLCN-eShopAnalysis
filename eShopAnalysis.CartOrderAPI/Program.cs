@@ -34,7 +34,8 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 builder.Services.Configure<BackChannelCommunication>(builder.Configuration.GetSection(nameof(BackChannelCommunication)));
 builder.Services.AddHttpClient(); //resolve IHttpClientFactory
-builder.Services.AddScoped<IBackChannelBaseService<RetrieveCouponWithCodeRequestDto, CouponDto>, BackChannelBaseService<RetrieveCouponWithCodeRequestDto, CouponDto>>();
+//builder.Services.AddScoped<IBackChannelBaseService<RetrieveCouponWithCodeRequestDto, CouponDto>, BackChannelBaseService<RetrieveCouponWithCodeRequestDto, CouponDto>>();
+builder.Services.AddScoped(typeof(IBackChannelBaseService<,>), typeof(BackChannelBaseService<,>));
 builder.Services.AddScoped<IBackChannelCouponSaleItemService, BackChannelCouponSaleItemService>();
 
 //config dapper

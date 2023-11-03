@@ -1,18 +1,18 @@
-﻿
-namespace eShopAnalysis.ProductCatalogAPI.Domain.Specification
+﻿namespace eShopAnalysis.ProductCatalogAPI.Domain.Specification
 {
     public static class SpecificationEvaluator<T>
     {
         public static IQueryable<T> GetQuery(
-            IQueryable<T> query, 
+            IQueryable<T> query,
             IFilterSpecification<T>? filterSpec = null,
-            BaseOrderSpecification<T>? orderSpec = null, 
+            BaseOrderSpecification<T>? orderSpec = null,
             PaginateSpecification? paginateSpec = null
             )
         {
             // Modify the IQueryable
             // Apply filter conditions
-            if (filterSpec.Criteria != null) {
+            if (filterSpec.Criteria != null)
+            {
                 query = query.Where(filterSpec.Criteria);
             }
 
@@ -21,12 +21,14 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Specification
             //            .Aggregate(query, (current, include) => current.Include(include));
 
             // Apply ordering
-            if (orderSpec != null) {
-                query = orderSpec.OrderType == OrderType.Ascending ? query.OrderBy(orderSpec.OrderBy) 
+            if (orderSpec != null)
+            {
+                query = orderSpec.OrderType == OrderType.Ascending ? query.OrderBy(orderSpec.OrderBy)
                                                                     : query.OrderByDescending(orderSpec.OrderBy);
             }
 
-            if (paginateSpec != null) {
+            if (paginateSpec != null)
+            {
                 int skip = paginateSpec.PageSize * (paginateSpec.Page - 1);
                 query = query.Skip(skip).Take(paginateSpec.PageSize);
             }

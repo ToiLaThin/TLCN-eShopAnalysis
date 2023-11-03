@@ -1,11 +1,11 @@
-﻿using eShopAnalysis.ProductCatalogAPI.Application.Result;
+﻿using eShopAnalysis.StockInventoryAPI.Utilities.Result;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using System.Reflection;
 
-namespace eShopAnalysis.ProductCatalogAPI.Utilities.Behaviors
+namespace eShopAnalysis.StockInventoryAPI.Utilities.Behaviors
 {
     //Ipipeline behavior & mediatR is another option
     //this is an IActionFilter(not have attribute) so it will executed before and after the action

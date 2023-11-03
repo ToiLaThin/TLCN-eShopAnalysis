@@ -1,5 +1,6 @@
 ﻿using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
+using eShopAnalysis.ProductCatalogAPI.Domain.Specification;
 using System.Linq.Expressions;
 
 namespace eShopAnalysis.ProductCatalogAPI.Domain.Specification
