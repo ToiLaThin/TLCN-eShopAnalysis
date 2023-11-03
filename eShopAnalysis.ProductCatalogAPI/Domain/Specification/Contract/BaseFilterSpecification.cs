@@ -4,7 +4,7 @@ using ZstdSharp.Unsafe;
 
 namespace eShopAnalysis.ProductCatalogAPI.Domain.Specification
 {
-    public class ParameterReplacer: ExpressionVisitor
+    public class ParameterReplacer : ExpressionVisitor
     {
         private readonly ParameterExpression _parameter;
         internal ParameterReplacer(ParameterExpression parameter)
@@ -17,20 +17,23 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Specification
         }
     }
 
-    public class AndFilterSpecification<T>: BaseFilterSpecification<T>
+    public class AndFilterSpecification<T> : BaseFilterSpecification<T>
     {
         private readonly IFilterSpecification<T> _left;
 
         private readonly IFilterSpecification<T> _right;
 
-        public AndFilterSpecification(IFilterSpecification<T> left, IFilterSpecification<T> right): base() {
+        public AndFilterSpecification(IFilterSpecification<T> left, IFilterSpecification<T> right) : base()
+        {
             _left = left;
             _right = right;
         }
 
-        public override Expression<Func<T, bool>> Criteria {
-            get {
-                var leftCriteria= _left.Criteria;
+        public override Expression<Func<T, bool>> Criteria
+        {
+            get
+            {
+                var leftCriteria = _left.Criteria;
                 var rightCriteria = _right.Criteria;
 
                 var paramExpr = Expression.Parameter(typeof(T));
@@ -49,7 +52,8 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Specification
         public virtual Expression<Func<T, bool>> Criteria { get; }
 
         protected BaseFilterSpecification() { }
-        public BaseFilterSpecification(Expression<Func<T, bool>> filter) {
+        public BaseFilterSpecification(Expression<Func<T, bool>> filter)
+        {
             Criteria = filter;
         }
 

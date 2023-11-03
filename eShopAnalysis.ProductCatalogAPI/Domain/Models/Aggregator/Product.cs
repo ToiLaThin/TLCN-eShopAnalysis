@@ -4,12 +4,13 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.Mediator;
 using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.Prototype;
-using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.FactoryMethod;
+using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.Factory;
 using eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto;
 
 namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
 {
     using eShopAnalysis.ProductCatalogAPI.Domain.Models;
+    using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.Factory;
     using static eShopAnalysis.ProductCatalogAPI.Domain.Models.ProductModel;
 
     [BsonIgnoreExtraElements]

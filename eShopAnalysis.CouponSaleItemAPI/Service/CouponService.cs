@@ -17,32 +17,24 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
         {
             var transaction = await _uOW.BeginTransactionAsync();
             var result = _uOW.CouponRepository.Add(coupon);
-            if (result == null)
-            {
+            if (result == null) {
                 await transaction.RollbackAsync();
                 return ServiceResponseDto<Coupon>.Failure("cannot add coupon, rolled back the transaction");
             }
-            else
-            {
-                await transaction.CommitAsync(); //because return no value
-                return ServiceResponseDto<Coupon>.Success(result);
-            }
+            await transaction.CommitAsync(); //because return no value
+            return ServiceResponseDto<Coupon>.Success(result);
         }
 
         public async Task<ServiceResponseDto<Coupon>> Delete(Guid coupon)
         {
             var transaction = await _uOW.BeginTransactionAsync();
             var result = _uOW.CouponRepository.Delete(coupon);
-            if (result == null)
-            {
+            if (result == null) {
                 await transaction.RollbackAsync();
                 return ServiceResponseDto<Coupon>.Failure("cannot delete coupon, rolled back the transaction");
             }
-            else
-            {
-                await transaction.CommitAsync();
-                return ServiceResponseDto<Coupon>.Success(result);
-            }
+            await transaction.CommitAsync();
+            return ServiceResponseDto<Coupon>.Success(result);
         }
 
         public ServiceResponseDto<IEnumerable<Coupon>> GetAll()
@@ -83,17 +75,13 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
             var transaction = await _uOW.BeginTransactionAsync();
             CouponUser couponUser = new CouponUser() { CouponId = couponId, UserId = userId };
             var result = _uOW.CouponUserRepository.Add(couponUser);
-            if (result == null)
-            {
+            if (result == null) {
                 await transaction.RollbackAsync();
                 return ServiceResponseDto<Coupon>.Failure("cannot add coupon user");
             }
-            else
-            {
-                await transaction.CommitAsync();
-                Coupon couponUsed = _uOW.CouponUserRepository.Get(couponId: couponId, userId: userId).CouponUsed; //this have couponUsed since we used include in the repo.Get()
-                return ServiceResponseDto<Coupon>.Success(couponUsed);
-            }
+            await transaction.CommitAsync();
+            Coupon couponUsed = _uOW.CouponUserRepository.Get(couponId: couponId, userId: userId).CouponUsed; //this have couponUsed since we used include in the repo.Get()
+            return ServiceResponseDto<Coupon>.Success(couponUsed);
         }
 
         public ServiceResponseDto<Coupon> RetrieveValidCouponWithCode(string couponCode)

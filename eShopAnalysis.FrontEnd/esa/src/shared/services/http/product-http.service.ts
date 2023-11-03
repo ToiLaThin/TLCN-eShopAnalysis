@@ -30,7 +30,13 @@ export class ProductHttpService implements OnInit {
   
   GetProducts() {
     this.getProducts().subscribe((products) => {
+      //if return 404, this will not be executed
+      console.log(products)
       this.allProductSubject.next(products);
+    }, 
+    error => {
+      // this will log the httpResponse error with status code 404
+      console.log(error)
     });
   }
   

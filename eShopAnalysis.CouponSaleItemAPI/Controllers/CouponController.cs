@@ -3,6 +3,7 @@ using eShopAnalysis.CouponSaleItemAPI.Application.BackchannelDto;
 using eShopAnalysis.CouponSaleItemAPI.Dto;
 using eShopAnalysis.CouponSaleItemAPI.Models;
 using eShopAnalysis.CouponSaleItemAPI.Service;
+using eShopAnalysis.CouponSaleItemAPI.Utilities.Behaviors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eShopAnalysis.CouponSaleItemAPI.Controllers
@@ -20,79 +21,92 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
         }
 
         [HttpGet("GetAllCoupons")]
-        public IEnumerable<CouponDto> GetAllCoupons() { 
-            var result = _couponService.GetAll();
-            if (result.IsFailed)
-            {
-                return null;
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IEnumerable<CouponDto>), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<IEnumerable<CouponDto>>> GetAllCoupons() { 
+            var serviceResult = _couponService.GetAll();
+            if (serviceResult.Data.Count() <= 0) {
+                return NotFound("none coupon exist");
             }
-            var resultDto = _mapper.Map<IEnumerable<CouponDto>>(result.Data);
-            return resultDto;
+            var resultDto = _mapper.Map<IEnumerable<CouponDto>>(serviceResult.Data);
+            return Ok(resultDto);
         }
 
         [HttpGet("GetAllCouponsUsedByUser")]
-        public IEnumerable<CouponDto> GetAllCouponsUsedByUser(Guid userId)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(IEnumerable<CouponDto>), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<IEnumerable<CouponDto>>> GetAllCouponsUsedByUser(Guid userId)
         {
-            var result = _couponService.GetCouponUsedByUser(userId);
-            if (result.IsFailed)
-            {
-                return null;
+            var serviceResult = _couponService.GetCouponUsedByUser(userId);
+            if (serviceResult.Data.Count() <= 0) {
+                return NoContent();
             }
-            var resultDto = _mapper.Map<IEnumerable<CouponDto>>(result.Data);
-            return resultDto;
+            var resultDto = _mapper.Map<IEnumerable<CouponDto>>(serviceResult.Data);
+            return Ok(resultDto);
         }
 
         [HttpGet("GetAllActiveCouponsNotUsedByUser")]
-        public IEnumerable<CouponDto> GetAllActiveCouponsNotUsedByUser([FromQuery] Guid userId)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(IEnumerable<CouponDto>), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<IEnumerable<CouponDto>>> GetAllActiveCouponsNotUsedByUser([FromQuery] Guid userId)
         {
-            var result = _couponService.GetActiveCouponsNotUsedByUser(userId);
-            if (result.IsFailed)
-            {
-                return null;
+            var serviceResult = _couponService.GetActiveCouponsNotUsedByUser(userId);
+            if (serviceResult.Data.Count() <= 0) {
+                return NoContent();
             }
-            var resultDto = _mapper.Map<IEnumerable<CouponDto>>(result.Data);
-            return resultDto;
+            var resultDto = _mapper.Map<IEnumerable<CouponDto>>(serviceResult.Data);
+            return Ok(resultDto);
         }
 
         [HttpPost("AddCoupon")]
-        public async Task<CouponDto> AddCoupon([FromBody] Coupon coupon)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(CouponDto), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<CouponDto>> AddCoupon([FromBody] Coupon coupon)
         {
-            var result = await _couponService.Add(coupon);
-            if (result.IsFailed)
-            {
-                return null;
+            var serviceResult = await _couponService.Add(coupon);
+            if (serviceResult.IsFailed) {
+                return NotFound(serviceResult.Error);
             }
-            var resultDto = _mapper.Map<CouponDto>(result.Data);
-            return resultDto;
+            var resultDto = _mapper.Map<CouponDto>(serviceResult.Data);
+            return Ok(resultDto);
         }
 
         [HttpPost("AddCouponUsedByUser")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(CouponDto), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         //thay vi return CouponUser hay CouponUserDto, ta return Coupon dc foreign toi
-        public async Task<CouponDto> AddCouponUsedByUser([FromQuery] Guid couponId, [FromQuery] Guid userId)
+        public async Task<ActionResult<CouponDto>> AddCouponUsedByUser([FromQuery] Guid couponId, [FromQuery] Guid userId)
         {
-            var result = await _couponService.MarkUserUsedCoupon(userId: userId, couponId: couponId);
-            if (result.IsFailed)
+            var serviceResult = await _couponService.MarkUserUsedCoupon(userId: userId, couponId: couponId);
+            if (serviceResult.IsFailed)
             {
-                return null;
+                return NotFound(serviceResult.Error);
             }
             //sẽ trả về null neu repo.Get ko co Include
-            var resultDto = _mapper.Map<CouponDto>(result.Data);
-            return resultDto;
+            var resultDto = _mapper.Map<CouponDto>(serviceResult.Data);
+            return Ok(resultDto);
         }
 
         [HttpGet("BackChannel/RetrieveCouponWithCode")]
+        //for swagger , this must be post not get request(cannot have body), but without swagger i think it's ok
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public BackChannelResponseDto<CouponDto> RetrieveCouponWithCode([FromBody] RetrieveCouponWithCodeRequestDto retrieveCouponWithCodeRequestDto)
         {
-            var result = _couponService.RetrieveValidCouponWithCode(retrieveCouponWithCodeRequestDto.CouponCode);
-            if (result.IsFailed)
+            var serviceResult = _couponService.RetrieveValidCouponWithCode(retrieveCouponWithCodeRequestDto.CouponCode);
+            if (serviceResult.IsFailed) 
             {
-                return BackChannelResponseDto<CouponDto>.Failure(result.Error);
+                return BackChannelResponseDto<CouponDto>.Failure(serviceResult.Error);
             }
-            else if (result.IsException)
+            else if (serviceResult.IsException)
             {
-                return BackChannelResponseDto<CouponDto>.Exception(result.Error);
+                return BackChannelResponseDto<CouponDto>.Exception(serviceResult.Error);
             }
-            var resultDto = _mapper.Map<CouponDto>(result.Data);
+            var resultDto = _mapper.Map<CouponDto>(serviceResult.Data);
             return BackChannelResponseDto<CouponDto>.Success(resultDto);
         }
 

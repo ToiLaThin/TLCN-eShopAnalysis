@@ -124,7 +124,6 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate
             //TODO change this to an reasonable condition, currently i am not very sure
             //if (this.OrdersStatus != OrderStatus.CustomerInfoConfirmed)
             //    return false;
-            this.DateCheckouted = DateTime.Now;
             this.OrdersStatus = OrderStatus.Checkouted;
             return true;
         }

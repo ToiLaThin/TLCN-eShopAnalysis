@@ -2,6 +2,7 @@
 using eShopAnalysis.CouponSaleItemAPI.Dto;
 using eShopAnalysis.CouponSaleItemAPI.Models;
 using eShopAnalysis.CouponSaleItemAPI.Service;
+using eShopAnalysis.CouponSaleItemAPI.Utilities.Behaviors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,27 +22,30 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
         }
 
         [HttpGet("GetAllSaleItems")]
-        public IEnumerable<SaleItemDto> GetAllSaleItems()
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IEnumerable<SaleItemDto>), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<IEnumerable<SaleItemDto>>> GetAllSaleItems()
         {
-            var result = _saleItemService.GetAll();
-            if (result.IsFailed)
-            {
-                return null;
+            var serviceResult = _saleItemService.GetAll();
+            if (serviceResult.Data.Count() <= 0) {
+                return NotFound(serviceResult.Error);
             }
-            var resultDto = _mapper.Map<IEnumerable<SaleItemDto>>(result.Data);
-            return resultDto;
+            var resultDto = _mapper.Map<IEnumerable<SaleItemDto>>(serviceResult.Data);
+            return Ok(resultDto);
         }
 
         [HttpPost("AddSaleItem")]
-        public async Task<SaleItemDto> AddSaleItem([FromBody] SaleItem saleItem)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(SaleItemDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<SaleItemDto>> AddSaleItem([FromBody] SaleItem saleItem)
         {
-            var result = await _saleItemService.Add(saleItem);
-            if (result.IsFailed)
-            {
-                return null;
+            var serviceResult = await _saleItemService.Add(saleItem);
+            if (serviceResult.IsFailed) {
+                return NotFound(serviceResult.Error);
             }
-            var resultDto = _mapper.Map<SaleItemDto>(result.Data);
-            return resultDto;
+            var resultDto = _mapper.Map<SaleItemDto>(serviceResult.Data);
+            return Ok(resultDto);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace eShopAnalysis.IdentityServer.Utilities
+﻿namespace eShopAnalysis.ProductCatalogAPI.Utilities
 {
     public static class RoleType
     {
