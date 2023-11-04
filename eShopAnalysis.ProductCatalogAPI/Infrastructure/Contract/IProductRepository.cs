@@ -17,7 +17,15 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure
 
         Product Get(Guid id);
 
-        IEnumerable<Product> GetAll();
+        Task AddAsync(Product product, IClientSessionHandle sessionHandle = null);
+
+        Task<bool> ReplaceAsync(Product product, IClientSessionHandle sessionHandle = null);
+
+        Task<bool> DeleteAsync(Product productDel, IClientSessionHandle sessionHandle = null);
+
+        Task<bool> SaveChangesAsync(Product product, IClientSessionHandle sessionHandle = null); //wrapper for mongo db replace
+
+        Task<Product> GetAsync(Guid id);
 
         IQueryable<Product> GetAllAsQueryable();
     }

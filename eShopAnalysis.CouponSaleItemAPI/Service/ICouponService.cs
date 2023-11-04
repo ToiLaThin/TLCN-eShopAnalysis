@@ -7,11 +7,11 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
     {
         Task<ServiceResponseDto<Coupon>> Add(Coupon coupon);
         Task<ServiceResponseDto<Coupon>> Delete(Guid coupon);
-        ServiceResponseDto<IEnumerable<Coupon>> GetAll();
-        ServiceResponseDto<Coupon> GetCoupon(Guid couponId);
-        ServiceResponseDto<IEnumerable<Coupon>> GetCouponUsedByUser(Guid userId);
-        ServiceResponseDto<IEnumerable<Coupon>> GetActiveCouponsNotUsedByUser(Guid userId);
+        Task<ServiceResponseDto<IEnumerable<Coupon>>> GetAll();
+        Task<ServiceResponseDto<Coupon>> GetCoupon(Guid couponId);
+        Task<ServiceResponseDto<IEnumerable<Coupon>>> GetCouponUsedByUser(Guid userId);
+        Task<ServiceResponseDto<IEnumerable<Coupon>>> GetActiveCouponsNotUsedByUser(Guid userId);
         Task<ServiceResponseDto<Coupon>> MarkUserUsedCoupon(Guid userId, Guid couponId);
-        ServiceResponseDto<Coupon> RetrieveValidCouponWithCode(string couponCode);
+        Task<ServiceResponseDto<Coupon>> RetrieveValidCouponWithCode(string couponCode);
     }
 }

@@ -32,7 +32,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Specification
 
     public interface IFilterSpecification<T>
     {
-        Expression<Func<T, bool>> Criteria { get; }
+        List<Expression<Func<T, bool>>> Criterias { get; }
 
         IFilterSpecification<T> And(IFilterSpecification<T> right);
 

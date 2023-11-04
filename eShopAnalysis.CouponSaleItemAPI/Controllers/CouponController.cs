@@ -25,7 +25,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
         [ProducesResponseType(typeof(IEnumerable<CouponDto>), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<IEnumerable<CouponDto>>> GetAllCoupons() { 
-            var serviceResult = _couponService.GetAll();
+            var serviceResult = await _couponService.GetAll();
             if (serviceResult.Data.Count() <= 0) {
                 return NotFound("none coupon exist");
             }
@@ -39,7 +39,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<IEnumerable<CouponDto>>> GetAllCouponsUsedByUser(Guid userId)
         {
-            var serviceResult = _couponService.GetCouponUsedByUser(userId);
+            var serviceResult = await _couponService.GetCouponUsedByUser(userId);
             if (serviceResult.Data.Count() <= 0) {
                 return NoContent();
             }
@@ -53,7 +53,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<IEnumerable<CouponDto>>> GetAllActiveCouponsNotUsedByUser([FromQuery] Guid userId)
         {
-            var serviceResult = _couponService.GetActiveCouponsNotUsedByUser(userId);
+            var serviceResult = await _couponService.GetActiveCouponsNotUsedByUser(userId);
             if (serviceResult.Data.Count() <= 0) {
                 return NoContent();
             }
@@ -95,9 +95,9 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
         [HttpGet("BackChannel/RetrieveCouponWithCode")]
         //for swagger , this must be post not get request(cannot have body), but without swagger i think it's ok
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public BackChannelResponseDto<CouponDto> RetrieveCouponWithCode([FromBody] RetrieveCouponWithCodeRequestDto retrieveCouponWithCodeRequestDto)
+        public async Task<BackChannelResponseDto<CouponDto>> RetrieveCouponWithCode([FromBody] RetrieveCouponWithCodeRequestDto retrieveCouponWithCodeRequestDto)
         {
-            var serviceResult = _couponService.RetrieveValidCouponWithCode(retrieveCouponWithCodeRequestDto.CouponCode);
+            var serviceResult = await _couponService.RetrieveValidCouponWithCode(retrieveCouponWithCodeRequestDto.CouponCode);
             if (serviceResult.IsFailed) 
             {
                 return BackChannelResponseDto<CouponDto>.Failure(serviceResult.Error);

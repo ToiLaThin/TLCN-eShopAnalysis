@@ -2,6 +2,7 @@
 using eShopAnalysis.CouponSaleItemAPI.Models;
 using eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService;
 using eShopAnalysis.CouponSaleItemAPI.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 
 namespace eShopAnalysis.CouponSaleItemAPI.Service
 {
@@ -19,7 +20,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
         public async Task<ServiceResponseDto<SaleItem>> Add(SaleItem saleItem)
         {
             var transaction = await _uOW.BeginTransactionAsync();
-            var result = _uOW.SaleItemRepository.Add(saleItem);
+            var result = await _uOW.SaleItemRepository.AddAsync(saleItem);
             if (result == null) {
                 await transaction.RollbackAsync();
                 return ServiceResponseDto<SaleItem>.Failure("cannot add the sale item, rolled back transaction");
@@ -38,7 +39,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
         public async Task<ServiceResponseDto<SaleItem>> Delete(Guid saleItem)
         {
             var transaction = await _uOW.BeginTransactionAsync();
-            var result = _uOW.SaleItemRepository.Delete(saleItem);
+            var result = await _uOW.SaleItemRepository.DeleteAsync(saleItem);
             if (result == null) {
                 await transaction.RollbackAsync();
                 return ServiceResponseDto<SaleItem>.Failure("cannot delete the sale item, rolled back transaction");
@@ -47,15 +48,17 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
             return ServiceResponseDto<SaleItem>.Success(result);
         }
 
-        public ServiceResponseDto<IEnumerable<SaleItem>> GetAll()
+        public async Task<ServiceResponseDto<IEnumerable<SaleItem>>> GetAll()
         {
-            var result = _uOW.SaleItemRepository.GetAll();
+            var result = await _uOW.SaleItemRepository.GetAsQueryable()
+                                                .AsNoTracking()
+                                                .ToListAsync();
             return ServiceResponseDto<IEnumerable<SaleItem>>.Success(result);
         }
 
-        public ServiceResponseDto<SaleItem> GetCoupon(Guid couponId)
+        public async Task<ServiceResponseDto<SaleItem>> GetCoupon(Guid couponId)
         {
-            var result = _uOW.SaleItemRepository.Get(couponId);
+            var result = await _uOW.SaleItemRepository.GetAsync(couponId);
             return ServiceResponseDto<SaleItem>.Success(result);
         }
     }

@@ -35,7 +35,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<IEnumerable<CatalogDto>>> GetAll()
         {
-            var serviceResult = _service.GetAll();
+            var serviceResult = await _service.GetAll();
             var resultDto = _mapper.Map<IEnumerable<Catalog>, IEnumerable<CatalogDto>>(serviceResult.Data);
             if (resultDto?.Count() > 0) {
                 return Ok(resultDto);
@@ -50,7 +50,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<CatalogDto>> GetOne([FromHeader] Guid catalogId)
         {
-            var serviceResult = _service.Get(catalogId);
+            var serviceResult = await _service.Get(catalogId);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
                                          Ok(_mapper.Map<Catalog, CatalogDto>(serviceResult.Data)) :
                                          NotFound(serviceResult.Error);
@@ -63,7 +63,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<CatalogDto>> CreateCatalog([FromBody] Catalog newCatalog)
         {
-            var serviceResult = _service.AddCatalog(newCatalog);
+            var serviceResult = await _service.AddCatalog(newCatalog);
             if (serviceResult.IsFailed || serviceResult.IsException) {
                 return NotFound(serviceResult.Error);
             }
@@ -77,7 +77,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<CatalogDto>> UpdateCatalog([FromBody] Catalog updateCatalog)
         {
-            var serviceResult = _service.UpdateCatalog(updateCatalog);
+            var serviceResult = await _service.UpdateCatalog(updateCatalog);
             if (serviceResult.IsFailed || serviceResult.IsException)
             {
                 return NotFound(serviceResult.Error);
@@ -92,7 +92,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<string>> DeleteCatalog([FromBody] Guid deleteCatalogId)
         {
-            var serviceResult = _service.DeleteCatalog(deleteCatalogId);
+            var serviceResult = await _service.DeleteCatalog(deleteCatalogId);
             if (serviceResult == false) {
                 return NotFound("not deleted success");
             }
@@ -109,7 +109,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<IEnumerable<SubCatalogDto>>> GetAllSubCatalogs([FromHeader] Guid catalogId)
         {
-            var serviceResult = _service.GetAllSubCatalogs(catalogId);
+            var serviceResult = await _service.GetAllSubCatalogs(catalogId);
             if (serviceResult.IsException || serviceResult.IsFailed) {
                 return NotFound(serviceResult.Error);
             }
@@ -125,7 +125,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [ProducesResponseType(typeof(SubCatalogDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<SubCatalogDto>> GetOneSubCatalog([FromHeader] Guid catalogId, [FromHeader] Guid subCatalogId)
         {
-            var serviceResult = _service.GetSubCatalog(catalogId, subCatalogId);
+            var serviceResult = await _service.GetSubCatalog(catalogId, subCatalogId);
             if (serviceResult.IsFailed || serviceResult.IsException) {
                 return NotFound(serviceResult.Error);
             }
@@ -139,7 +139,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<string>> CreateSubCatalog([FromBody] SubCatalog newSubCatalog, [FromHeader] Guid catalogId)
         {
-            var serviceResult = _service.AddNewSubCatalog(catalogId, newSubCatalog);
+            var serviceResult = await _service.AddNewSubCatalog(catalogId, newSubCatalog);
             if (serviceResult == false) {
                 return NotFound("cannot add subcatalog");
             }
@@ -152,7 +152,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<SubCatalogDto>> DeleteSubCatalog([FromHeader] Guid catalogId, [FromHeader] Guid subCatalogId)
         {
-            var serviceResult = _service.DeleteSubCatalog(catalogId, subCatalogId);
+            var serviceResult = await _service.DeleteSubCatalog(catalogId, subCatalogId);
             if (serviceResult.IsFailed) {
                 return NotFound(serviceResult.Error);
             }
@@ -166,7 +166,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<SubCatalogDto>> UpdateSubCatalog([FromHeader] Guid catalogId, [FromBody] SubCatalog newSubCatalog)
         {
-            var serviceResult = _service.UpdateSubCatalog(catalogId, newSubCatalog);
+            var serviceResult = await _service.UpdateSubCatalog(catalogId, newSubCatalog);
             if (serviceResult.IsFailed)
             {
                 return NotFound(serviceResult.Error);

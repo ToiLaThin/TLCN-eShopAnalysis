@@ -31,7 +31,7 @@ namespace eShopAnalysis.StockInventory.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<IEnumerable<StockInventory>>> GetAll()
         {
-            var result = _service.GetAll();
+            var result = await _service.GetAll();
             if (result.Data.Count() <= 0) {
                 return NotFound("no stock in warehouse");
             }
@@ -43,7 +43,7 @@ namespace eShopAnalysis.StockInventory.Controllers
         [ProducesResponseType(typeof(IEnumerable<StockInventory>), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<StockInventory>> Add(StockInventory stockInventory) {
-            var result = _service.Add(stockInventory);
+            var result = await _service.Add(stockInventory);
             if (result.IsFailed || result.IsException) {
                 return NotFound(result.Error);
             }
@@ -53,9 +53,11 @@ namespace eShopAnalysis.StockInventory.Controllers
         //for any microservice want to add new stock inventory
         [HttpPost("BackChannel/AddStock")]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public BackChannelResponseDto<StockInventoryDto> AddNew([FromBody] StockInventoryDto stockInventoryDtoToAdd)
+        public async Task<BackChannelResponseDto<StockInventoryDto>> AddNew([FromBody] StockInventoryDto stockInventoryDtoToAdd)
         {
-            var result = _service.AddNew(stockInventoryDtoToAdd.ProductId, stockInventoryDtoToAdd.ProductModelId, stockInventoryDtoToAdd.ProductBusinessKey);
+            var result = await _service.AddNew(stockInventoryDtoToAdd.ProductId, 
+                                               stockInventoryDtoToAdd.ProductModelId, 
+                                               stockInventoryDtoToAdd.ProductBusinessKey);
             if (result.IsFailed || result.IsException) {
                 return BackChannelResponseDto<StockInventoryDto>.Failure(result.Error);
             }
@@ -67,7 +69,7 @@ namespace eShopAnalysis.StockInventory.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> GetStockOfModels([FromBody] OrderItemsStockRequestDto orderItemsStockReq)
         {
-            var result = _service.GetStockOfModels(orderItemsStockReq.ProductModelIds);
+            var result = await _service.GetStockOfModels(orderItemsStockReq.ProductModelIds);
             if (result.IsFailed || result.IsException) {
                 return null;
             }
@@ -79,7 +81,7 @@ namespace eShopAnalysis.StockInventory.Controllers
         public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> DecreaseStockItems([FromBody] IEnumerable<StockDecreaseRequestDto> stockDecreaseReqs)
         {
             if (stockDecreaseReqs == null) { throw new ArgumentNullException(nameof(stockDecreaseReqs)); }
-            var result = _service.DecreaseStockItems(stockDecreaseReqs);
+            var result = await _service.DecreaseStockItems(stockDecreaseReqs);
             if (result.IsFailed || result.IsException) {
                 return null;
             }

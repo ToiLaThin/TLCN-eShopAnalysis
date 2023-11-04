@@ -11,9 +11,11 @@
         {
             // Modify the IQueryable
             // Apply filter conditions
-            if (filterSpec.Criteria != null)
+            if (filterSpec.Criterias != null)
             {
-                query = query.Where(filterSpec.Criteria);
+                filterSpec.Criterias.ForEach(c => {
+                    query = query.Where(c);
+                });
             }
 
             // Includes

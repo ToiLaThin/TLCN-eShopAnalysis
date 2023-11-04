@@ -27,7 +27,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PostgresDbContext>(ctxOption =>
 {
-    ctxOption.UseNpgsql(builder.Configuration.GetConnectionString("CouponSaleItemConnString"));
+    ctxOption.UseNpgsql(builder.Configuration.GetConnectionString("CouponSaleItemConnString"))
+             .LogTo(Console.WriteLine,LogLevel.Information); //how to log db command in serilog
 });
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICouponService, CouponService>();
