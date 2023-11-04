@@ -23,6 +23,10 @@ namespace eShopAnalysis.StockInventoryAPI.Utilities.Behaviors
         //should not return null dto because will not know it have error on client angular
         public void OnActionExecuted(ActionExecutedContext context)
         {
+            if (context.Result == null) { 
+                return; 
+            }
+
             var controllerStr = context.Controller.ToString();
             var controllerName = controllerStr.Substring(controllerStr.LastIndexOf('.') + 1)
                                               .ToUpper();
@@ -33,7 +37,10 @@ namespace eShopAnalysis.StockInventoryAPI.Utilities.Behaviors
                                         .ToUpper();
 
             var implicitConvertedResult = (context.Result as ObjectResult);
-            if (implicitConvertedResult.StatusCode == StatusCodes.Status404NotFound) {
+            if (implicitConvertedResult == null) {
+                return;
+            }
+            if (implicitConvertedResult?.StatusCode == StatusCodes.Status404NotFound) {
                 _logger.LogError(
                     "Request {@ControllerName} " +
                     "\n\tAt action {@ActionName} " +
@@ -43,7 +50,7 @@ namespace eShopAnalysis.StockInventoryAPI.Utilities.Behaviors
                     controllerName,
                     actionName,
                     actionRoute,
-                    implicitConvertedResult.Value.ToString(),
+                    implicitConvertedResult?.Value?.ToString(),
                     DateTime.UtcNow
                 );
                 return;
@@ -52,6 +59,10 @@ namespace eShopAnalysis.StockInventoryAPI.Utilities.Behaviors
             //backChannelResp = implicitConvertedResult.Value as BackChannelResponseDto<object> return null
             //this make sure is of type BackChannelResponseDto<>, then we use dynamic to bypass compiler check
             //because we checked it ourself
+            if (implicitConvertedResult.StatusCode != StatusCodes.Status200OK) {
+                //only check and log backchannel if it is returned(200) not, discriminate from other meths(can have 204, ...)
+                return;
+            }
             Type resultValueType = implicitConvertedResult.Value.GetType();
             if (resultValueType.Name != typeof(BackChannelResponseDto<>).Name) { 
                 return;

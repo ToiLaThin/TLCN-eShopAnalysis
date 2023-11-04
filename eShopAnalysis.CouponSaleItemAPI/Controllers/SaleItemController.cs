@@ -27,7 +27,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<IEnumerable<SaleItemDto>>> GetAllSaleItems()
         {
-            var serviceResult = _saleItemService.GetAll();
+            var serviceResult = await _saleItemService.GetAll();
             if (serviceResult.Data.Count() <= 0) {
                 return NotFound(serviceResult.Error);
             }

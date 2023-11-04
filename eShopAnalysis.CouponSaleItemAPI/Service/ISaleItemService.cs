@@ -7,7 +7,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
     {
         Task<ServiceResponseDto<SaleItem>> Add(SaleItem saleItem);
         Task<ServiceResponseDto<SaleItem>> Delete(Guid saleItem);
-        ServiceResponseDto<IEnumerable<SaleItem>> GetAll();
-        ServiceResponseDto<SaleItem> GetCoupon(Guid couponId);
+        Task<ServiceResponseDto<IEnumerable<SaleItem>>> GetAll();
+        Task<ServiceResponseDto<SaleItem>> GetCoupon(Guid couponId);
     }
 }

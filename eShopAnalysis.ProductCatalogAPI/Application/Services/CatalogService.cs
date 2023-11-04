@@ -9,19 +9,19 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
 
     public interface ICatalogService
     {
-        ServiceResponseDto<Catalog> Get(Guid catalogGuid);
-        ServiceResponseDto<IEnumerable<Catalog>> GetAll();
-        ServiceResponseDto<Catalog> AddCatalog(Catalog catalog);
-        bool DeleteCatalog(Guid catalogId);
-        ServiceResponseDto<Catalog> UpdateCatalog(Catalog catalog); //for testing only
-        ServiceResponseDto<Catalog> UpdateCatalogInfo(Catalog catalog);//only modify name and info
+        Task<ServiceResponseDto<Catalog>> Get(Guid catalogGuid);
+        Task<ServiceResponseDto<IEnumerable<Catalog>>> GetAll();
+        Task<ServiceResponseDto<Catalog>> AddCatalog(Catalog catalog);
+        Task<bool> DeleteCatalog(Guid catalogId);
+        Task<ServiceResponseDto<Catalog>> UpdateCatalog(Catalog catalog); //for testing only
+        Task<ServiceResponseDto<Catalog>> UpdateCatalogInfo(Catalog catalog);//only modify name and info
 
         //SubCatalog manipulate from catalog
-        ServiceResponseDto<SubCatalog> GetSubCatalog(Guid catalogId, Guid subCatalogId);
-        ServiceResponseDto<IEnumerable<SubCatalog>> GetAllSubCatalogs(Guid catalogId);
-        bool AddNewSubCatalog(Guid catalogId, SubCatalog subCatalog);
-        ServiceResponseDto<SubCatalog> UpdateSubCatalog(Guid catalogId, SubCatalog subCatalog );
-        ServiceResponseDto<SubCatalog> DeleteSubCatalog(Guid catalogId,Guid subCatalogId);
+        Task<ServiceResponseDto<SubCatalog>> GetSubCatalog(Guid catalogId, Guid subCatalogId);
+        Task<ServiceResponseDto<IEnumerable<SubCatalog>>> GetAllSubCatalogs(Guid catalogId);
+        Task<bool> AddNewSubCatalog(Guid catalogId, SubCatalog subCatalog);
+        Task<ServiceResponseDto<SubCatalog>> UpdateSubCatalog(Guid catalogId, SubCatalog subCatalog );
+        Task<ServiceResponseDto<SubCatalog>> DeleteSubCatalog(Guid catalogId,Guid subCatalogId);
     }
 
     public class CatalogService : ICatalogService
@@ -32,15 +32,15 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public ServiceResponseDto<IEnumerable<Catalog>> GetAll()
+        public async Task<ServiceResponseDto<IEnumerable<Catalog>>> GetAll()
         {
-            var result = _unitOfWork.CatalogRepository.GetAll();
+            var result = _unitOfWork.CatalogRepository.GetAllAsQueryable().ToList();
             return ServiceResponseDto<IEnumerable<Catalog>>.Success(result);
         }
 
-        public ServiceResponseDto<Catalog> Get(Guid catalogGuid)
+        public async Task<ServiceResponseDto<Catalog>> Get(Guid catalogGuid)
         {
-            var result = _unitOfWork.CatalogRepository.Get(catalogGuid);
+            var result = await _unitOfWork.CatalogRepository.GetAsync(catalogGuid);
             if (result == null)
             {
                 return ServiceResponseDto<Catalog>.Failure("cannot find catalog");
@@ -48,38 +48,38 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             return ServiceResponseDto<Catalog>.Success(result);
         }
 
-        public ServiceResponseDto<Catalog> AddCatalog(Catalog catalog)
+        public async Task<ServiceResponseDto<Catalog>> AddCatalog(Catalog catalog)
         {
-            var result = _unitOfWork.CatalogRepository.Add(catalog);
+            var result = await _unitOfWork.CatalogRepository.AddAsync(catalog);
             return ServiceResponseDto<Catalog>.Success(result);
         }
 
-        public ServiceResponseDto<Catalog> UpdateCatalog(Catalog catalog)
+        public async Task<ServiceResponseDto<Catalog>> UpdateCatalog(Catalog catalog)
         {
-            bool success = _unitOfWork.CatalogRepository.Update(catalog);
+            bool success = await _unitOfWork.CatalogRepository.UpdateAsync(catalog);
             if (success == true) {
-                return Get(catalog.CatalogId);
+                return await Get(catalog.CatalogId);
             }
             return ServiceResponseDto<Catalog>.Failure("Update catalog failed");
         }
 
-        public ServiceResponseDto<Catalog> UpdateCatalogInfo(Catalog catalog)
+        public async Task<ServiceResponseDto<Catalog>> UpdateCatalogInfo(Catalog catalog)
         {
             throw new NotImplementedException();
         }
 
-        public bool DeleteCatalog(Guid catalogId)
+        public async Task<bool> DeleteCatalog(Guid catalogId)
         {
-            bool success = _unitOfWork.CatalogRepository.Remove(catalogId);
+            bool success = await _unitOfWork.CatalogRepository.RemoveAsync(catalogId);
             if (success == true) {
                 return true;
             }
             return false;
         }
 
-        public ServiceResponseDto<SubCatalog> GetSubCatalog(Guid catalogId, Guid subCatalogId)
+        public async Task<ServiceResponseDto<SubCatalog>> GetSubCatalog(Guid catalogId, Guid subCatalogId)
         {
-            Catalog catalogToGet = _unitOfWork.CatalogRepository.Find(c => c.CatalogId == catalogId).First();
+            var catalogToGet = await _unitOfWork.CatalogRepository.GetAsync(catalogId);
             if (catalogToGet is null) {
                 return ServiceResponseDto<SubCatalog>.Failure("cannot find catalog to update subcatalog");
             }
@@ -90,31 +90,31 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             return ServiceResponseDto<SubCatalog>.Success(subCatalog);
         }
 
-        public ServiceResponseDto<IEnumerable<SubCatalog>> GetAllSubCatalogs(Guid catalogId)
+        public async Task<ServiceResponseDto<IEnumerable<SubCatalog>>> GetAllSubCatalogs(Guid catalogId)
         {
-            Catalog catalogToGet = _unitOfWork.CatalogRepository.Find(c => c.CatalogId == catalogId).First();
+            var catalogToGet = await _unitOfWork.CatalogRepository.GetAsync(catalogId);
             if (catalogToGet is null) {
                 return ServiceResponseDto<IEnumerable<SubCatalog>>.Failure("cannot find catalog to get all subcatalog");
             }
             return ServiceResponseDto<IEnumerable<SubCatalog>>.Success(catalogToGet.SubCatalogs);
         }
 
-        public bool AddNewSubCatalog(Guid catalogId, SubCatalog subCatalog)
+        public async Task<bool> AddNewSubCatalog(Guid catalogId, SubCatalog subCatalog)
         {
             //check if catalog exist: now how to remove this duplication
-            var catalogToAddSubTo = _unitOfWork.CatalogRepository.Get(catalogId);
+            var catalogToAddSubTo = await _unitOfWork.CatalogRepository.GetAsync(catalogId);
             if (catalogToAddSubTo == null) {
                 return false;
             }
             catalogToAddSubTo.AddSubCatalog(subCatalog);
-            var result = _unitOfWork.CatalogRepository.Update(catalogToAddSubTo);
+            var result = await _unitOfWork.CatalogRepository.UpdateAsync(catalogToAddSubTo);
             return result;
         }
         
-        public ServiceResponseDto<SubCatalog> UpdateSubCatalog(Guid catalogId, SubCatalog subCatalog)
+        public async Task<ServiceResponseDto<SubCatalog>> UpdateSubCatalog(Guid catalogId, SubCatalog subCatalog)
         {
             //check if catalog exist: now how to remove this duplication
-            var catalogToAddSubTo = _unitOfWork.CatalogRepository.Get(catalogId);
+            var catalogToAddSubTo = await _unitOfWork.CatalogRepository.GetAsync(catalogId);
             if (catalogToAddSubTo == null) {
                 return ServiceResponseDto<SubCatalog>.Failure("cannot find catalog to update subcatalog");
             }
@@ -122,17 +122,17 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             if (updateSubCatalog == null) {
                 return ServiceResponseDto<SubCatalog>.Failure("cannot find subcatalog to update");
             }
-            var result = _unitOfWork.CatalogRepository.Update(catalogToAddSubTo);
+            var result = await _unitOfWork.CatalogRepository.UpdateAsync(catalogToAddSubTo);
             if (result == false) {
                 return ServiceResponseDto<SubCatalog>.Failure("cannot update subcatalog");
             }
             return ServiceResponseDto<SubCatalog>.Success(updateSubCatalog);
         }
 
-        public ServiceResponseDto<SubCatalog> DeleteSubCatalog(Guid catalogId, Guid subCatalogId)
+        public async Task<ServiceResponseDto<SubCatalog>> DeleteSubCatalog(Guid catalogId, Guid subCatalogId)
         {
             //check if catalog exist: now how to remove this duplication
-            var catalogToAddSubTo = _unitOfWork.CatalogRepository.Get(catalogId);
+            var catalogToAddSubTo = await _unitOfWork.CatalogRepository.GetAsync(catalogId);
             if (catalogToAddSubTo == null) {
                 return ServiceResponseDto<SubCatalog>.Failure("cannot find catalog to delete subcatalog");
             }
@@ -141,7 +141,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
                 return ServiceResponseDto<SubCatalog>.Failure("cannot remove subcatalog from catalog in model"); 
             }
 
-            var result = _unitOfWork.CatalogRepository.Update(catalogToAddSubTo);
+            var result = await _unitOfWork.CatalogRepository.UpdateAsync(catalogToAddSubTo);
             if (result == false) {
                 return ServiceResponseDto<SubCatalog>.Failure("cannot remove subcatalog from catalog");
             }

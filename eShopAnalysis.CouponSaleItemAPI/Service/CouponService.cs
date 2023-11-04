@@ -2,6 +2,7 @@
 using eShopAnalysis.CouponSaleItemAPI.Models;
 using eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService;
 using eShopAnalysis.CouponSaleItemAPI.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 
 namespace eShopAnalysis.CouponSaleItemAPI.Service
 {
@@ -16,7 +17,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
         public async Task<ServiceResponseDto<Coupon>> Add(Coupon coupon)
         {
             var transaction = await _uOW.BeginTransactionAsync();
-            var result = _uOW.CouponRepository.Add(coupon);
+            var result = await _uOW.CouponRepository.AddAsync(coupon);
             if (result == null) {
                 await transaction.RollbackAsync();
                 return ServiceResponseDto<Coupon>.Failure("cannot add coupon, rolled back the transaction");
@@ -28,7 +29,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
         public async Task<ServiceResponseDto<Coupon>> Delete(Guid coupon)
         {
             var transaction = await _uOW.BeginTransactionAsync();
-            var result = _uOW.CouponRepository.Delete(coupon);
+            var result = await _uOW.CouponRepository.DeleteAsync(coupon);
             if (result == null) {
                 await transaction.RollbackAsync();
                 return ServiceResponseDto<Coupon>.Failure("cannot delete coupon, rolled back the transaction");
@@ -37,36 +38,43 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
             return ServiceResponseDto<Coupon>.Success(result);
         }
 
-        public ServiceResponseDto<IEnumerable<Coupon>> GetAll()
+        public async Task<ServiceResponseDto<IEnumerable<Coupon>>> GetAll()
         {
-            var result = _uOW.CouponRepository.GetAll();
+            var result = await _uOW.CouponRepository.GetAsQueryable().AsNoTracking().ToListAsync();
             return ServiceResponseDto<IEnumerable<Coupon>>.Success(result);
         }
 
-        public ServiceResponseDto<Coupon> GetCoupon(Guid couponId)
+        public async Task<ServiceResponseDto<Coupon>> GetCoupon(Guid couponId)
         {
-            var result = _uOW.CouponRepository.Get(couponId);
+            var result = await _uOW.CouponRepository.GetAsync(couponId);
             return ServiceResponseDto<Coupon>.Success(result);
         }
 
-        public ServiceResponseDto<IEnumerable<Coupon>> GetCouponUsedByUser(Guid userId)
+        public async Task<ServiceResponseDto<IEnumerable<Coupon>>> GetCouponUsedByUser(Guid userId)
         {
-            var result = _uOW.CouponUserRepository.GetAll()
-                                                  .AsQueryable()
+            var result = await _uOW.CouponUserRepository.GetAsQueryableIncludedCouponUsed()
+                                                  .AsNoTracking()
                                                   .Where(x => x.UserId == userId)
                                                   .Select(c => c.CouponUsed)
-                                                  .ToList();                                                  
+                                                  .ToListAsync();                                                  
             return ServiceResponseDto<IEnumerable<Coupon>>.Success(result);
         }
 
-        public ServiceResponseDto<IEnumerable<Coupon>> GetActiveCouponsNotUsedByUser(Guid userId)
+        public async Task<ServiceResponseDto<IEnumerable<Coupon>>> GetActiveCouponsNotUsedByUser(Guid userId)
         {
-            var couponUsedByUser = _uOW.CouponUserRepository.GetAll().Where(cU => cU.UserId == userId).Select(cU => cU.CouponUsed);
-            var result = _uOW.CouponRepository.GetAll()
-                                              .AsQueryable()
+            var couponUsedByUser = await _uOW.CouponUserRepository.GetAsQueryableIncludedCouponUsed()
+                                                                  .AsNoTracking()
+                                                                  .Where(cU => cU.UserId == userId)
+                                                                  .Select(cU => cU.CouponUsed)
+                                                                  .ToListAsync();
+            if (couponUsedByUser == null || couponUsedByUser.Count <= 0) {
+                return ServiceResponseDto<IEnumerable<Coupon>>.Success(new List<Coupon> { });
+            }
+            var result = await _uOW.CouponRepository.GetAsQueryable()
+                                              .AsNoTracking()             
                                               .Where(c => c.CouponStatus == Status.Active) //limited the amount of coupon retrived
                                               .Except(couponUsedByUser) //TODO find if there is any other way https://stackoverflow.com/a/14682518
-                                              .ToList();
+                                              .ToListAsync();
             return ServiceResponseDto<IEnumerable<Coupon>>.Success(result);
         }
 
@@ -74,23 +82,27 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
         {
             var transaction = await _uOW.BeginTransactionAsync();
             CouponUser couponUser = new CouponUser() { CouponId = couponId, UserId = userId };
-            var result = _uOW.CouponUserRepository.Add(couponUser);
+            var result = await _uOW.CouponUserRepository.AddAsync(couponUser);
             if (result == null) {
                 await transaction.RollbackAsync();
                 return ServiceResponseDto<Coupon>.Failure("cannot add coupon user");
             }
             await transaction.CommitAsync();
-            Coupon couponUsed = _uOW.CouponUserRepository.Get(couponId: couponId, userId: userId).CouponUsed; //this have couponUsed since we used include in the repo.Get()
+            var couponUserTemp = await _uOW.CouponUserRepository.GetAsync(couponId: couponId, userId: userId); 
+            //this have couponUsed since we used include in the repo.Get()
+            Coupon couponUsed = couponUserTemp.CouponUsed;
             return ServiceResponseDto<Coupon>.Success(couponUsed);
         }
 
-        public ServiceResponseDto<Coupon> RetrieveValidCouponWithCode(string couponCode)
+        public async Task<ServiceResponseDto<Coupon>> RetrieveValidCouponWithCode(string couponCode)
         {
-            IEnumerable<Coupon> resultTemp = _uOW.CouponRepository.GetAll()
+            IEnumerable<Coupon> resultTemp = await _uOW.CouponRepository.GetAsQueryable()
+                                                  .AsNoTracking()
                                                   .Where(c => c.CouponCode == couponCode)
                                                   .Where(c => c.CouponStatus == Status.Active)
                                                   .Where(c => c.DateEnded >= DateTime.Now)
-                                                  .Select(c => c);
+                                                  .Select(c => c)
+                                                  .ToListAsync();
             if (resultTemp == null ) {
                 return ServiceResponseDto<Coupon>.Failure("no coupon match");
             }

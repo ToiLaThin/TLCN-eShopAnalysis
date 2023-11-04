@@ -29,32 +29,38 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Specification
             _right = right;
         }
 
-        public override Expression<Func<T, bool>> Criteria
+        public override List<Expression<Func<T, bool>>> Criterias
         {
             get
             {
-                var leftCriteria = _left.Criteria;
-                var rightCriteria = _right.Criteria;
+                //var leftCriteria = _left.Criteria;
+                //var rightCriteria = _right.Criteria;
 
-                var paramExpr = Expression.Parameter(typeof(T));
-                BinaryExpression exprBody = Expression.AndAlso(leftCriteria.Body, rightCriteria.Body);
-                exprBody = (BinaryExpression)new ParameterReplacer(paramExpr).Visit(exprBody);
-                return Expression.Lambda<Func<T, bool>>(exprBody, paramExpr);
+                //var paramExpr = Expression.Parameter(typeof(T));
+                //BinaryExpression exprBody = Expression.AndAlso(leftCriteria.Body, rightCriteria.Body);
+                //exprBody = (BinaryExpression)new ParameterReplacer(paramExpr).Visit(exprBody);
+                //return Expression.Lambda<Func<T, bool>>(exprBody, paramExpr);
+                var result = new List<Expression<Func<T, bool>>>();
+                result.AddRange(_left.Criterias);
+                result.AddRange(_right.Criterias);
+                return result;
             }
-        }
-
+        }        
     }
 
     //composite filter specification
     //https://thecodeblogger.com/2021/07/02/net-composite-specifications-using-ef-core/
     public abstract class BaseFilterSpecification<T> : IFilterSpecification<T>
     {
-        public virtual Expression<Func<T, bool>> Criteria { get; }
+        public virtual List<Expression<Func<T, bool>>> Criterias { get; }
 
         protected BaseFilterSpecification() { }
         public BaseFilterSpecification(Expression<Func<T, bool>> filter)
         {
-            Criteria = filter;
+            Criterias = new List<Expression<Func<T, bool>>>
+            {
+                filter
+            };
         }
 
         public IFilterSpecification<T> And(IFilterSpecification<T> right)

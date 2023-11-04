@@ -12,6 +12,7 @@ namespace eShopAnalysis.StockInventory.Repository
         {
             _redisContext = redisContext;
         }
+
         public StockInventory Add(StockInventory stockInventory)
         {
             stockInventory.StockInventoryId = Ulid.NewUlid();
@@ -41,11 +42,12 @@ namespace eShopAnalysis.StockInventory.Repository
             return null;
         }
 
-        public IEnumerable<StockInventory> GetAll()
+
+        //do not use toList and not getAll, make db call in the service layer
+        public IQueryable<StockInventory> GetAsQueryable()
         {
-            try
-            {
-                var result = _redisContext.StockInventoryCollection.Select(x => x).ToList();
+            try {
+                var result = _redisContext.StockInventoryCollection.AsQueryable();
                 return result;
             }
             catch(Exception ex)
