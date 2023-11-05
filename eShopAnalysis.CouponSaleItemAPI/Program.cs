@@ -6,9 +6,6 @@ using eShopAnalysis.CouponSaleItemAPI.UnitOfWork;
 using eShopAnalysis.CouponSaleItemAPI.Service;
 using AutoMapper;
 using System.Reflection;
-using eShopAnalysis.CouponSaleItemAPI.Utilities;
-using eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService;
-using eShopAnalysis.CouponSaleItemAPI.Service.BackChannelService;
 using eShopAnalysis.CouponSaleItemAPI.Application.IntegrationEvents;
 using Serilog;
 using eShopAnalysis.CouponSaleItemAPI.Utilities.Behaviors;
@@ -33,9 +30,6 @@ builder.Services.AddDbContext<PostgresDbContext>(ctxOption =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddScoped<ISaleItemService, SaleItemService>();
-builder.Services.AddHttpClient(); //resolve http client factory
-builder.Services.AddScoped<IBackChannelProductCatalogService, BackChannelProductCatalogService>();
-builder.Services.AddScoped(typeof(IBackChannelBaseService<,>), typeof(BackChannelBaseService<,>));
 //config automapper
 var mapperConfig = new MapperConfiguration(cfg =>
 {
@@ -44,7 +38,6 @@ var mapperConfig = new MapperConfiguration(cfg =>
 IMapper mapper = new Mapper(mapperConfig);
 builder.Services.AddSingleton(mapper);
 
-builder.Services.Configure<BackChannelCommunication>(builder.Configuration.GetSection(nameof(BackChannelCommunication)));
 
 var app = builder.Build();
 app.UseSerilogRequestLogging();

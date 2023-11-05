@@ -11,12 +11,13 @@ export class SaleHttpService {
   constructor(private http: HttpClient) { }
 
   private addSaleToModel(saleItem: ISaleItem) {
-    return this.http.post<ISaleItem>(`${env.BASEURL}/api/CouponSaleItem/SaleItemAPI/AddSaleItem`, saleItem);
+    return this.http.post<ISaleItem>(`${env.BASEURL}/api/Aggregate/AggregateOrderItemStock/AddSaleItemAndUpdateProductToOnSale`, saleItem);
   }
 
   public AddSaleToModel(saleItem: ISaleItem) {
-    this.addSaleToModel(saleItem).subscribe((saleItem) => {
-      console.log("AddSaleToModel");      
+    this.addSaleToModel(saleItem).subscribe((saleItem) => {      
+      console.log("AddSaleToModel"); 
+      //reload the sale list to see the changes     
     });
   }
 }

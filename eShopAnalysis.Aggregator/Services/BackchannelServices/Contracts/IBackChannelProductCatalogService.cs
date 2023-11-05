@@ -1,8 +1,7 @@
-﻿using eShopAnalysis.CouponSaleItemAPI.Dto;
-using eShopAnalysis.CouponSaleItemAPI.Models;
-using eShopAnalysis.Dto.BackchannelDto;
+﻿using eShopAnalysis.Aggregator.Result;
+using eShopAnalysis.Aggregator.Services.BackchannelDto;
 
-namespace eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService
+namespace eShopAnalysis.Aggregator.Services.BackchannelServices
 {
     public interface IBackChannelProductCatalogService
     {

@@ -1,6 +1,5 @@
 ﻿using eShopAnalysis.CouponSaleItemAPI.Dto;
 using eShopAnalysis.CouponSaleItemAPI.Models;
-using eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService;
 using eShopAnalysis.CouponSaleItemAPI.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 
