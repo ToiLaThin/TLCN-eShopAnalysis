@@ -1,4 +1,5 @@
 ﻿
+using eShopAnalysis.Aggregator.Application.BackchannelDto;
 using eShopAnalysis.Aggregator.Models.Dto;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
 using eShopAnalysis.Aggregator.Services.BackchannelServices;
@@ -12,14 +13,17 @@ namespace eShopAnalysis.ApiGateway.Controllers
     {
         private readonly IBackChannelCartOrderService _backChannelCartOrderService;
         private readonly IBackChannelStockInventoryService _backChannelStockInventoryService;
+        private readonly IBackChannelCouponSaleItemService _backChannelCouponSaleItemService;
 
         public AggregateController(
             IBackChannelStockInventoryService backChannelStockInventoryService,
-            IBackChannelCartOrderService backChannelCartOrderService
+            IBackChannelCartOrderService backChannelCartOrderService,
+            IBackChannelCouponSaleItemService backChannelCouponSaleItemService
             )
         {
             _backChannelStockInventoryService = backChannelStockInventoryService;
             _backChannelCartOrderService = backChannelCartOrderService;
+            _backChannelCouponSaleItemService = backChannelCouponSaleItemService;
         }
         [HttpGet("GetOrderToApproveWithStock")]
         public async Task<OrderItemAndStockAggregateDto> GetOrderToApprovedWithStock()
@@ -92,6 +96,34 @@ namespace eShopAnalysis.ApiGateway.Controllers
                 //else use eventual consistency, rsult.isFailed mean orderstatus not set
             }
             return null;
+
+        }
+
+        [HttpPost("CheckCouponAndAddCart")]
+        public async Task<ActionResult> CheckCouponAndAddCart([FromBody] CartConfirmRequestDto cartConfirmRequestDto)
+        {
+            CartConfirmRequestToCartApiDto requestToCartApiDto = new CartConfirmRequestToCartApiDto {
+                CartItems = cartConfirmRequestDto.CartItems,
+                UserId = cartConfirmRequestDto.UserId,
+                Coupon = null
+            };
+
+            //if have coupon in request frontend, try get the coupon data and set in the request to cart add
+            if (cartConfirmRequestDto.CouponCode != null && !cartConfirmRequestDto.CouponCode.Equals(String.Empty)) {
+                var backChannelResponse = await _backChannelCouponSaleItemService.RetrieveCouponWithCode(cartConfirmRequestDto.CouponCode);
+                if (backChannelResponse.IsFailed || backChannelResponse.IsException) {
+                    return NotFound();
+                }
+                requestToCartApiDto.Coupon = backChannelResponse.Data;
+            }
+
+            //if no coupon apply, the request to cart api will have no coupon
+            var cartBackChannelResp = await _backChannelCartOrderService.AddCart(requestToCartApiDto);
+            if (cartBackChannelResp.IsFailed || cartBackChannelResp.IsException) {
+                return NotFound();
+            }
+            return Ok();
+
 
         }
     }

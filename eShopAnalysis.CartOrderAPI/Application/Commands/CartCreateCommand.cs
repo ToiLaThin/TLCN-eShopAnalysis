@@ -1,4 +1,5 @@
-﻿using eShopAnalysis.CartOrderAPI.Application.Result;
+﻿using eShopAnalysis.CartOrderAPI.Application.BackchannelDto;
+using eShopAnalysis.CartOrderAPI.Application.Result;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
 using MediatR;
 using System.Runtime.Serialization;
@@ -14,14 +15,14 @@ namespace eShopAnalysis.CartOrderAPI.Application.Commands
         //[DataMember]
         public Guid UserId { get; private set; }
 
-        public string CouponCode { get; private set; }
+        public CouponDto? Coupon { get; private set; }
 
         public CartCreateCommand()
         {
             CartItems = new List<CartItem>();
         }
 
-        public CartCreateCommand(IEnumerable<CartItem> cartItemsToAdd, Guid buyerId, string couponCode)
+        public CartCreateCommand(IEnumerable<CartItem> cartItemsToAdd, Guid buyerId, CouponDto? coupon)
         {
             //is this ok
             if (buyerId == Guid.Empty || buyerId == default(Guid)) { 
@@ -32,7 +33,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Commands
             }
             this.CartItems = cartItemsToAdd;
             this.UserId = buyerId;
-            this.CouponCode = couponCode;
+            this.Coupon = coupon;
         }
     }
 }

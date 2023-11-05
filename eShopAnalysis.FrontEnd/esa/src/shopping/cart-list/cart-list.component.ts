@@ -66,6 +66,9 @@ export class CartListComponent implements OnInit {
     
     this.cartService.confirmCart(cartRequest).subscribe(
       () => {
+        if (this.cartService.couponCodeApplied.getValue() !== undefined) {
+          this.removeCoupon();
+        }
         this.cartService.itemsInCartSubject.next([]);
         localStorage.removeItem(this.cartService.itemsInCartKey);
         console.log('cart confirmed');

@@ -5,7 +5,7 @@ using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using eShopAnalysis.Aggregator.Utilities;
 using Microsoft.Extensions.Options;
 
-namespace eShopAnalysis.ApiGateway.Services.BackchannelServices
+namespace eShopAnalysis.Aggregator.Services.BackchannelServices
 {
     public class BackChannelStockInventoryService : IBackChannelStockInventoryService
     {

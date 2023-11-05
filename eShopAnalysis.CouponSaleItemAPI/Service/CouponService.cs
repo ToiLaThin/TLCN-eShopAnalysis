@@ -67,14 +67,16 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
                                                                   .Where(cU => cU.UserId == userId)
                                                                   .Select(cU => cU.CouponUsed)
                                                                   .ToListAsync();
-            if (couponUsedByUser == null || couponUsedByUser.Count <= 0) {
-                return ServiceResponseDto<IEnumerable<Coupon>>.Success(new List<Coupon> { });
-            }
-            var resultTEmp = await _uOW.CouponRepository.GetAsQueryable()
+            var resultTEmpQuery =  _uOW.CouponRepository.GetAsQueryable()
                                               .AsNoTracking()
-                                              .Where(c => c.CouponStatus == Status.Active) //limited the amount of coupon retrived
-                                              .ToListAsync();//TODO find if there is any other way https://stackoverflow.com/a/14682518
-            var result = resultTEmp.Except(couponUsedByUser); 
+                                              .Where(c => c.CouponStatus == Status.Active); //limited the amount of coupon retrived
+                                              //TODO find if there is any other way https://stackoverflow.com/a/14682518
+
+            if (couponUsedByUser == null || couponUsedByUser.Count <= 0) {
+                return ServiceResponseDto<IEnumerable<Coupon>>.Success(await resultTEmpQuery.ToListAsync());
+            }
+            var result = await resultTEmpQuery.Except(couponUsedByUser)
+                                              .ToListAsync(); 
             //i have to use this to not have error, query cannot be translated: https://learn.microsoft.com/en-us/ef/core/querying/client-eval
             return ServiceResponseDto<IEnumerable<Coupon>>.Success(result);
         }
@@ -101,7 +103,7 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
                                                   .AsNoTracking()
                                                   .Where(c => c.CouponCode == couponCode)
                                                   .Where(c => c.CouponStatus == Status.Active)
-                                                  .Where(c => c.DateEnded >= DateTime.Now)
+                                                  //.Where(c => c.DateEnded >= DateTime.Now) please inspect why this can have errors
                                                   .Select(c => c)
                                                   .ToListAsync();
             if (resultTemp == null ) {

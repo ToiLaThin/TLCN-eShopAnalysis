@@ -1,10 +1,11 @@
-﻿using eShopAnalysis.Aggregator.Result;
+﻿using eShopAnalysis.Aggregator.Application.BackchannelDto;
+using eShopAnalysis.Aggregator.Result;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
 using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using eShopAnalysis.Aggregator.Utilities;
 using Microsoft.Extensions.Options;
 
-namespace eShopAnalysis.ApiGateway.Services.BackchannelServices
+namespace eShopAnalysis.Aggregator.Services.BackchannelServices
 {
     public class BackChannelCartOrderService : IBackChannelCartOrderService
     {
@@ -39,6 +40,18 @@ namespace eShopAnalysis.ApiGateway.Services.BackchannelServices
                 ApiType = ApiType.PUT,
                 Url = $"{_backChannelUrls.Value.OrderAPIBaseUri}/BulkApproveOrder",
                 Data = orderIdsToApprove
+            });
+            return result;
+        }
+
+        public async Task<BackChannelResponseDto<object>> AddCart(CartConfirmRequestToCartApiDto requestToCartApiDto)
+        {
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<CartConfirmRequestToCartApiDto, object>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<CartConfirmRequestToCartApiDto>()
+            {
+                ApiType = ApiType.POST,
+                Url = $"{_backChannelUrls.Value.CartAPIBaseUri}/AddCart",
+                Data = requestToCartApiDto
             });
             return result;
         }

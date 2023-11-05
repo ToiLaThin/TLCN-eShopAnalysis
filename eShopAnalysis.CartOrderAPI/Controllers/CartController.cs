@@ -1,5 +1,6 @@
 ﻿using eShopAnalysis.CartOrderAPI.Application.Commands;
 using eShopAnalysis.CartOrderAPI.Application.Dto;
+using eShopAnalysis.CartOrderAPI.Application.Result;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
 using eShopAnalysis.CartOrderAPI.Utilities.Behaviors;
 using MediatR;
@@ -18,9 +19,7 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("AddCart")]
-        [ProducesResponseType(typeof(CartSummary), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpPost("BackChannel/AddCart")]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         //only have one thing can be in FromBody
         //also in get request should not have body
@@ -28,13 +27,13 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
         // if CartCreateCommand have private setter, it will not have example schema in the swagger index.html and the data we received (cartItem and userId) will be null and default Guid
         //so in controller we received a Dto and create the command
         //TODO we could also use factory to create command with validation the input
-        public async Task<ActionResult<CartSummary>> AddCart([FromBody] CartConfirmRequestDto cartConfirmRequestDto) { 
+        public async Task<BackChannelResponseDto<CartSummary>> AddCart([FromBody] CartConfirmRequestToCartApiDto cartConfirmRequestDto) { 
             CartCreateCommand command = new CartCreateCommand(cartConfirmRequestDto.CartItems, cartConfirmRequestDto.UserId, cartConfirmRequestDto.CouponCode);
             var commandResult = await _mediator.Send(command);
             if (commandResult.IsFailed || commandResult.IsException) {
-                return NotFound(commandResult.Error);
+                return BackChannelResponseDto<CartSummary>.Failure(commandResult.Error);
             }
-            return Ok(commandResult.Data);
+            return BackChannelResponseDto<CartSummary>.Success(commandResult.Data);
         }
     }
 }
