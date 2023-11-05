@@ -1,5 +1,4 @@
-﻿
-using eShopAnalysis.Aggregator.Models.Dto;
+﻿using eShopAnalysis.Aggregator.Models.Dto;
 using eShopAnalysis.Aggregator.Result;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
 

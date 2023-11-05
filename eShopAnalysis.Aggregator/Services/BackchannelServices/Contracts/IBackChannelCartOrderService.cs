@@ -1,4 +1,4 @@
-﻿
+﻿using eShopAnalysis.Aggregator.Application.BackchannelDto;
 using eShopAnalysis.Aggregator.Result;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
 
@@ -9,5 +9,8 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
         //will introduce paging later
         Task<BackChannelResponseDto<IEnumerable<OrderItemsResponseDto>>> GetToApprovedOrders(int limit = 15);
         Task<BackChannelResponseDto<IEnumerable<Guid>>> BulkApproveOrder(IEnumerable<Guid> orderIdsToApprove);
+
+        //i do not want to use CartSummary here
+        Task<BackChannelResponseDto<object>> AddCart(CartConfirmRequestToCartApiDto requestToCartApiDto);
     }
 }

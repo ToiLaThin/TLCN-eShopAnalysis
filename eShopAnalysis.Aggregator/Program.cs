@@ -1,6 +1,6 @@
 using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using eShopAnalysis.Aggregator.Utilities;
-using eShopAnalysis.ApiGateway.Services.BackchannelServices;
+using eShopAnalysis.CartOrderAPI.Application.BackchannelServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +10,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<BackChannelCommunication>(builder.Configuration.GetSection(nameof(BackChannelCommunication)));
 builder.Services.AddScoped<IBackChannelCartOrderService, BackChannelCartOrderService>();
 builder.Services.AddScoped<IBackChannelStockInventoryService, BackChannelStockInventoryService>();
+builder.Services.AddScoped<IBackChannelCouponSaleItemService, BackChannelCouponSaleItemService>();
 //builder.Services.AddScoped<IBackChannelBaseService<PagingOrderRequestDto, IEnumerable<OrderItemsResponseDto>>,
 //                            BackChannelBaseService<PagingOrderRequestDto, IEnumerable<OrderItemsResponseDto>>>();
 //builder.Services.AddScoped<IBackChannelBaseService<OrderItemsStockRequestDto, IEnumerable<ItemStockResponseDto>>,

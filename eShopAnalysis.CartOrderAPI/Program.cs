@@ -1,7 +1,6 @@
 using eShopAnalysis.EventBus.Abstraction;
 using eShopAnalysis.EventBus.Extension;
 using eShopAnalysis.CartOrderAPI.Application.BackchannelDto;
-using eShopAnalysis.CartOrderAPI.Application.BackchannelServices;
 using eShopAnalysis.CartOrderAPI.Infrastructure;
 using eShopAnalysis.CartOrderAPI.Infrastructure.Repositories;
 using eShopAnalysis.CartOrderAPI.Utilities;
@@ -38,12 +37,6 @@ builder.Services.AddMediatR(mediatRConfig =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
-
-builder.Services.Configure<BackChannelCommunication>(builder.Configuration.GetSection(nameof(BackChannelCommunication)));
-builder.Services.AddHttpClient(); //resolve IHttpClientFactory
-//builder.Services.AddScoped<IBackChannelBaseService<RetrieveCouponWithCodeRequestDto, CouponDto>, BackChannelBaseService<RetrieveCouponWithCodeRequestDto, CouponDto>>();
-builder.Services.AddScoped(typeof(IBackChannelBaseService<,>), typeof(BackChannelBaseService<,>));
-builder.Services.AddScoped<IBackChannelCouponSaleItemService, BackChannelCouponSaleItemService>();
 
 //config dapper
 builder.Services.AddScoped<IOrderQueries>(sp => 

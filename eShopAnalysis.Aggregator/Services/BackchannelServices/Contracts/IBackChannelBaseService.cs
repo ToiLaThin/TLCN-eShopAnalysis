@@ -1,6 +1,4 @@
-﻿
-
-using eShopAnalysis.Aggregator.Result;
+﻿using eShopAnalysis.Aggregator.Result;
 
 namespace eShopAnalysis.Aggregator.Services.BackchannelServices
 {
