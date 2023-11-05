@@ -1,9 +1,10 @@
-﻿using eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate;
+﻿using eShopAnalysis.CartOrderAPI.Application.Result;
+using eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate;
 using MediatR;
 
 namespace eShopAnalysis.CartOrderAPI.Application.Commands
 {
-    public class SetOrderCheckoutedOnlineCommand: IRequest<Order>
+    public class SetOrderCheckoutedOnlineCommand: IRequest<CommandHandlerResponseDto<Order>>
     {
         public Guid OrderId { get; }
 

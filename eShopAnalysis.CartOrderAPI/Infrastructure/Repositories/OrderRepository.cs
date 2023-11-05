@@ -17,7 +17,14 @@ namespace eShopAnalysis.CartOrderAPI.Infrastructure.Repositories
             return orderAdded;
         }
 
-        public async Task<Order> GetOrder(Guid orderId)
+        public async Task<Order?> AddAsync(Order order)
+        {
+            var orderAddedEntity = await _context.Orders.AddAsync(order);
+            //_context.SaveChanges();
+            return orderAddedEntity.Entity;
+        }
+
+        public async Task<Order> GetOrderAsyncWithChangeTracker(Guid orderId)
         {
             Order order = await _context.Orders.Include(c => c.Cart)
                                                .Include(c => c.Address)

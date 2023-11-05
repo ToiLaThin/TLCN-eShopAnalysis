@@ -25,10 +25,17 @@ export class OrderApproveService {
 
   public reset() {
     this.getBatchOrderApprove().subscribe(res => {
-      //must parse it mannulaly
-      res.itemsStock = new Map<string, number>(Object.entries(res.itemsStock));
-      this.itemsStockLookUpSub.next(res.itemsStock);
-      this.ordersToApproveSub.next(res.orderItems);
+      //must parse it mannulaly      
+      if (res != null) {
+        res.itemsStock = new Map<string, number>(Object.entries(res.itemsStock));
+        this.itemsStockLookUpSub.next(res.itemsStock);
+        this.ordersToApproveSub.next(res.orderItems);
+        this.ordersApprovedSub.next([]); //without this the next time we approve order, the previous approved order(changed status) will be there which is false
+        return;
+      }      
+      this.itemsStockLookUpSub.next(new Map<string, number>());
+      this.ordersToApproveSub.next([]);
+      this.ordersApprovedSub.next([]); 
     });
   }
 

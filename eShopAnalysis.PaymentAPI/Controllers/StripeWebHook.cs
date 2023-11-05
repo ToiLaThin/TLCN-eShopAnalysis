@@ -2,6 +2,7 @@
 using eShopAnalysis.PaymentAPI.Service;
 using eShopAnalysis.PaymentAPI.Service.Strategy;
 using eShopAnalysis.PaymentAPI.Utilities;
+using eShopAnalysis.PaymentAPI.Utilities.Behaviors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Stripe;
@@ -21,10 +22,15 @@ namespace eShopAnalysis.PaymentAPI.Controllers
         //Quickly returns a successful status code (2xx) prior to any complex logic that could cause a timeout.For example, you must return a 200 response before updating a customer’s invoice as paid in your accounting system.
         //THE HANDLE MUST BE ASYNCHRONOUS WITHOUT AN AWAIT
         [HttpPost("PaymentSucceed")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<IActionResult> PaymentCompleted()
         {
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-
+            if (String.IsNullOrEmpty(json)) {
+                return Ok("Xui ghe");
+            }
             try {
                 var stripeEvent = EventUtility.ParseEvent(json);
                 // Handle the event

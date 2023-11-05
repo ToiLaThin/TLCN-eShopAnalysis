@@ -16,7 +16,14 @@ namespace eShopAnalysis.CartOrderAPI.Infrastructure.Repositories
             return cartAdded;
         }
 
-        public async Task<CartSummary> GetCart(Guid cartId)
+        public async Task<CartSummary?> AddAsync(CartSummary cart)
+        {
+            var cartAddedEntity = await _context.Carts.AddAsync(cart);
+            //_context.SaveChanges();
+            return cartAddedEntity?.Entity;
+        }
+
+        public async Task<CartSummary> GetCartAsyncWithChangeTracker(Guid cartId)
         {
             CartSummary cart = await _context.Carts.Include(c => c.Items)
                                                    .FirstOrDefaultAsync(c => c.Id == cartId);
@@ -31,6 +38,7 @@ namespace eShopAnalysis.CartOrderAPI.Infrastructure.Repositories
 
         public void Update(CartSummary cart)
         {
+            //must get with change tracker then, just modify prop, then change the state of entity to modified
             _context.Entry(cart).State = EntityState.Modified;
         }
     }

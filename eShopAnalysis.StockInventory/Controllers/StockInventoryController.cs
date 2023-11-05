@@ -69,9 +69,15 @@ namespace eShopAnalysis.StockInventory.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> GetStockOfModels([FromBody] OrderItemsStockRequestDto orderItemsStockReq)
         {
+            if (orderItemsStockReq == null) {
+                return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Exception("argument is null");
+            }
+            if (orderItemsStockReq.ProductModelIds.Count() <= 0) {
+                return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Failure("argument is not valid");
+            }
             var result = await _service.GetStockOfModels(orderItemsStockReq.ProductModelIds);
             if (result.IsFailed || result.IsException) {
-                return null;
+                return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Failure(result.Error);
             }
             return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result.Data);
         }
@@ -83,7 +89,7 @@ namespace eShopAnalysis.StockInventory.Controllers
             if (stockDecreaseReqs == null) { throw new ArgumentNullException(nameof(stockDecreaseReqs)); }
             var result = await _service.DecreaseStockItems(stockDecreaseReqs);
             if (result.IsFailed || result.IsException) {
-                return null;
+                return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Failure(result.Error);
             }
             return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result.Data);
         }

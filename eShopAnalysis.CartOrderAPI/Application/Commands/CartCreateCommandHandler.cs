@@ -1,6 +1,7 @@
 ﻿using eShopAnalysis.CartOrderAPI.Application.BackchannelDto;
 using eShopAnalysis.CartOrderAPI.Application.BackchannelServices;
 using eShopAnalysis.CartOrderAPI.Application.IntegrationEvents;
+using eShopAnalysis.CartOrderAPI.Application.Result;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.DomainEvents;
 using eShopAnalysis.CartOrderAPI.Infrastructure;
@@ -13,7 +14,7 @@ using System.Runtime.Serialization;
 
 namespace eShopAnalysis.CartOrderAPI.Application.Commands
 {
-    public class CartCreateCommandHandler : IRequestHandler<CartCreateCommand, CartSummary>
+    public class CartCreateCommandHandler : IRequestHandler<CartCreateCommand, CommandHandlerResponseDto<CartSummary>>
     {
         IUnitOfWork _uOW;
         IBackChannelCouponSaleItemService _backChannelCouponSaleItemService;
@@ -24,37 +25,32 @@ namespace eShopAnalysis.CartOrderAPI.Application.Commands
             _backChannelCouponSaleItemService = backChannelCouponSaleItemService;
             _eventBus = eventBus;
         }
-        public async Task<CartSummary> Handle(CartCreateCommand request, CancellationToken cancellationToken)
+        public async Task<CommandHandlerResponseDto<CartSummary>> Handle(CartCreateCommand request, CancellationToken cancellationToken)
         {
             UserAppliedCouponToCartIntegrationEvent toSentUserAppliedCouponToCartIntegrationEvent = null;
             var transaction = await _uOW.BeginTransactionAsync();
             var cartSummaryCreated = CartSummary.CreateCartSummaryFromItems(Guid.NewGuid(), request.UserId, request.CartItems);
-            var result = _uOW.CartRepository.Add(cartSummaryCreated);
+            var result = await _uOW.CartRepository.AddAsync(cartSummaryCreated);
 
             //if request have coupon code, check if it 's exist and apply it to cart if ok, else just create cart 
             if (!request.CouponCode.IsNullOrEmpty()) {
                 var backChannelResponse = await _backChannelCouponSaleItemService.RetrieveCouponWithCode(request.CouponCode);            
-                if (backChannelResponse.IsFailed || backChannelResponse.IsException)
-                {
+                if (backChannelResponse.IsFailed || backChannelResponse.IsException) {
                     _uOW.RollbackTransaction();
-                    string message = backChannelResponse.Error;
-                    return null;
+                    return CommandHandlerResponseDto<CartSummary>.Failure(backChannelResponse.Error);
                 }
 
                 var couponDtoRetrived = backChannelResponse.Data;
-                if (couponDtoRetrived != null )
-                {
-                    bool appliedSuccessfully = cartSummaryCreated.ApplyCoupon(couponDtoRetrived);
-                    if (!appliedSuccessfully) {
-                        _uOW.RollbackTransaction(); return null;
-                    } else {
-                        toSentUserAppliedCouponToCartIntegrationEvent = new UserAppliedCouponToCartIntegrationEvent(userId: request.UserId, couponId: couponDtoRetrived.CouponId);
-                    }
-                } else
-                {
+                if (couponDtoRetrived == null ) {
                     _uOW.RollbackTransaction();
-                    return null;
+                    return CommandHandlerResponseDto<CartSummary>.Failure("Have coupon, coupon retrieved but null"); ;
                 }
+                bool appliedSuccessfully = cartSummaryCreated.ApplyCoupon(couponDtoRetrived);
+                if (!appliedSuccessfully) {
+                    _uOW.RollbackTransaction(); 
+                    return CommandHandlerResponseDto<CartSummary>.Failure("Retrived coupon but cannot applied"); ;
+                } 
+                toSentUserAppliedCouponToCartIntegrationEvent = new UserAppliedCouponToCartIntegrationEvent(userId: request.UserId, couponId: couponDtoRetrived.CouponId);
             }
 
 
@@ -67,16 +63,17 @@ namespace eShopAnalysis.CartOrderAPI.Application.Commands
             //call event bus to send integration event in case there is a coupon, thus we have the to sent event, sent event after commit the transaction
             if (toSentUserAppliedCouponToCartIntegrationEvent != null)
             {
-                try { _eventBus.Publish(toSentUserAppliedCouponToCartIntegrationEvent); }
-                catch (Exception ex)
-                {
+                try { 
+                    _eventBus.Publish(toSentUserAppliedCouponToCartIntegrationEvent); 
+                }
+                catch (Exception ex) {
                     throw ex;
                     _uOW.RollbackTransaction();
-                    return null;
+                    return CommandHandlerResponseDto<CartSummary>.Failure(ex.Message);
                 }
             }
 
-            return result;
+            return CommandHandlerResponseDto<CartSummary>.Success(result);
         }
     }
 }

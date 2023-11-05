@@ -1,11 +1,10 @@
-﻿using eShopAnalysis.StockInventoryAPI.Utilities.Result;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using System.Reflection;
 
-namespace eShopAnalysis.StockInventoryAPI.Utilities.Behaviors
+namespace eShopAnalysis.PaymentAPI.Utilities.Behaviors
 {
     //Ipipeline behavior & mediatR is another option
     //this is an IActionFilter(not have attribute) so it will executed before and after the action
@@ -40,7 +39,7 @@ namespace eShopAnalysis.StockInventoryAPI.Utilities.Behaviors
             if (implicitConvertedResult == null) {
                 return;
             }
-            if (implicitConvertedResult?.StatusCode == StatusCodes.Status404NotFound) {
+            if (implicitConvertedResult?.StatusCode == StatusCodes.Status404NotFound || implicitConvertedResult?.StatusCode == StatusCodes.Status400BadRequest) {
                 _logger.LogError(
                     "Request {@ControllerName} " +
                     "\n\tAt action {@ActionName} " +
@@ -59,36 +58,35 @@ namespace eShopAnalysis.StockInventoryAPI.Utilities.Behaviors
             //backChannelResp = implicitConvertedResult.Value as BackChannelResponseDto<object> return null
             //this make sure is of type BackChannelResponseDto<>, then we use dynamic to bypass compiler check
             //because we checked it ourself
-            if (implicitConvertedResult.StatusCode != null)
-            {
-                //only check and log backchannel if it is returned(status code is null even though it return 200) not, discriminate from other meths(can have 204, ...)
-                return;
-            }
-            Type resultValueType = implicitConvertedResult.Value.GetType();
-            if (resultValueType.Name != typeof(BackChannelResponseDto<>).Name) { 
-                return;
-            }
-            dynamic backChannelResp = implicitConvertedResult.Value;
-            if (backChannelResp.IsFailed || backChannelResp.IsException) {
-                string error = backChannelResp.Error; //logger not accept dynamic
-                _logger.LogError(
-                    "BackChannel Request {@ControllerName} " +
-                    "\n\tAt action {@ActionName} " +
-                    "\n\tAt route {@RouteName} " +
-                    "\n\tError: {@Error} " +
-                    "\n\tAt {@DateTime}",
-                    controllerName,
-                    actionName,
-                    actionRoute,
-                    error,
-                    DateTime.UtcNow
-                );
-                //when this is received by the backchannel sender,
-                //it will still know because we switch case the status code
-                //and return and backChannelResponseDto.Fail
-                context.Result = new NotFoundObjectResult(backChannelResp.Error);
-                return;
-            }            
+            //if (implicitConvertedResult.StatusCode != StatusCodes.Status200OK) {
+            //    //only check and log backchannel if it is returned(200) not, discriminate from other meths(can have 204, ...)
+            //    return;
+            //}
+            //Type resultValueType = implicitConvertedResult.Value.GetType();
+            //if (resultValueType.Name != typeof(BackChannelResponseDto<>).Name) { 
+            //    return;
+            //}
+            //dynamic backChannelResp = implicitConvertedResult.Value;
+            //if (backChannelResp.IsFailed || backChannelResp.IsException) {
+            //    string error = backChannelResp.Error; //logger not accept dynamic
+            //    _logger.LogError(
+            //        "BackChannel Request {@ControllerName} " +
+            //        "\n\tAt action {@ActionName} " +
+            //        "\n\tAt route {@RouteName} " +
+            //        "\n\tError: {@Error} " +
+            //        "\n\tAt {@DateTime}",
+            //        controllerName,
+            //        actionName,
+            //        actionRoute,
+            //        error,
+            //        DateTime.UtcNow
+            //    );
+            //    //when this is received by the backchannel sender,
+            //    //it will still know because we switch case the status code
+            //    //and return and backChannelResponseDto.Fail
+            //    context.Result = new NotFoundObjectResult(backChannelResp.Error);
+            //    return;
+            //}            
         }
 
 

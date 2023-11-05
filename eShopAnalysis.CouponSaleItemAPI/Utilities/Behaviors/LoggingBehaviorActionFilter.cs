@@ -59,8 +59,9 @@ namespace eShopAnalysis.CouponSaleItemAPI.Utilities.Behaviors
             //backChannelResp = implicitConvertedResult.Value as BackChannelResponseDto<object> return null
             //this make sure is of type BackChannelResponseDto<>, then we use dynamic to bypass compiler check
             //because we checked it ourself
-            if (implicitConvertedResult.StatusCode != StatusCodes.Status200OK) {
-                //only check and log backchannel if it is returned(200) not, discriminate from other meths(can have 204, ...)
+            if (implicitConvertedResult.StatusCode != null)
+            {
+                //only check and log backchannel if it is returned(status code is null even though it return 200) not, discriminate from other meths(can have 204, ...)
                 return;
             }
             Type resultValueType = implicitConvertedResult.Value.GetType();

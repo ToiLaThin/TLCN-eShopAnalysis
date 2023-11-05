@@ -1,10 +1,11 @@
-﻿using eShopAnalysis.CartOrderAPI.Services.BackchannelDto;
+﻿using eShopAnalysis.CartOrderAPI.Application.Result;
+using eShopAnalysis.CartOrderAPI.Services.BackchannelDto;
 using MediatR;
 
 namespace eShopAnalysis.CartOrderAPI.Application.Commands
 {
     //approve aka stock confirmed
-    public class OrderApproveCommand: IRequest<IEnumerable<Guid>>
+    public class OrderApproveCommand: IRequest<CommandHandlerResponseDto<IEnumerable<Guid>>>
     {
         public IEnumerable<Guid> OrderIdsToApprove { get; private set; }
 

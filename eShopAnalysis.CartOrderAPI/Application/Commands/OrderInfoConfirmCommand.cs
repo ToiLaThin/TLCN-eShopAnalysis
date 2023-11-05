@@ -1,11 +1,12 @@
-﻿using eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate;
+﻿using eShopAnalysis.CartOrderAPI.Application.Result;
+using eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate;
 using eShopAnalysis.CartOrderAPI.Domain.SeedWork;
 using MediatR;
 using System.Net;
 
 namespace eShopAnalysis.CartOrderAPI.Application.Commands
 {
-    public class OrderInfoConfirmCommand: IRequest<Order>
+    public class OrderInfoConfirmCommand: IRequest<CommandHandlerResponseDto<Order>>
     {
         public Guid OrderId { get; set; }
 

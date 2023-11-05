@@ -1,10 +1,11 @@
-﻿using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
+﻿using eShopAnalysis.CartOrderAPI.Application.Result;
+using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
 using MediatR;
 using System.Runtime.Serialization;
 
 namespace eShopAnalysis.CartOrderAPI.Application.Commands
 {
-    public class CartCreateCommand : IRequest<CartSummary>
+    public class CartCreateCommand : IRequest<CommandHandlerResponseDto<CartSummary>>
     {
         //[DataMember]
         public IEnumerable<CartItem> CartItems { get; private set; } 

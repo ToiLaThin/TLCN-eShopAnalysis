@@ -17,6 +17,7 @@ export class OrderApproveComponent implements OnInit {
   get OrderStatus() { return OrderStatus; }
 
   constructor(private orderApproveService: OrderApproveService) { 
+    this.orderApproveService.reset();
   }
 
   

@@ -25,7 +25,7 @@ namespace eShopAnalysis.ApiGateway.Controllers
         public async Task<OrderItemAndStockAggregateDto> GetOrderToApprovedWithStock()
         {
             var approvedOrdersResult = await _backChannelCartOrderService.GetToApprovedOrders();
-            if (approvedOrdersResult.IsSuccess)
+            if (approvedOrdersResult.IsSuccess && approvedOrdersResult.Data.Count() > 0)
             {
                 //https://stackoverflow.com/a/34883995
                 var allItemsInOrdersIds = approvedOrdersResult.Data.SelectMany(o => o.OrderItemsQty)

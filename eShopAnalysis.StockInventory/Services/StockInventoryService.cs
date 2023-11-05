@@ -64,9 +64,10 @@ namespace eShopAnalysis.StockInventoryAPI.Services
         }
 
         public async Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> GetStockOfModels(IEnumerable<Guid> modelIds)
-        {            
+        {
+            IEnumerable<string> modelIdsStr = modelIds.Select(x => x.ToString()); //convert to string so we do not have to use Guid.Parse in the contain or any method(have errro)
             var stockOfModelIds = _repo.GetAsQueryable()
-                                       .Where(st => modelIds.Any(m => m == Guid.Parse(st.ProductModelId)))
+                                       .Where(st => modelIdsStr.Contains(st.ProductModelId))
                                        .ToList();
             List<ItemStockResponseDto> result = new List<ItemStockResponseDto>();
             foreach (var stockOfModel in stockOfModelIds) {
@@ -81,11 +82,11 @@ namespace eShopAnalysis.StockInventoryAPI.Services
 
         public async Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> DecreaseStockItems(IEnumerable<StockDecreaseRequestDto> decreaseReqs)
         {
-            var requestedModelIds = decreaseReqs.Select(req => req.ProductModelId).ToList();
+            var requestedModelIds = decreaseReqs.Select(req => req.ProductModelId.ToString()).ToList();
             var stocksToDecrease = _repo.GetAsQueryable()
-                                        .Where(st => requestedModelIds
-                                        .Contains(Guid.Parse(st.ProductModelId)))
+                                        .Where(st => requestedModelIds.Contains(st.ProductModelId))
                                         .ToList();
+                                        
 
             if (stocksToDecrease != null) {
                 foreach (var stock in stocksToDecrease)
@@ -103,7 +104,7 @@ namespace eShopAnalysis.StockInventoryAPI.Services
                 //get result after update
                 IEnumerable<ItemStockResponseDto> result = _repo.GetAsQueryable()
                                         .Where(st => requestedModelIds
-                                        .Contains(Guid.Parse(st.ProductModelId)))
+                                        .Contains(st.ProductModelId))
                                         .ToList()
                                         .Select(st => {
                                             return new ItemStockResponseDto

@@ -37,7 +37,7 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
             //kiem tra da co user mapping chua, neu chua thi phai tao
             if (mapping == null) { throw new ArgumentNullException("uOW"); }
 
-            string? checkCustomerId = mapping.GetCustomerIdOfUser(userId);
+            string? checkCustomerId = await mapping.GetCustomerIdOfUserAsync(userId);
             //neu chua co thi create mapping 
             if (checkCustomerId.IsNullOrEmpty()) {
                 //even if we pay with momo, still need to create stripe customer, so next time this customer, if pay by stripe will have a valid customer id
@@ -47,7 +47,7 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
                 };
                 var customerService = new CustomerService();
                 var createdCustomer = customerService.Create(customerServiceOptions);
-                mapping.AddUserCustomerMapping(new UserCustomerMapping { 
+                await mapping.AddUserCustomerMappingAsync(new UserCustomerMapping { 
                     CustomerId = createdCustomer.Id, UserId = userId 
                 });
             }
