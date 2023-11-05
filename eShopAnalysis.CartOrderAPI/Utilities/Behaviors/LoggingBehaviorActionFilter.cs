@@ -1,11 +1,11 @@
-﻿using eShopAnalysis.StockInventoryAPI.Utilities.Result;
+﻿using eShopAnalysis.CartOrderAPI.Application.Result;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using System.Reflection;
 
-namespace eShopAnalysis.StockInventoryAPI.Utilities.Behaviors
+namespace eShopAnalysis.CartOrderAPI.Utilities.Behaviors
 {
     //Ipipeline behavior & mediatR is another option
     //this is an IActionFilter(not have attribute) so it will executed before and after the action
@@ -59,8 +59,7 @@ namespace eShopAnalysis.StockInventoryAPI.Utilities.Behaviors
             //backChannelResp = implicitConvertedResult.Value as BackChannelResponseDto<object> return null
             //this make sure is of type BackChannelResponseDto<>, then we use dynamic to bypass compiler check
             //because we checked it ourself
-            if (implicitConvertedResult.StatusCode != null)
-            {
+            if (implicitConvertedResult.StatusCode != null) {
                 //only check and log backchannel if it is returned(status code is null even though it return 200) not, discriminate from other meths(can have 204, ...)
                 return;
             }

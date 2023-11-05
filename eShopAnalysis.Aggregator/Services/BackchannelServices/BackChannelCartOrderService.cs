@@ -8,23 +8,21 @@ namespace eShopAnalysis.ApiGateway.Services.BackchannelServices
 {
     public class BackChannelCartOrderService : IBackChannelCartOrderService
     {
-        private readonly IBackChannelBaseService<PagingOrderRequestDto, IEnumerable<OrderItemsResponseDto>> _baseService;
-        private readonly IBackChannelBaseService<IEnumerable<Guid>, IEnumerable<Guid>> _baseApproveService;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IOptions<BackChannelCommunication> _backChannelUrls;
         public BackChannelCartOrderService(
-            IBackChannelBaseService<PagingOrderRequestDto, IEnumerable<OrderItemsResponseDto>> baseService,
-            IOptions<BackChannelCommunication> backChannelUrls,
-            IBackChannelBaseService<IEnumerable<Guid>, IEnumerable<Guid>> baseApproveService
+            IServiceProvider serviceProvider,
+            IOptions<BackChannelCommunication> backChannelUrls
             )
         {
-            _baseService = baseService;
+            _serviceProvider = serviceProvider;
             _backChannelUrls = backChannelUrls;
-            _baseApproveService = baseApproveService;
         }
 
         public async Task<BackChannelResponseDto<IEnumerable<OrderItemsResponseDto>>> GetToApprovedOrders(int limit = 15)
         {
-            var result = await _baseService.SendAsync(new BackChannelRequestDto<PagingOrderRequestDto>()
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<PagingOrderRequestDto, IEnumerable<OrderItemsResponseDto>>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<PagingOrderRequestDto>()
             {
                 ApiType = ApiType.POST,
                 Url = $"{_backChannelUrls.Value.OrderAPIBaseUri}/GetToApprovedOrders",
@@ -35,7 +33,8 @@ namespace eShopAnalysis.ApiGateway.Services.BackchannelServices
 
         public async Task<BackChannelResponseDto<IEnumerable<Guid>>> BulkApproveOrder(IEnumerable<Guid> orderIdsToApprove)
         {
-            var result = await _baseApproveService.SendAsync(new BackChannelRequestDto<IEnumerable<Guid>>()
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<IEnumerable<Guid>, IEnumerable<Guid>>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<IEnumerable<Guid>>()
             {
                 ApiType = ApiType.PUT,
                 Url = $"{_backChannelUrls.Value.OrderAPIBaseUri}/BulkApproveOrder",

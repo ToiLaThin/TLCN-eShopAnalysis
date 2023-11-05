@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using eShopAnalysis.EventBus.Extension;
 using Stripe;
 using eShopAnalysis.EventBus.Abstraction;
+using Serilog;
+using eShopAnalysis.PaymentAPI.Utilities.Behaviors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +17,10 @@ var builder = WebApplication.CreateBuilder(args);
 //new just subscribe integration event and integration event handler
 builder.Services.AddEventBus(builder.Configuration);
 //builder.Services.AddTransient<IIntegrationEventHandler<GracePeriodConfirmedIntegrationEvent>, GracePeriodConfirmedIntegrationEventHandler>();
-
+builder.Host.UseSerilog((context, config) => {
+    config.ReadFrom.Configuration(context.Configuration);
+});
+builder.Services.AddScoped<LoggingBehaviorActionFilter>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -50,7 +55,8 @@ builder.Services.AddScoped<IUserCustomerMappingRepository, UserCustomerMappingRe
 
 builder.Services.AddDbContext<PaymentContext>(ctxOption =>
 {
-    ctxOption.UseSqlServer(builder.Configuration.GetConnectionString("PaymentDb"));
+    ctxOption.UseSqlServer(builder.Configuration.GetConnectionString("PaymentDb"))
+             .LogTo(Console.WriteLine, LogLevel.Information); ;
 });
 StripeConfiguration.ApiKey = "sk_test_51MKzuQK5g3RpaRBrDoRZF32WRPWdGWDF5uUsJNX8hLl7ruXj2hA5B23UXlhCEPMnqJ2k75Ah4Zl1Aw3niu2SRfdV00E9hnzp67";
 var app = builder.Build();
@@ -61,7 +67,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseSerilogRequestLogging();
 app.UseHttpsRedirection(); //for redirect to stripe? but now we do not redirect , do we still need this
 
 app.UseAuthorization();

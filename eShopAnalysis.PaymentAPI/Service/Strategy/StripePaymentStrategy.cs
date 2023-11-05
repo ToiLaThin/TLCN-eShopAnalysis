@@ -74,7 +74,8 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
                 if (paymentTransactionRepository is not StripePaymentTransactionRepository transRepo) { 
                     throw new Exception("cannot resolve the type"); 
                 }
-                bool anyTransactionExistedForThisOrder = await transRepo.GetAll()
+                bool anyTransactionExistedForThisOrder = await transRepo.GetAsQueryable()
+                                                                        .AsNoTracking()
                                                                         .Where(trans => trans.CustomerId == customerId)
                                                                         .AnyAsync(trans => trans.OrderId == orderId);
                 //if the paymentTransaction is cancelled(refunded), we will still mark ti as Existed and will not create a checkout session for order with this ORDERID

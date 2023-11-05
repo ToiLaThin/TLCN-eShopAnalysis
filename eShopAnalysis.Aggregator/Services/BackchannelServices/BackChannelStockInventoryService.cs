@@ -9,23 +9,22 @@ namespace eShopAnalysis.ApiGateway.Services.BackchannelServices
 {
     public class BackChannelStockInventoryService : IBackChannelStockInventoryService
     {
-        private readonly IBackChannelBaseService<OrderItemsStockRequestDto, IEnumerable<ItemStockResponseDto>> _baseService;
+        //(done using service provider)
         //TODO might need refactor: make backchannelStockInventoryService generic so that it does not have to inject to much
         //but this will make controller inject more service with different generic argument or change the service to make it use reflection
-        private readonly IBackChannelBaseService<IEnumerable<StockDecreaseRequestDto>, IEnumerable<ItemStockResponseDto>> _baseStockDecreaseService;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IOptions<BackChannelCommunication> _backChannelUrls;
         public BackChannelStockInventoryService(
-            IBackChannelBaseService<OrderItemsStockRequestDto, IEnumerable<ItemStockResponseDto>> baseService, 
             IOptions<BackChannelCommunication> backChannelUrls,
-            IBackChannelBaseService<IEnumerable<StockDecreaseRequestDto>, IEnumerable<ItemStockResponseDto>> baseStockDecreaseService)
+            IServiceProvider serviceProvider)
         {
-            _baseService = baseService;
+            _serviceProvider = serviceProvider;
             _backChannelUrls = backChannelUrls;
-            _baseStockDecreaseService = baseStockDecreaseService;
         }
         public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> GetOrderItemsStock(IEnumerable<Guid> productModelIds)
         {
-            var result = await _baseService.SendAsync(new BackChannelRequestDto<OrderItemsStockRequestDto>()
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<OrderItemsStockRequestDto, IEnumerable<ItemStockResponseDto>>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<OrderItemsStockRequestDto>()
             {
                 ApiType = ApiType.POST,
                 Url = $"{_backChannelUrls.Value.StockInventoryAPIBaseUri}/GetStockOfModels",
@@ -36,7 +35,8 @@ namespace eShopAnalysis.ApiGateway.Services.BackchannelServices
 
         public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> DecreaseStockItems(IEnumerable<StockDecreaseRequestDto> stockDecreaseReqs)
         {
-            var result = await _baseStockDecreaseService.SendAsync(new BackChannelRequestDto<IEnumerable<StockDecreaseRequestDto>>()
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<IEnumerable<StockDecreaseRequestDto>, IEnumerable<ItemStockResponseDto>>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<IEnumerable<StockDecreaseRequestDto>>()
             {
                 ApiType = ApiType.POST,
                 Url = $"{_backChannelUrls.Value.StockInventoryAPIBaseUri}/DecreaseStockItems",

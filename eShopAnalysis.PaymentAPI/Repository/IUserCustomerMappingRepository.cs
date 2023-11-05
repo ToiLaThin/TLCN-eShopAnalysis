@@ -9,5 +9,11 @@ namespace eShopAnalysis.PaymentAPI.Repository
         UserCustomerMapping AddUserCustomerMapping(UserCustomerMapping mappingToAdd);
 
         UserCustomerMapping DeleteUserCustomerMapping(Guid userId);
+
+        Task<string> GetCustomerIdOfUserAsync(Guid userId);
+
+        Task<UserCustomerMapping> AddUserCustomerMappingAsync(UserCustomerMapping mappingToAdd);
+
+        Task<UserCustomerMapping> DeleteUserCustomerMappingAsync(Guid userId);
     }
 }

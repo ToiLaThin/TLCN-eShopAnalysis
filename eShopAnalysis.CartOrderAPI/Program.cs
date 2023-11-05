@@ -10,17 +10,24 @@ using System.Reflection;
 using eShopAnalysis.CartOrderAPI.Application.Queries;
 using eShopAnalysis.CartOrderAPI.IntegrationEvents;
 using eShopAnalysis.CartOrderAPI.Application.IntegrationEvents.EventHandling;
+using Serilog;
+using eShopAnalysis.CartOrderAPI.Utilities.Behaviors;
 
 var builder = WebApplication.CreateBuilder(args);
 //this will config all required by event bus, review appsettings.json EventBus section and EventBus Connection string
 //new just subscribe integration event and integration event handler
 builder.Services.AddEventBus(builder.Configuration);
+builder.Host.UseSerilog((context, config) => {
+    config.ReadFrom.Configuration(context.Configuration);
+});
+builder.Services.AddScoped<LoggingBehaviorActionFilter>();
 builder.Services.AddTransient<IIntegrationEventHandler<OrderPaymentTransactionCompletedIntegrationEvent>, OrderPaymentTransactionCompletedIntegrationEventHandling>();
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<OrderCartContext>(ctxOption =>
 {
-    ctxOption.UseSqlServer(builder.Configuration.GetConnectionString("OrderCartDb"));
+    ctxOption.UseSqlServer(builder.Configuration.GetConnectionString("OrderCartDb"))
+             .LogTo(Console.WriteLine, LogLevel.Information); ;
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -50,6 +57,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseSerilogRequestLogging();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

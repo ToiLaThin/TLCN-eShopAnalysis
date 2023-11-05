@@ -70,11 +70,12 @@ namespace eShopAnalysis.CouponSaleItemAPI.Service
             if (couponUsedByUser == null || couponUsedByUser.Count <= 0) {
                 return ServiceResponseDto<IEnumerable<Coupon>>.Success(new List<Coupon> { });
             }
-            var result = await _uOW.CouponRepository.GetAsQueryable()
-                                              .AsNoTracking()             
+            var resultTEmp = await _uOW.CouponRepository.GetAsQueryable()
+                                              .AsNoTracking()
                                               .Where(c => c.CouponStatus == Status.Active) //limited the amount of coupon retrived
-                                              .Except(couponUsedByUser) //TODO find if there is any other way https://stackoverflow.com/a/14682518
-                                              .ToListAsync();
+                                              .ToListAsync();//TODO find if there is any other way https://stackoverflow.com/a/14682518
+            var result = resultTEmp.Except(couponUsedByUser); 
+            //i have to use this to not have error, query cannot be translated: https://learn.microsoft.com/en-us/ef/core/querying/client-eval
             return ServiceResponseDto<IEnumerable<Coupon>>.Success(result);
         }
 

@@ -5,6 +5,7 @@ using eShopAnalysis.CartOrderAPI.Application.Result;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate;
 using eShopAnalysis.CartOrderAPI.Services.BackchannelDto;
+using eShopAnalysis.CartOrderAPI.Utilities.Behaviors;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,55 +25,74 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
         }
 
         [HttpGet("GetDraftOrdersOfUser")]
-        public async Task<IEnumerable<OrderDraftViewModel>> GetDraftOrdersOfUser([FromQuery] string userId)
+        [ProducesResponseType(typeof(CartSummary), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<IEnumerable<OrderDraftViewModel>>> GetDraftOrdersOfUser([FromQuery] string userId)
         {
             Guid userIdGuid = Guid.Parse(userId);
-            var result = await _orderQueries.GetUserDraftOrders(userIdGuid);
-            return result;
+            var queryResult = await _orderQueries.GetUserDraftOrders(userIdGuid);
+            if (queryResult.IsFailed || queryResult.IsException) {
+                return NotFound(queryResult.Error);
+            }
+            return Ok(queryResult.Data);
         }
 
         [HttpPost("ConfirmOrderCustomerInfo")]
-        public async Task<Order> ConfirmOrderCustomerInfo([FromBody] CustomerOrderInfoConfirmedRequestDto customerOrderInfoConfirmedRequestDto)
+        [ProducesResponseType(typeof(CartSummary), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<Order>> ConfirmOrderCustomerInfo([FromBody] CustomerOrderInfoConfirmedRequestDto customerOrderInfoConfirmedRequestDto)
         {
             //TODO for now i do thing minimun, please review it later
             OrderInfoConfirmCommand command = new OrderInfoConfirmCommand(customerOrderInfoConfirmedRequestDto.OrderId,customerOrderInfoConfirmedRequestDto.Address, customerOrderInfoConfirmedRequestDto.PhoneNumber);
-            var result = await _mediator.Send(command);
-            return result;
+            var commandResult = await _mediator.Send(command);
+            if (commandResult.IsFailed || commandResult.IsException) {
+                return NotFound(commandResult.Error);
+            }
+            return Ok(commandResult.Data);
         }
 
         [HttpPut("PickPaymentMethodCOD")]
-        public async Task<OrderViewModel> PickPaymentMethodCOD([FromQuery] Guid orderId)
+        [ProducesResponseType(typeof(CartSummary), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<OrderViewModel>> PickPaymentMethodCOD([FromQuery] Guid orderId)
         {
             PickPaymentMethodCODCommand command = new PickPaymentMethodCODCommand(orderId);
-            var result = await _mediator.Send(command);
-            return result;
+            var commandResult = await _mediator.Send(command);
+            if (commandResult.IsFailed || commandResult.IsException) {
+                return NotFound(commandResult.Error);
+            }
+            return Ok(commandResult.Data);
         }
 
         [HttpPut("BackChannel/BulkApproveOrder")]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<BackChannelResponseDto<IEnumerable<Guid>>> BulkApproveOrder([FromBody] IEnumerable<Guid> orderIdsToApprove)
         {
             if (orderIdsToApprove == null) { 
                 throw new ArgumentNullException(nameof(orderIdsToApprove)); 
             }
             OrderApproveCommand command = new OrderApproveCommand(orderIdsToApprove);
-            var result = await _mediator.Send(command);
-            if (result == null) {
-                return BackChannelResponseDto<IEnumerable<Guid>>.Failure("data have errors");
+            var commandResult = await _mediator.Send(command);
+            if (commandResult.IsFailed || commandResult.IsException) {
+                return BackChannelResponseDto<IEnumerable<Guid>>.Failure(commandResult.Error);
             }
-            return BackChannelResponseDto<IEnumerable<Guid>>.Success(result);
+            return BackChannelResponseDto<IEnumerable<Guid>>.Success(commandResult.Data);
         }
 
         //return minial orders with items quantity to aggregate api gateway
         //if swagger cannot get schema, view debug console to fix
         [HttpPost("BackChannel/GetToApprovedOrders")]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<BackChannelResponseDto<IEnumerable<OrderItemsResponseDto>>> GetToApprovedOrders([FromBody] PagingOrderRequestDto pagingOrderRequest)
         {
-            var result = await _orderQueries.GetToApprovedOrders(pagingOrderRequest.Limit);
-            if (result == null)
-            {
+            var queryResult = await _orderQueries.GetToApprovedOrders(pagingOrderRequest.Limit);
+            if (queryResult.IsFailed || queryResult.IsException) {
                 return BackChannelResponseDto<IEnumerable<OrderItemsResponseDto>>.Failure("data have errors");
             }
-            return BackChannelResponseDto<IEnumerable<OrderItemsResponseDto>>.Success(result);
+            return BackChannelResponseDto<IEnumerable<OrderItemsResponseDto>>.Success(queryResult.Data);
         }
 
     }

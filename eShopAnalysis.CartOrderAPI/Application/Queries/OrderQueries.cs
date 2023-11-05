@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using eShopAnalysis.CartOrderAPI.Application.Result;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate;
 using eShopAnalysis.CartOrderAPI.Services.BackchannelDto;
 using Microsoft.Data.SqlClient;
@@ -16,7 +17,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
         }
 
         //ref: https://www.learndapper.com/relationships
-        public async Task<IEnumerable<OrderItemsResponseDto>> GetToApprovedOrders(int limit)
+        public async Task<QueryResponseDto<IEnumerable<OrderItemsResponseDto>>> GetToApprovedOrders(int limit)
         {
             using var connection = new SqlConnection(_connString);
             string sql = @"SELECT o.Id AS OrderId, o.OrdersStatus AS OrderStatus, o.PaymentMethod, c.TotalPriceFinal As TotalPriceFinal, 
@@ -43,7 +44,9 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
                     return orderItems;
                 },
                 splitOn: "ProductModelId");
-
+            if (orderItemsEntry == null) {
+                return QueryResponseDto<IEnumerable<OrderItemsResponseDto>>.Failure("Query return no result");
+            }
             //group orderItems with same id and return a single orderItems with itemQty is list of all order of that group
             IEnumerable<OrderItemsResponseDto> orderItemsGrp = orderItemsEntry.GroupBy(o => o.OrderId).Select(g =>
             {
@@ -52,10 +55,10 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
                 groupedOrderItems.OrderItemsQty = g.Select(g => g.OrderItemsQty.First()).ToList(); //necessary
                 return groupedOrderItems;
             });
-            return orderItemsGrp;
+            return QueryResponseDto<IEnumerable<OrderItemsResponseDto>>.Success(orderItemsGrp);
         }
 
-        public async Task<IEnumerable<OrderDraftViewModel>> GetUserDraftOrders(Guid userId)
+        public async Task<QueryResponseDto<IEnumerable<OrderDraftViewModel>>> GetUserDraftOrders(Guid userId)
         {
             using var connection = new SqlConnection(_connString);
             string sql = @"SELECT o.Id As OrderId, c.TotalPriceOriginal As SubTotal, c.CouponDiscountAmount + c.TotalSaleDiscountAmount As TotalDiscount
@@ -65,7 +68,11 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
             object paramsSql = new { userId, OrdersStatus = OrderStatus.CreatedDraft };
 
             var result = await connection.QueryAsync<OrderDraftViewModel>(sql, paramsSql);
-            return result;
+            if (result == null || result.Count() <= 0) {
+                return QueryResponseDto<IEnumerable<OrderDraftViewModel>>.Failure("Query return no result");
+            }
+            return QueryResponseDto<IEnumerable<OrderDraftViewModel>>.Success(result);
+
         }
     }
 }

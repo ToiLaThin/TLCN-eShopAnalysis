@@ -28,8 +28,8 @@ namespace eShopAnalysis.PaymentAPI.Repository
                 TotalDiscount = discount,
                 TransactionStatus = PaymentStatus.Pending
             };
-            _context.StripeTransactions.Add(transaction);
-            _context.SaveChanges();
+            await _context.StripeTransactions.AddAsync(transaction);
+            await _context.SaveChangesAsync();
             return await _context.StripeTransactions.FindAsync(paymentIntentId);
         }
 
@@ -46,7 +46,7 @@ namespace eShopAnalysis.PaymentAPI.Repository
 
         //https://stackoverflow.com/a/26677047
         //we should not return all by calling ToListAsync(even async), but on the service , we will add some filtering(where) and then call to list async
-        public IQueryable<StripeTransaction> GetAll()
+        public IQueryable<StripeTransaction> GetAsQueryable()
         {
             var result = _context.StripeTransactions.AsQueryable();
             return result;

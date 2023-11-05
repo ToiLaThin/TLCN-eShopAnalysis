@@ -8,6 +8,8 @@ namespace eShopAnalysis.CartOrderAPI.Infrastructure.Repositories
 
         void Update(CartSummary cart);
 
-        Task<CartSummary> GetCart(Guid cartId);
+        Task<CartSummary?> AddAsync(CartSummary cart);
+
+        Task<CartSummary> GetCartAsyncWithChangeTracker(Guid cartId);
     }
 }
