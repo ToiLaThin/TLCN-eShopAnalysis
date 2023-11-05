@@ -35,17 +35,16 @@ namespace eShopAnalysis.CouponSaleItemAPI.Controllers
             return Ok(resultDto);
         }
 
-        [HttpPost("AddSaleItem")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(SaleItemDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<SaleItemDto>> AddSaleItem([FromBody] SaleItem saleItem)
+        [HttpPost("BackChannel/AddSaleItem")]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<BackChannelResponseDto<SaleItemDto>> AddSaleItem([FromBody] SaleItem saleItem)
         {
             var serviceResult = await _saleItemService.Add(saleItem);
-            if (serviceResult.IsFailed) {
-                return NotFound(serviceResult.Error);
+            if (serviceResult.IsFailed || serviceResult.IsException) {
+                return BackChannelResponseDto<SaleItemDto>.Failure(serviceResult.Error);
             }
             var resultDto = _mapper.Map<SaleItemDto>(serviceResult.Data);
-            return Ok(resultDto);
+            return BackChannelResponseDto<SaleItemDto>.Success(resultDto);
         }
     }
 }

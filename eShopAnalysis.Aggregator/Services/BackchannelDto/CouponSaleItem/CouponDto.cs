@@ -1,4 +1,4 @@
-﻿namespace eShopAnalysis.Aggregator.Application.BackchannelDto
+﻿namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 { 
     public enum Status
     {

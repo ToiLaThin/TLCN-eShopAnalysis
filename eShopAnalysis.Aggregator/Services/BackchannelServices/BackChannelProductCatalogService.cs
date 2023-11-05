@@ -1,12 +1,10 @@
-﻿using eShopAnalysis.CouponSaleItemAPI.Dto;
-using eShopAnalysis.CouponSaleItemAPI.Dto.BackchannelDto;
-using eShopAnalysis.CouponSaleItemAPI.Models;
-using eShopAnalysis.CouponSaleItemAPI.Service.BackChannelService;
-using eShopAnalysis.CouponSaleItemAPI.Utilities;
-using eShopAnalysis.Dto.BackchannelDto;
+﻿using eShopAnalysis.Aggregator.Result;
+using eShopAnalysis.Aggregator.Services.BackchannelDto;
+using eShopAnalysis.Aggregator.Services.BackchannelServices;
+using eShopAnalysis.Aggregator.Utilities;
 using Microsoft.Extensions.Options;
 
-namespace eShopAnalysis.CouponSaleItemAPI.Service.BackchannelService
+namespace eShopAnalysis.Aggregator.Services.BackchannelService
 {
     public class BackChannelProductCatalogService : IBackChannelProductCatalogService
     {        

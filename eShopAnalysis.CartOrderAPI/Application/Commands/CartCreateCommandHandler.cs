@@ -1,15 +1,10 @@
-﻿using eShopAnalysis.CartOrderAPI.Application.BackchannelDto;
-using eShopAnalysis.CartOrderAPI.Application.IntegrationEvents;
+﻿using eShopAnalysis.CartOrderAPI.Application.IntegrationEvents;
 using eShopAnalysis.CartOrderAPI.Application.Result;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.DomainEvents;
 using eShopAnalysis.CartOrderAPI.Infrastructure;
-using eShopAnalysis.CartOrderAPI.Infrastructure.Repositories;
 using eShopAnalysis.EventBus.Abstraction;
 using MediatR;
-using Microsoft.IdentityModel.Tokens;
-using System.Linq.Expressions;
-using System.Runtime.Serialization;
 
 namespace eShopAnalysis.CartOrderAPI.Application.Commands
 {

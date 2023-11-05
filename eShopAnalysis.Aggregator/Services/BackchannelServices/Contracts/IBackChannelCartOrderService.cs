@@ -1,5 +1,4 @@
-﻿using eShopAnalysis.Aggregator.Application.BackchannelDto;
-using eShopAnalysis.Aggregator.Result;
+﻿using eShopAnalysis.Aggregator.Result;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
 
 namespace eShopAnalysis.Aggregator.Services.BackchannelServices

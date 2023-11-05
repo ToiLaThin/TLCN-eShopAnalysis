@@ -1,21 +1,9 @@
 ﻿
-namespace eShopAnalysis.Dto.BackchannelDto
+namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
-    public enum CublicType
-    {
-        M, //khoi luowng
-        V, //the tich
-        S, //dien tich
-        N //do not have cubic
-
-    };
-
-    //the return type after send the request to the productCatalog microservice to 
-    //update the product to isSaleItem = true; and other props
-    //just a return type to have loopback request
+    //response from update product to on sale from ProductCatalog
     public class ProductDto
     {
-
         public Guid ProductId { get; set; }
 
         public string ProductName { get; set; }
@@ -28,9 +16,11 @@ namespace eShopAnalysis.Dto.BackchannelDto
 
         public bool IsOnSale { get; set; } 
 
-        public double SalePercent { get; set; } 
+        public double ProductDisplaySaleValue { get; set; }
 
-        public double PriceOnSale { get; set; }
+        public DiscountType ProductDisplaySaleType { get; set; }
+
+        public double ProductDisplayPriceOnSale { get; set; }
 
 
         public bool HaveVariants { get; set; }
@@ -52,6 +42,15 @@ namespace eShopAnalysis.Dto.BackchannelDto
         public string ProductBrand { get; set; }
     }
 
+    public enum CublicType
+    {
+        M, //khoi luowng
+        V, //the tich
+        S, //dien tich
+        N //do not have cubic
+
+    };
+
     public class ProductModelDto
     {
         public Guid ProductModelId { get; set; }
@@ -68,7 +67,11 @@ namespace eShopAnalysis.Dto.BackchannelDto
 
         public bool IsOnSaleModel { get; set; }
 
-        public double SalePercentModel { get; set; }
+        public Guid? SaleItemId { get; set; }
+
+        public double SaleValueModel { get; set; }
+
+        public DiscountType SaleType { get; set; }
 
         public double PriceOnSaleModel { get; set; }
     }

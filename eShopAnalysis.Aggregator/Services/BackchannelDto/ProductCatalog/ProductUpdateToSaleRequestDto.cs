@@ -1,10 +1,10 @@
-﻿using eShopAnalysis.CouponSaleItemAPI.Models;
+﻿using eShopAnalysis.Aggregator.Services.BackchannelDto;
 
-namespace eShopAnalysis.CouponSaleItemAPI.Dto.BackchannelDto
+namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
+    //request to ProductCatalog to update to on sale
     public class ProductUpdateToSaleRequestDto
     {
-        //TODO fix the model of product and saleiitem, about the discount type
         public Guid ProductId { get; set; }
 
         public Guid ProductModelId { get; set; }
