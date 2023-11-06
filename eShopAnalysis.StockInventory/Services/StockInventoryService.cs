@@ -5,13 +5,16 @@ namespace eShopAnalysis.StockInventoryAPI.Services
     using eShopAnalysis.ApiGateway.Services.BackchannelDto;
     using eShopAnalysis.StockInventory.Models;
     using eShopAnalysis.StockInventory.Repository;
+    using eShopAnalysis.StockInventoryAPI.Dto;
     using eShopAnalysis.StockInventoryAPI.Dto.BackchannelDto;
+    using Microsoft.AspNetCore.Mvc;
+    using System.Collections.Generic;
 
     public interface IStockInventoryService
     {
         Task<ServiceResponseDto<StockInventory>> Add(StockInventory stockToAdd);
 
-        Task<ServiceResponseDto<StockInventory>> AddNew(string productId, string productModelId, string businessKey);
+        Task<ServiceResponseDto<IEnumerable<StockInventory>>> AddNewStocks(IEnumerable<StockInventory> stockInventories);
 
         Task<ServiceResponseDto<IEnumerable<StockInventory>>> GetAll();
 
@@ -38,22 +41,44 @@ namespace eShopAnalysis.StockInventoryAPI.Services
             return ServiceResponseDto<StockInventory>.Failure("Cannot add stock to repo");
         }
 
-        public async Task<ServiceResponseDto<StockInventory>> AddNew(string productId, string productModelId, string businessKey)
+        public async Task<ServiceResponseDto<IEnumerable<StockInventory>>> AddNewStocks(IEnumerable<StockInventory> stockInventories)
         {
-
-            var result = await _repo.AddAsync(new StockInventory()
-            {
-                StockInventoryId = Ulid.NewUlid(),
-                ProductId = productId,
-                ProductModelId = productModelId,
-                ProductBusinessKey = businessKey,
-                CurrentQuantity = 50
-            });
-            if (result != null)
-            {
-                return ServiceResponseDto<StockInventory>.Success(result);
+            var productIdsToCheck = stockInventories.Select(x => x.ProductId).Distinct(); //can have id of the same product for models, so distince to avoid duplication
+            var productModelIdsToCheck = stockInventories.Select(x => x.ProductModelId).Distinct();
+            var productIdsInDb = _repo.GetAsQueryable()
+                                      .ToList()//to list truoc rồi mới select được
+                                      .Select(st => st.ProductId)
+                                      .Distinct(); 
+            var productModelIdsInDb = _repo.GetAsQueryable()
+                                           .ToList()
+                                           .Select(st => st.ProductModelId)
+                                           .Distinct();
+            int numProductIdsExisted = productIdsInDb.Intersect(productIdsToCheck)
+                                                     .Count();
+            int numProductModelIds = productModelIdsInDb.Intersect(productModelIdsToCheck)
+                                                        .Count();
+            if (numProductIdsExisted > 0 || numProductModelIds > 0) {
+                return ServiceResponseDto<IEnumerable<StockInventory>>.Failure("one or more product ids or product model ids already exists");
             }
-            return ServiceResponseDto<StockInventory>.Failure("Cannot add stock to repo");
+
+            List<StockInventory> result = new() { };
+            foreach (var stock in stockInventories) {
+                var stockAdded = await _repo.AddAsync(new StockInventory()
+                {
+                    StockInventoryId = Ulid.NewUlid(),
+                    ProductId = stock.ProductId,
+                    ProductModelId = stock.ProductModelId,
+                    ProductBusinessKey = stock.ProductBusinessKey,
+                    CurrentQuantity = 50
+                });
+                //TODO can add unit of work
+                if (stockAdded == null){
+                    return ServiceResponseDto<IEnumerable<StockInventory>>.Failure("cannot add one of the stock dto");
+                    //throw new Exception(""cannot add one of the stock dto"");
+                }
+                result.Add(stockAdded);
+            }
+            return ServiceResponseDto<IEnumerable<StockInventory>>.Success(result);
         }
 
         public async Task<ServiceResponseDto<IEnumerable<StockInventory>>> GetAll()

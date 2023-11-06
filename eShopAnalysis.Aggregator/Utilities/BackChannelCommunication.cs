@@ -12,6 +12,6 @@
 
         public string SaleItemAPIBaseUri { get; set; }
 
-        public string ProductCatalogAPIBaseUri { get; set; }
+        public string ProductAPIBaseUri { get; set; }
     }
 }

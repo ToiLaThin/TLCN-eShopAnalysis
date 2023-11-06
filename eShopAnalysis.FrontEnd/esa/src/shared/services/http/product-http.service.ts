@@ -41,11 +41,12 @@ export class ProductHttpService implements OnInit {
   }
   
   private addProduct(product: IProduct) {
-    return this.http.post<IProduct>(`${env.BASEURL}/api/ProductCatalog/ProductAPI/AddProduct`, product);
+    return this.http.post<IProduct>(`${env.BASEURL}/api/Aggregate/WriteAggregator/AddNewProductAndModelsStock`, product);
   }
 
   public AddProduct(product: IProduct) {
     this.addProduct(product).subscribe((product) => {
+      alert("Add product successfully");
       this.GetProducts();
     });
   }

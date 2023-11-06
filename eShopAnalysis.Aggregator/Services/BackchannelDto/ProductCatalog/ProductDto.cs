@@ -34,6 +34,22 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelDto
         public ProductInfoDto ProductInfo { get; set; }
 
         public List<ProductModelDto> ProductModels { get; set; }
+
+        public ProductDto()
+        {
+            //productId will be gen in mongo since it is id
+            //default values
+            HaveVariants = false;
+            HavePricePerCublic = false;
+
+            IsOnSale = false;
+            ProductDisplaySaleValue = -1;
+            ProductDisplaySaleType = DiscountType.NoDiscount;
+            ProductDisplayPriceOnSale = -1;
+
+            BusinessKey = Guid.NewGuid();
+            Revision = 0;
+        }
     }
 
     public class ProductInfoDto
@@ -74,5 +90,20 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelDto
         public DiscountType SaleType { get; set; }
 
         public double PriceOnSaleModel { get; set; }
+
+        public ProductModelDto()
+        {
+            ProductModelId = Guid.NewGuid();
+            //default value
+            IsOnSaleModel = false;
+            SaleItemId = null; //at first it is null
+            SaleType = DiscountType.NoDiscount;// them 1 discount Type là none cả trên front end và backend
+            PriceOnSaleModel = -1;
+            SaleValueModel = -1;
+
+            PricePerCublicValue = -1;
+            CublicValue = -1;
+            CublicType = CublicType.N;
+        }
     }
 }

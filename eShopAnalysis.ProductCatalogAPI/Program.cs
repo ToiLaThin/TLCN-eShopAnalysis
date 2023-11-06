@@ -4,8 +4,6 @@ using App.Metrics.Registry;
 using AutoMapper;
 using eShopAnalysis.EventBus.Abstraction;
 using eShopAnalysis.EventBus.Extension;
-using eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto;
-using eShopAnalysis.ProductCatalogAPI.Application.BackchannelServices;
 using eShopAnalysis.ProductCatalogAPI.Application.Services;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.SeedWork.Factory;
@@ -38,7 +36,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection(nameof(MongoDbSettings)));
-builder.Services.Configure<BackChannelCommunication>(builder.Configuration.GetSection(nameof(BackChannelCommunication)));
 builder.Services.AddScoped<MongoDbContext>();
 
 
@@ -48,15 +45,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICatalogService, CatalogService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-builder.Services.AddScoped<IBackChannelStockInventoryService, BackChannelStockInventoryService>();
-
 builder.Services.AddScoped<IDomainEventFactory, DomainEventFactory>();
 builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
-
-builder.Services.AddHttpClient(); //resolve IHttpClientFactory
-//builder.Services.AddScoped<IBackChannelBaseService<StockInventoryDto, StockInventoryDto>, BackChannelBaseService<StockInventoryDto, StockInventoryDto>>();
-//this line can be converted to this
-builder.Services.AddScoped(typeof(IBackChannelBaseService<,>), typeof(BackChannelBaseService<,>));
 
 //config automapper
 var mapperConfig = new MapperConfiguration(cfg => 

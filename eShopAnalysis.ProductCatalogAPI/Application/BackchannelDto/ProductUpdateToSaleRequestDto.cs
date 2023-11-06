@@ -2,6 +2,7 @@
 
 namespace eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto
 {
+    //from aggregator to update product to on sale
     public class ProductUpdateToSaleRequestDto
     {
         public Guid ProductId { get; set; }

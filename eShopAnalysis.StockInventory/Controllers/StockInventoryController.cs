@@ -51,18 +51,20 @@ namespace eShopAnalysis.StockInventory.Controllers
         }
 
         //for any microservice want to add new stock inventory
-        [HttpPost("BackChannel/AddStock")]
+        [HttpPost("BackChannel/AddNewStockInventories")]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<BackChannelResponseDto<StockInventoryDto>> AddNew([FromBody] StockInventoryDto stockInventoryDtoToAdd)
+        public async Task<BackChannelResponseDto<IEnumerable<StockInventoryDto>>> AddNewStockInventories([FromBody] IEnumerable<StockInventoryDto> stockInventoryDtosToAdd)
         {
-            var result = await _service.AddNew(stockInventoryDtoToAdd.ProductId, 
-                                               stockInventoryDtoToAdd.ProductModelId, 
-                                               stockInventoryDtoToAdd.ProductBusinessKey);
-            if (result.IsFailed || result.IsException) {
-                return BackChannelResponseDto<StockInventoryDto>.Failure(result.Error);
+            if (stockInventoryDtosToAdd == null || stockInventoryDtosToAdd.Count() <= 0) {
+                throw new ArgumentNullException(nameof(stockInventoryDtosToAdd));
             }
-            var stockInventoryDto = _mapper.Map<StockInventoryDto>(result.Data);
-            return BackChannelResponseDto<StockInventoryDto>.Success(stockInventoryDto);
+            var stockInventoriesToAdd = _mapper.Map<IEnumerable<StockInventory>>(stockInventoryDtosToAdd);
+            var result = await _service.AddNewStocks(stockInventoriesToAdd);
+            if (result.IsFailed || result.IsException) {
+                return BackChannelResponseDto<IEnumerable<StockInventoryDto>>.Failure(result.Error);
+            }
+            var stockInventoryDtos = _mapper.Map<IEnumerable<StockInventoryDto>>(result.Data);
+            return BackChannelResponseDto<IEnumerable<StockInventoryDto>>.Success(stockInventoryDtos);
         }
 
         [HttpPost("BackChannel/GetStockOfModels")]

@@ -5,8 +5,10 @@ using static eShopAnalysis.ProductCatalogAPI.Domain.Models.ProductModel;
 
 namespace eShopAnalysis.ProductCatalogAPI.Application.Dto
 {
+
+    //can also be use as backchannel dto to return to aggregator after added successfully
     public class ProductDto
-    {
+    {        
         public Guid ProductId { get; set; }
 
         public string ProductName { get; set; }
@@ -46,14 +48,14 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Dto
     }
 
     public class ProductModelDto
-    {
+    {        
         public Guid ProductModelId { get; set; }
 
         public IEnumerable<string> ProductModelThumbnails { get; set; }
 
         public CublicType CublicType { get; set; }
 
-        public double CublicValue { get; set; } 
+        public double CublicValue { get; set; }
 
         public double PricePerCublicValue { get; set; }
         public double CublicPrice { get; set; } 

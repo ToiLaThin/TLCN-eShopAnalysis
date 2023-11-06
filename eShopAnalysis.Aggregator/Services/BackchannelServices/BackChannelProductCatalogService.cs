@@ -8,20 +8,34 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelService
 {
     public class BackChannelProductCatalogService : IBackChannelProductCatalogService
     {        
-        private readonly IBackChannelBaseService<ProductUpdateToSaleRequestDto, ProductDto> _baseService;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IOptions<BackChannelCommunication> _backChannelUrls;
 
-        public BackChannelProductCatalogService(IBackChannelBaseService<ProductUpdateToSaleRequestDto, ProductDto> baseService, IOptions<BackChannelCommunication> backChannelUrls)
+        public BackChannelProductCatalogService(IOptions<BackChannelCommunication> backChannelUrls, IServiceProvider serviceProvider)
         {
-            _baseService = baseService;
             _backChannelUrls = backChannelUrls;
+            _serviceProvider = serviceProvider;
         }
-        public async Task<BackChannelResponseDto<ProductDto>> UpdateProductToSaleAsync(Guid productId, Guid productModelId, Guid saleItemId, DiscountType discountType, double discountValue)
+
+        public async Task<BackChannelResponseDto<ProductDto>> AddProduct(ProductDto productToAdd)
         {
-            var result = await _baseService.SendAsync(new BackChannelRequestDto<ProductUpdateToSaleRequestDto>()
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<ProductDto, ProductDto>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<ProductDto>()
             {
                 ApiType = ApiType.POST,
-                Url = $"{_backChannelUrls.Value.ProductCatalogAPIBaseUri}/UpdateProductToOnSale",
+                Url = $"{_backChannelUrls.Value.ProductAPIBaseUri}/AddProduct",
+                Data = productToAdd
+            });
+            return result;
+        }
+
+        public async Task<BackChannelResponseDto<ProductDto>> UpdateProductToSaleAsync(Guid productId, Guid productModelId, Guid saleItemId, DiscountType discountType, double discountValue)
+        {
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<ProductUpdateToSaleRequestDto, ProductDto>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<ProductUpdateToSaleRequestDto>()
+            {
+                ApiType = ApiType.POST,
+                Url = $"{_backChannelUrls.Value.ProductAPIBaseUri}/UpdateProductToOnSale",
                 Data = new ProductUpdateToSaleRequestDto() { 
                     DiscountType = discountType, 
                     DiscountValue = discountValue, 
