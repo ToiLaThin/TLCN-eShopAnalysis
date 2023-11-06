@@ -66,26 +66,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
                 return Ok(resultDto);
             }
             return NoContent();
-        }
-
-        [HttpPost("AddProduct")]
-        [Authorize(
-            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = PolicyNames.AdminPolicy,
-            Roles = RoleType.Admin
-           )
-        ]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
-        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<ProductDto>> AddProduct([FromBody] Product newProduct)
-        {
-            var serviceResult = await _service.AddProduct(newProduct);
-            ActionResult actionResultDto = (serviceResult.IsSuccess == true) ? 
-                                         Ok(_mapper.Map<Product, ProductDto>(serviceResult.Data)) : 
-                                         NotFound(serviceResult.Error);
-            return actionResultDto;
-        }
+        }        
 
         [HttpPost("UpdateProductSubCatalog")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -164,6 +145,28 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
             }
             var productDto = _mapper.Map<ProductDto>(serviceResult.Data);
             return BackChannelResponseDto<ProductDto>.Success(productDto);
+        }
+
+        [HttpPost("BackChannel/AddProduct")]
+        //TODO how to auth jwt in backchannel
+        //[Authorize(
+        //    AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+        //    Policy = PolicyNames.AdminPolicy,
+        //    Roles = RoleType.Admin
+        //   )
+        //]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<BackChannelResponseDto<ProductDto>> AddProduct([FromBody] ProductDto newProductDto)
+        {
+            var newProduct = _mapper.Map<ProductDto,Product>(newProductDto);
+            if (newProduct == null) {
+                throw new InvalidCastException("please review this");
+            }
+            var serviceResult = await _service.AddProduct(newProduct);
+            var response = (serviceResult.IsSuccess == true) ?
+                                         BackChannelResponseDto<ProductDto>.Success(_mapper.Map<Product, ProductDto>(serviceResult.Data)) :
+                                         BackChannelResponseDto<ProductDto>.Failure(serviceResult.Error);
+            return response;
         }
     }
 }

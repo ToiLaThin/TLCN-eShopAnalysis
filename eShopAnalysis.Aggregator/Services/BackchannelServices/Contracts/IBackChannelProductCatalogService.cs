@@ -6,5 +6,7 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
     public interface IBackChannelProductCatalogService
     {
         Task<BackChannelResponseDto<ProductDto>> UpdateProductToSaleAsync(Guid productId, Guid productModelId, Guid saleItemId, DiscountType discountType, double discountValue);
+
+        Task<BackChannelResponseDto<ProductDto>> AddProduct(ProductDto productToAdd);
     }
 }

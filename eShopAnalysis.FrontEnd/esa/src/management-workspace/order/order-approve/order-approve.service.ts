@@ -40,7 +40,7 @@ export class OrderApproveService {
   }
 
   public getBatchOrderApprove() {
-    return this.http.get<IOrderItemsAndStockAggregate>(`${env.BASEURL}/api/Aggregate/AggregateOrderItemStock/GetOrderToApproveWithStock`);
+    return this.http.get<IOrderItemsAndStockAggregate>(`${env.BASEURL}/api/Aggregate/ReadAggregator/GetOrderToApproveWithStock`);
   }
 
   public approveOrder(orderId: string) {
@@ -74,7 +74,7 @@ export class OrderApproveService {
   public confirmApprovingOrders() {
     let ordersApproved = this.ordersApprovedGetter();
     if (ordersApproved.length > 0) {
-      this.http.post(`${env.BASEURL}/api/Aggregate/AggregateOrderItemStock/ApproveOrdersAndModifyStocks`, ordersApproved).subscribe(res => {
+      this.http.post(`${env.BASEURL}/api/Aggregate/WriteAggregator/ApproveOrdersAndModifyStocks`, ordersApproved).subscribe(res => {
         this.reset();
         alert("Order approved successfully");
       });

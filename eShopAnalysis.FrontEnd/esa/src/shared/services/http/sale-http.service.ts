@@ -11,7 +11,7 @@ export class SaleHttpService {
   constructor(private http: HttpClient) { }
 
   private addSaleToModel(saleItem: ISaleItem) {
-    return this.http.post<ISaleItem>(`${env.BASEURL}/api/Aggregate/AggregateOrderItemStock/AddSaleItemAndUpdateProductToOnSale`, saleItem);
+    return this.http.post<ISaleItem>(`${env.BASEURL}/api/Aggregate/WriteAggregator/AddSaleItemAndUpdateProductToOnSale`, saleItem);
   }
 
   public AddSaleToModel(saleItem: ISaleItem) {

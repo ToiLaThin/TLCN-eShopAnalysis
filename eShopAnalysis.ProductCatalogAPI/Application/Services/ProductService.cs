@@ -1,6 +1,4 @@
-﻿using eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto;
-using eShopAnalysis.ProductCatalogAPI.Application.BackchannelServices;
-using eShopAnalysis.ProductCatalogAPI.Application.Result;
+﻿using eShopAnalysis.ProductCatalogAPI.Application.Result;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
 using eShopAnalysis.ProductCatalogAPI.Domain.Specification;
@@ -34,11 +32,9 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
         //unit of work can commit transaction, rollback(in case back channel service failed,
         //and mediator so we can communicate with CatalogRepo)
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IBackChannelStockInventoryService _backChannelStockInventoryService;        
-        public ProductService(IUnitOfWork unitOfWork, IBackChannelStockInventoryService backChannelStockInventoryService)
+        public ProductService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _backChannelStockInventoryService = backChannelStockInventoryService;            
         }
         #region Product Services
 
@@ -79,18 +75,12 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             _unitOfWork.BeginTransactionAsync();
             //pass in the sessionHandle to add product in the current transaction 
             await _unitOfWork.ProductRepository.AddAsync(product, _unitOfWork.GetClientSessionHandle());
-
-            foreach (var productModel in product.ProductModels) {
-                var backChannelResponse = await _backChannelStockInventoryService.AddNewStockInventory(product.ProductId.ToString(), 
-                                                                                                       productModel.ProductModelId.ToString(),
-                                                                                                       product.BusinessKey.ToString());
-                if (backChannelResponse.IsFailed || backChannelResponse.IsException) {
-                    _unitOfWork.RollbackTransaction();//do not need to delete the add product
-                    return ServiceResponseDto<Product>.Failure(backChannelResponse.Error);
-                }
-            }
             _unitOfWork.CommitTransaction();
-            return ServiceResponseDto<Product>.Success(product);
+            var productAdded = await _unitOfWork.ProductRepository.GetAsync(product.ProductId);
+            if (productAdded == null) {
+                return ServiceResponseDto<Product>.Failure("cannot find product added, added failed or error");
+            }
+            return ServiceResponseDto<Product>.Success(productAdded);
         }
 
         //todo,every time update, we have to create a new row in db which is the same info but have different id

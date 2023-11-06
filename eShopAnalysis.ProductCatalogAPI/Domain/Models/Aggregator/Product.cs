@@ -41,7 +41,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
 
             BusinessKey = Guid.NewGuid();
             Revision = 0;
-    }
+        }
         public override ClonableObject Clone()
         {
             //just call the above clone constructor

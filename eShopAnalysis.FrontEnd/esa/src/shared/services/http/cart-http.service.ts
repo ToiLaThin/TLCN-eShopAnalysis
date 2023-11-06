@@ -43,7 +43,7 @@ export class CartHttpService {
   }
 
   public confirmCart(cartConfirmRequest: ICartConfirmRequest) : Observable<any>{
-    return this.http.post<ICartConfirmRequest>(`${env.BASEURL}/api/Aggregate/AggregateOrderItemStock/CheckCouponAndAddCart`, cartConfirmRequest);
+    return this.http.post<ICartConfirmRequest>(`${env.BASEURL}/api/Aggregate/WriteAggregator/CheckCouponAndAddCart`, cartConfirmRequest);
   }
 
   public changeCartItemQuantity(indexInCart: number, newQuantity: number) {
