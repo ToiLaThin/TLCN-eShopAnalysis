@@ -396,3 +396,12 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Python Scrapy project, virtual environment
+# library, environment variables
+venv/
+# data , generated files
+catalogs.json
+__pycache__/
+#secrets spiders, avoid uploading data of site to github
+spiders/
