@@ -402,6 +402,8 @@ FodyWeavers.xsd
 venv/
 # data , generated files
 catalogs.json
+products.json
+response*.html
 __pycache__/
 #secrets spiders, avoid uploading data of site to github
 spiders/

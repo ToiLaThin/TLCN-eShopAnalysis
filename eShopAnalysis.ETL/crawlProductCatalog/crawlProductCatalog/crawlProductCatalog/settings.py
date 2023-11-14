@@ -16,7 +16,7 @@ FEEDS = {
     # 'catalogs.csv': {'format': 'csv'},
     # 'products.json': {'format': 'json'},
 }
-SCRAPEOPS_API_KEY = 'do not reveal your api key'
+SCRAPEOPS_API_KEY = 'do not reveal your key'
 SCRAPEOPS_FAKE_USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents?'
 
 SCRAPEOPS_FAKE_USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents?'
