@@ -18,11 +18,13 @@ class SaveToMongoPipeline(object):
             "MONGODB_PORT": 27017,
             "MONGODB_DB": "ProductCatalogDb",
             "MONGODB_CATALOG_COLLECTION": "CatalogCollection",
+            "MONGODB_PRODUCT_COLLECTION": "ProductCollection"
         }
         connection = pymongo.MongoClient(uuidRepresentation="standard", host=settings["MONGODB_SERVER"], port=settings["MONGODB_PORT"])
 
         db = connection[settings["MONGODB_DB"]]
-        self.collection = db.get_collection(settings["MONGODB_CATALOG_COLLECTION"])
+        # when running different spider, remember to change the collection name
+        self.collection = db.get_collection(settings["MONGODB_PRODUCT_COLLECTION"])
         self.collection.delete_many({}) # clear collection
 
     def process_item(self, item, spider):
