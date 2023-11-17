@@ -7,6 +7,9 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+from shutil import which
+
+
 BOT_NAME = "crawlProductCatalog"
 
 SPIDER_MODULES = ["crawlProductCatalog.spiders"]
@@ -16,7 +19,7 @@ FEEDS = {
     # 'catalogs.csv': {'format': 'csv'},
     # 'products.json': {'format': 'json'},
 }
-SCRAPEOPS_API_KEY = 'do not reveal your key'
+SCRAPEOPS_API_KEY = 'do not reveal your api key'
 SCRAPEOPS_FAKE_USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents?'
 
 SCRAPEOPS_FAKE_USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents?'
@@ -29,6 +32,16 @@ MONGODB_DB = "ProductCatalogDb",
 MONGODB_CATALOG_COLLECTION = "CatalogCollection",
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "crawlProductCatalog (+http://www.yourdomain.com)"
+
+# For Selenium Scrapy
+# https://stackoverflow.com/questions/8550114/can-scrapy-be-used-to-scrape-dynamic-content-from-websites-that-are-using-ajax
+# https://copyprogramming.com/howto/python-scrapy-selenium-wait-until-code-example
+# ONLY IF YOU USE SCRAPY SELENIUM WHICH IS NOT FLEXIBLE ENOUGH
+# SELENIUM_DRIVER_NAME = 'chrome'
+# SELENIUM_DRIVER_EXECUTABLE_PATH = which('chromedriver')
+# SELENIUM_DRIVER_ARGUMENTS=['--headless'] 
+# this to not launch a new browser
+# '--headless' if using chrome instead of firefox
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -65,7 +78,8 @@ ROBOTSTXT_OBEY = False
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    "crawlProductCatalog.middlewares.ScrapeOpsFakeBrowserHeaderAgentMiddleware": 200
+    "crawlProductCatalog.middlewares.ScrapeOpsFakeBrowserHeaderAgentMiddleware": 200,
+    # "scrapy_selenium.SeleniumMiddleware": 800
 #    "crawlProductCatalog.middlewares.CrawlproductcatalogDownloaderMiddleware": 543,
 }
 
