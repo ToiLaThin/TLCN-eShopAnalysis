@@ -1,3 +1,7 @@
 ipython
 pymongo
 scrapy
+selenium
+jupyterlab
+webdriver-manager
+scrapy-selenium
