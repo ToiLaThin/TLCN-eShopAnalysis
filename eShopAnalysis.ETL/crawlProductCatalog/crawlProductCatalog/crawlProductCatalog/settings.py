@@ -11,6 +11,10 @@ from shutil import which
 
 
 BOT_NAME = "crawlProductCatalog"
+#limit the number of items to be scraped
+CLOSESPIDER_ITEMCOUNT = 2
+#xtremely necessary for debugging
+LOG_LEVEL='INFO' 
 
 SPIDER_MODULES = ["crawlProductCatalog.spiders"]
 NEWSPIDER_MODULE = "crawlProductCatalog.spiders"
@@ -19,7 +23,7 @@ FEEDS = {
     # 'catalogs.csv': {'format': 'csv'},
     # 'products.json': {'format': 'json'},
 }
-SCRAPEOPS_API_KEY = 'do not reveal your api key'
+SCRAPEOPS_API_KEY = 'do not reveal your key'
 SCRAPEOPS_FAKE_USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents?'
 
 SCRAPEOPS_FAKE_USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents?'
@@ -93,7 +97,9 @@ DOWNLOADER_MIDDLEWARES = {
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
 #    "crawlProductCatalog.pipelines.CrawlproductcatalogPipeline": 300,
-    "crawlProductCatalog.pipelines.SaveToMongoPipeline": 200
+    "crawlProductCatalog.pipelines.ProcessCatalogPipeline": 100,
+    "crawlProductCatalog.pipelines.ProcessProductPipeline": 150,
+    "crawlProductCatalog.pipelines.SaveToMongoPipeline": 200,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
