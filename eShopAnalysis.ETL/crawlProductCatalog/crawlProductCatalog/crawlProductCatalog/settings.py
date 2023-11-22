@@ -12,7 +12,7 @@ from shutil import which
 
 BOT_NAME = "crawlProductCatalog"
 #limit the number of items to be scraped
-CLOSESPIDER_ITEMCOUNT = 2
+CLOSESPIDER_ITEMCOUNT = 50
 #xtremely necessary for debugging
 LOG_LEVEL='INFO' 
 
@@ -23,7 +23,7 @@ FEEDS = {
     # 'catalogs.csv': {'format': 'csv'},
     # 'products.json': {'format': 'json'},
 }
-SCRAPEOPS_API_KEY = 'do not reveal your key'
+SCRAPEOPS_API_KEY = 'do not reveal your api key'
 SCRAPEOPS_FAKE_USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents?'
 
 SCRAPEOPS_FAKE_USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents?'

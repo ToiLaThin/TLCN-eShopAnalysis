@@ -3,6 +3,7 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
 
+from enum import Enum
 import scrapy
 
 
@@ -50,6 +51,7 @@ class ProductModelItem(scrapy.Item):
     _id = scrapy.Field()
     ProductModelThumbnails = scrapy.Field()
     CublicType = scrapy.Field()
+    CublicValue = scrapy.Field()
     PricePerCublicValue = scrapy.Field()
     CublicPrice = scrapy.Field()
     Price = scrapy.Field()
@@ -58,3 +60,9 @@ class ProductModelItem(scrapy.Item):
     SaleValueModel = scrapy.Field()
     SaleType = scrapy.Field()
     PriceOnSaleModel = scrapy.Field()
+
+class CublicType(Enum):
+    MG = 0
+    ML = 1
+    M = 3
+    NONE = 3
