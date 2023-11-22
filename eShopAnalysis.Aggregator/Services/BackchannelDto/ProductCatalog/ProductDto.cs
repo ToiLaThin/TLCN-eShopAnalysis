@@ -56,6 +56,11 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelDto
     {
         public string ProductDescription { get; set; }
         public string ProductBrand { get; set; }
+
+        public string ProductUsageInstruction { get; set; }
+
+        public string ProductPreserveInstruction { get; set; }
+        public string ProductIngredients { get; set; }
     }
 
     public enum CublicType
