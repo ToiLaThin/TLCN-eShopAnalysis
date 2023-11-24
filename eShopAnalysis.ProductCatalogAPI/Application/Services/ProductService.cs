@@ -1,8 +1,10 @@
-﻿using eShopAnalysis.ProductCatalogAPI.Application.Result;
+﻿using eShopAnalysis.ProductCatalogAPI.Application.Dto;
+using eShopAnalysis.ProductCatalogAPI.Application.Result;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
 using eShopAnalysis.ProductCatalogAPI.Domain.Specification;
 using eShopAnalysis.ProductCatalogAPI.Infrastructure.Contract;
+using Newtonsoft.Json;
 using static eShopAnalysis.ProductCatalogAPI.Domain.Models.ProductModel;
 
 namespace eShopAnalysis.ProductCatalogAPI.Application.Services
@@ -11,6 +13,9 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
     public interface IProductService
     {
         Task<ServiceResponseDto<Product>> Get(Guid productId);
+
+        Task<ServiceResponseDto<IEnumerable<Product>>> GetAllMatching(ProductLazyLoadRequestDto lazyLoadRequestDto);
+
         ServiceResponseDto<IEnumerable<Product>> GetAll();
         Task<ServiceResponseDto<Product>> AddProduct(Product product);
         //bool DeleteCatalog(Guid catalogId);
@@ -50,7 +55,19 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
                
         }
 
-      public ServiceResponseDto<IEnumerable<Product>> GetAll()
+        public async Task<ServiceResponseDto<IEnumerable<Product>>> GetAllMatching(ProductLazyLoadRequestDto lazyLoadRequestDto)
+        {            
+            IQueryable<Product> originalQuery = _unitOfWork.ProductRepository.GetAllAsQueryable();
+            ProductSpecificationFactory productSpecFactory = new ProductSpecificationFactory(lazyLoadRequestDto);
+            var result = SpecificationEvaluator<Product>.GetQuery(query: originalQuery,
+                                                                  filterSpec: productSpecFactory.FilterSpecification,
+                                                                  orderSpec: productSpecFactory.OrderSpecification,
+                                                                  paginateSpec: productSpecFactory.PaginateSpecification
+                                                                  )
+                                                        .AsEnumerable();
+            return ServiceResponseDto<IEnumerable<Product>>.Success(result);
+        }
+        public ServiceResponseDto<IEnumerable<Product>> GetAll()
         {
             var result = _unitOfWork.ProductRepository.GetAllAsQueryable().ToList();
             return ServiceResponseDto<IEnumerable<Product>>.Success(result);
@@ -150,7 +167,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             var result = ServiceResponseDto<Product>.Success(updatedProduct);
             await _unitOfWork.ProductRepository.SaveChangesAsync(updatedProduct);
             return result;
-        }
+        }      
         #endregion
 
     }

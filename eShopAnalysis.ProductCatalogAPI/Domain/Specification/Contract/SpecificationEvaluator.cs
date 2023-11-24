@@ -1,17 +1,19 @@
-﻿namespace eShopAnalysis.ProductCatalogAPI.Domain.Specification
+﻿using eShopAnalysis.ProductCatalogAPI.Application.Dto;
+
+namespace eShopAnalysis.ProductCatalogAPI.Domain.Specification
 {
     public static class SpecificationEvaluator<T>
     {
         public static IQueryable<T> GetQuery(
             IQueryable<T> query,
             IFilterSpecification<T>? filterSpec = null,
-            BaseOrderSpecification<T>? orderSpec = null,
-            PaginateSpecification? paginateSpec = null
+            IOrderSpecification<T>? orderSpec = null,
+            IPaginateSpecification? paginateSpec = null
             )
         {
             // Modify the IQueryable
             // Apply filter conditions
-            if (filterSpec.Criterias != null)
+            if (filterSpec?.Criterias != null)
             {
                 filterSpec.Criterias.ForEach(c => {
                     query = query.Where(c);
