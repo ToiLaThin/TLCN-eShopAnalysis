@@ -45,11 +45,33 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
             return actionResultDto;
         }
 
+        [HttpPost("GetProductsLazyLoad")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductsLazyLoad([FromBody] ProductLazyLoadRequestDto lazyLoadRequestDto)
+        {
+            //service.GetAll will become async later
+            var serviceResult = await _service.GetAllMatching(lazyLoadRequestDto);
+            if (serviceResult.IsFailed)
+            {
+                return NotFound(serviceResult);
+                //will create http response error with error message(the oen pass in NotFound) in angular
+                //https://angular.io/api/common/http/HttpErrorResponse#description
+            }
+            //var resultDto = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(serviceResult.Data);
+            var resultDto = serviceResult.Data;
+            if (resultDto.Count() > 0)
+            {
+                return Ok(resultDto);
+            }
+            return NoContent();
+        }
+
         [HttpGet("GetAllProduct")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(IEnumerable<ProductDto>) , StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        //not use as attribute but to get the service from DI container
         public async Task<ActionResult<IEnumerable<Product>>> GetAllProduct()
         {
             //service.GetAll will become async later
