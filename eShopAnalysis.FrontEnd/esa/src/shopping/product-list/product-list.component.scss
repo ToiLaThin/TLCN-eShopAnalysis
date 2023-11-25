@@ -1,3 +1,15 @@
+.head {
+    display: flex;
+    flex-direction: flex-start;
+    gap: 40px;
+
+    margin: 2rem auto;
+    width: 100%;
+    max-width: 1600px;
+    padding: 0 15px;
+
+}
+
 .product-list-container {
     display: flex;
     flex-direction: row;
@@ -14,4 +26,64 @@
 
 esa-product-list-card {
     width: 30%;
+}
+
+.center {
+    text-align: center;
+    font-family: monospace;
+
+    .pagination {
+        display: inline-block;
+        a {
+            color: #FFF;
+            float: left;
+            margin: 0 5px;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color 0.5s;
+            border: 1px solid #FFF;
+            background-color: gray;
+        }
+    
+        a.active {
+            color: #FFF;
+            background-color: #0096FF;
+            border: 1px solid #0096FF;
+        }
+        a:hover:not(.active) {
+            background-color: #FFF;
+        }
+    }
+}
+
+.border {
+    outline: 1px solid #ddd;
+    padding: 5px;
+}
+
+
+
+
+.layout {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+    margin: 2rem auto;
+    width: 100%;
+    max-width: 1600px;
+    padding: 0 15px;
+
+    .filter-container {
+        width: 30%;
+        height: 100%;
+        background-color: #1A2238;;
+        color: whitesmoke;
+        padding: 24px 16px 20px 30px;
+        border-radius: 4px;
+        a {
+            color: whitesmoke;
+            text-decoration: none;
+        }
+    }
 }
