@@ -1,8 +1,88 @@
-<div class="product-list-container">
-    <ng-container *ngFor="let product of ( allProduct$ | async)">
-        <esa-product-list-card [product]="product" 
-                               (click)="viewProductDetail(product.productId)"
-        >
-        </esa-product-list-card>
-    </ng-container>
+<div class="head">
+    <div>
+        <label for="sortBy">Sort By:</label>
+        <select name="sortBy" id="sortBy" class="border" (change)="changeSortBy($event.target)">
+            <option value="0" selected></option>
+            <ng-container *ngFor="let sortBy of sortByEnums | slice:1">
+                <option value="{{sortBy.key}}">{{sortBy.value}}</option>
+            </ng-container>
+        </select>
+    </div>
+    <div>
+        <label for="orderType">Order Type:</label>
+        <select name="orderType" id="orderType" class="border" (change)="changeOrderType($event.target)">
+            <option value="0" selected>Ascending</option>
+            <ng-container *ngFor="let orderType of orderTypeEnums | slice:1">
+                <option value="{{orderType.key}}">{{orderType.value}}</option>
+            </ng-container>
+        </select>
+    </div>
+    <div>
+        <label for="productPerPage">Product per page:</label>
+        <select name="productPerPage" id="productPerPage" class="border" (change)="changeProductPerPage($event.target)">
+            <option value="16" selected>16</option>
+            <ng-container *ngFor="let numProductPerPage of numProductPerPageEnums | slice:1">
+                <option value="{{numProductPerPage.key}}">{{numProductPerPage.value}}</option>
+            </ng-container>
+        </select>
+
+    </div>
+</div>
+
+<div class="layout">
+    <div class="filter-container">
+        <label for="catalog">Catalog:</label>
+        <div style="background-color: white; color: black;">
+            <select name="catalog" id="catalog" class="border" (change)="onCatalogChange()">
+                <ng-container *ngFor="let cat of (allCatalog$ | async)">
+                    <option value="{{cat.catalogId}}">
+                        {{cat.catalogName}}
+                    </option>
+                </ng-container>
+            </select>
+        </div>
+        <br>
+
+        <div class="left-filter-container">
+            <h4>SubCatalog</h4>
+            <ng-container *ngFor="let sub of (selectedSubCatalogs$ | async)">
+                <input type="checkbox" name="subcatalog" value="{{sub.subCatalogId}}" (change)="selectSubCatalog($event.target)"><a>{{sub.subCatalogName}}</a><br>
+            </ng-container>
+            <h3>Price</h3>
+            <p id="prijsValue"></p>
+            <div class="range-container">
+                <input type="range" id="priceRange" name="prijs" min="165" max="5200" step="1">
+            </div>
+            <h4>Color</h4>
+            <select name="Color">
+                <option value="rood">Red</option>
+                <option value="blauw">Blue</option>
+                <option value="groen">Green</option>
+            </select>
+
+        <!-- end filter-container -->
+        </div>
+    </div>
+    <div class="product-list-container">
+        <ng-container *ngFor="let product of ( allProduct$ | async)">
+            <esa-product-list-card [product]="product" 
+                                   (click)="viewProductDetail(product.productId)"
+            >
+            </esa-product-list-card>
+        </ng-container>
+    </div>
+    <!-- End of product list -->
+</div>
+
+<div class="center">
+    <div class="pagination">
+        <a href="#">&laquo;</a>
+        <a href="#">1</a>
+        <a href="#" class="active">2</a>
+        <a href="#">3</a>
+        <a href="#">4</a>
+        <a href="#">5</a>
+        <a href="#">6</a>
+        <a href="#">&raquo;</a>
+    </div>
 </div>

@@ -1,26 +1,26 @@
-<mat-card>
-    <mat-card-header>
-       {{product.productName}}
-    </mat-card-header>
-    <mat-card-subtitle>
-        {{product.subCatalogName}}
-    </mat-card-subtitle>
-    <ng-container *ngIf="this.product.isOnSale === true">
-        <mat-card-subtitle>
-            <span style="color: white; background-color: red;">{{product.productDisplaySaleValue}}</span>
-        </mat-card-subtitle>
-    </ng-container>
-
-    <mat-card-content>
-        <img mat-card-image 
-             src="https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1hZ2V8ZW58MHx8MHx8fDA%3D&w=1000&q=80"
-        >
-    </mat-card-content>
-    
-    <mat-card-actions>
-        <button mat-flat-button color="warn">
-            <mat-icon>home</mat-icon>
-            Add to cart
-        </button>
-    </mat-card-actions>
-</mat-card>
+<div class="product-card spacing">
+    <div class="badge">New Product</div>
+    <div class="product-thumb">
+        <img src="{{product.productCoverImage}}">
+    </div>
+    <div class="product-details">
+        <span class="product-category">{{product.subCatalogName}}</span>
+        <h4><a>{{product.productName}}</a></h4>
+        <p>New Import T-Shirt For Man Very Rare Collection, If You Want Order Right Now</p>
+        <div class="product-bottom-details">
+            <ng-container *ngIf="this.product.isOnSale === true">
+                <div class="product-price">
+                    <small>{{product.productModels[0].price}}đ</small>
+                    {{product.productDisplayPriceOnSale}}
+                </div>
+            </ng-container>
+            <ng-container *ngIf="this.product.isOnSale === false">
+                <div class="product-price">{{product.productModels[0].price}}đ</div>
+            </ng-container>
+            <div class="product-links">
+                <a href="#"><i class="fa fa-heart"></i></a>
+                <a href="#"><i class="fa fa-shopping-cart"></i></a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -44,3 +44,45 @@ export interface IProduct {
     productInfo?: IProductInfo;
     productModels: IProductModel[];
 }
+
+
+//lazy load request
+export enum ProductPerPage {
+    Sixteen = 16,
+    ThirtyTwo = 32,
+    FortyEight = 48,
+}
+
+export enum SortBy {
+    Id = 0,
+    Price = 1,
+    Name = 2
+}
+
+export enum FilterBy {
+    SubCatalogs = 0,
+    Price = 1
+}
+
+export enum OrderType {
+    Ascending = 0,
+    Descending = 1
+}
+
+export interface IPriceMeta {
+    fromPrice: number;
+    toPrice: number;
+}
+
+export interface IFilterRequest {
+    filterBy: FilterBy;
+    Meta: string;
+}
+
+export interface IProductLazyLoadRequest {
+    pageOffset: number;
+    productPerPage: number;
+    sortBy: SortBy;
+    orderType: OrderType;
+    filterRequests: IFilterRequest[];
+}
