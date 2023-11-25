@@ -50,8 +50,17 @@
             </ng-container>
             <h3>Price</h3>
             <p id="prijsValue"></p>
-            <div class="range-container">
-                <input type="range" id="priceRange" name="prijs" min="165" max="5200" step="1">
+            <div class="range_container">
+                <div class="sliders_control">
+                    <input id="fromSlider" type="range" [(ngModel)]="this.fromPrice" min="0" max="10000000" (change)="changePriceRange()"/>
+                    <input id="toSlider" type="range" [(ngModel)]="this.toPrice" min="0" max="10000000" (change)="changePriceRange()"/>
+                </div>
+                <div class="form_control">
+                    <div>
+                        <p>{{this.fromPrice}}</p>
+                        <p>{{this.toPrice}}</p>
+                    </div>
+                </div>
             </div>
             <h4>Color</h4>
             <select name="Color">
@@ -64,7 +73,7 @@
         </div>
     </div>
     <div class="product-list-container">
-        <ng-container *ngFor="let product of ( allProduct$ | async)">
+        <ng-container *ngFor="let product of ( allToDisplayProduct$ | async)">
             <esa-product-list-card [product]="product" 
                                    (click)="viewProductDetail(product.productId)"
             >
@@ -76,13 +85,10 @@
 
 <div class="center">
     <div class="pagination">
-        <a href="#">&laquo;</a>
-        <a href="#">1</a>
-        <a href="#" class="active">2</a>
-        <a href="#">3</a>
-        <a href="#">4</a>
-        <a href="#">5</a>
-        <a href="#">6</a>
-        <a href="#">&raquo;</a>
+        <a >&laquo;</a>
+        <ng-container *ngFor="let pageNum of (this.totalPageAsArray$ | async)">
+            <a class="active" (click)="changePage(pageNum)">{{pageNum}}</a>
+        </ng-container>
+        <a >&raquo;</a>
     </div>
 </div>

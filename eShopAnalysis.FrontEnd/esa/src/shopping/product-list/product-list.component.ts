@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductHttpService } from 'src/shared/services/http/product-http.service';
-import { Observable, Subscription } from 'rxjs';
-import { IProduct, IProductLazyLoadRequest, OrderType, ProductPerPage, SortBy } from 'src/shared/models/product.interface';
+import { Observable, Subscription, map } from 'rxjs';
+import { FilterBy, IProduct, IProductLazyLoadRequest, OrderType, ProductPerPage, SortBy } from 'src/shared/models/product.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ICatalog, ISubCatalog } from 'src/shared/models/catalog.interface';
 import { CatalogHttpService } from 'src/shared/services/http/catalog-http.service';
@@ -13,10 +13,13 @@ import { CatalogHttpService } from 'src/shared/services/http/catalog-http.servic
 })
 export class ProductListComponent implements OnInit {
 
-  allProduct$! : Observable<IProduct[]>;
+  fromPrice: number = 0;
+  toPrice: number = 10000000;
+  allToDisplayProduct$! : Observable<IProduct[]>;
   allCatalog$! : Observable<ICatalog[]>;
   selectedSubCatalogs$! : Observable<ISubCatalog[]>;
-
+  totalPage$! : Observable<number>;
+  totalPageAsArray$! : Observable<number[]>; 
   
   numProductPerPageEnums = Object.keys(ProductPerPage).filter(k => !isNaN(parseInt(k))).map(k => ({
     key: k, 
@@ -35,12 +38,76 @@ export class ProductListComponent implements OnInit {
   constructor(private productService: ProductHttpService, 
               private catalogService:CatalogHttpService,
               private route: Router) {
-    this.allProduct$ = this.productService.allProduct$;    
+
+    this.allToDisplayProduct$ = this.productService.paginatedProducts$.pipe(
+      map(paginatedProducts => paginatedProducts.products)
+    );    
     this.allCatalog$ = this.catalogService.allCatalog$;
     this.selectedSubCatalogs$ = this.catalogService.allSubCatalog$;
+    this.totalPage$ = this.productService.paginatedProducts$.pipe(
+      map(paginatedProducts => paginatedProducts.pageCount)
+    );
+    this.totalPageAsArray$ = this.totalPage$.pipe(
+      map(totalPage => Array(totalPage).fill(1).map((x,i)=>i + 1))
+    ); 
   }
 
   ngOnInit(): void {
+  }
+
+  changePriceRange() {
+    const fromPrice: number = this.fromPrice;
+    const toPrice: number = this.toPrice;
+    if (fromPrice > toPrice)  {
+      alert("Please enter valid price range");
+      return;
+    }
+    const priceMeta: string = JSON.stringify({
+      fromPrice: fromPrice,
+      toPrice: toPrice
+    });
+    const oldRequest:IProductLazyLoadRequest = this.productService.lazyLoadRequestSubject.value;
+    const filteredByPriceRange = this.productService.lazyLoadRequestSubject.value.filterRequests.some((filterRequest) => filterRequest.filterBy == FilterBy.Price);
+    if (filteredByPriceRange === true) {
+      console.log("filteredByPriceRange is already true");
+      
+      const indexOldFilterRequest = this.productService.lazyLoadRequestSubject.value.filterRequests.findIndex((filterRequest) => filterRequest.filterBy == FilterBy.Price);
+      this.productService.lazyLoadRequestSubject.next({
+        ...oldRequest,
+        filterRequests: [
+          ...oldRequest.filterRequests.slice(0, indexOldFilterRequest),
+          {
+            filterBy: FilterBy.Price,
+            Meta: priceMeta
+          },
+          ...oldRequest.filterRequests.slice(indexOldFilterRequest + 1)
+        ]
+      });
+      this.productService.GetProducts();
+      return;
+    }
+    
+    console.log("filteredByPriceRange is false");
+    this.productService.lazyLoadRequestSubject.next({
+      ...oldRequest,
+      filterRequests: [
+        ...oldRequest.filterRequests,
+        {
+          filterBy: FilterBy.Price,
+          Meta: priceMeta
+        }
+      ]
+    });
+    this.productService.GetProducts();
+  }
+
+  changePage(pageNumber: number) {
+    const oldRequest:IProductLazyLoadRequest = this.productService.lazyLoadRequestSubject.value;
+    this.productService.lazyLoadRequestSubject.next({
+      ...oldRequest,
+      pageOffset: pageNumber
+    });
+    this.productService.GetProducts();
   }
 
   changeOrderType(target: EventTarget | null) {

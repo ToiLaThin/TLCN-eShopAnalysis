@@ -47,22 +47,21 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
 
         [HttpPost("GetProductsLazyLoad")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedProductDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<IEnumerable<Product>>> GetProductsLazyLoad([FromBody] ProductLazyLoadRequestDto lazyLoadRequestDto)
         {
-            //service.GetAll will become async later
             var serviceResult = await _service.GetAllMatching(lazyLoadRequestDto);
-            if (serviceResult.IsFailed)
-            {
-                return NotFound(serviceResult);
-                //will create http response error with error message(the oen pass in NotFound) in angular
-                //https://angular.io/api/common/http/HttpErrorResponse#description
+            if (serviceResult.IsFailed) {
+                return NotFound(serviceResult.Error);
             }
-            //var resultDto = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(serviceResult.Data);
-            var resultDto = serviceResult.Data;
-            if (resultDto.Count() > 0)
-            {
+            PaginatedProductDto paginatedProductDto = new PaginatedProductDto() {
+                Products = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(serviceResult.Data),
+                PageCount = serviceResult.Data.Count() / lazyLoadRequestDto.ProductPerPage + 1,
+                PageNumber = lazyLoadRequestDto.PageOffset                
+            };
+            var resultDto = paginatedProductDto;
+            if (resultDto.Products.Count() > 0) {
                 return Ok(resultDto);
             }
             return NoContent();
@@ -74,10 +73,9 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<IEnumerable<Product>>> GetAllProduct()
         {
-            //service.GetAll will become async later
             var serviceResult = _service.GetAll();
             if (serviceResult.IsFailed) {
-                return NotFound(serviceResult); 
+                return NotFound(serviceResult.Error); 
                 //will create http response error with error message(the oen pass in NotFound) in angular
                 //https://angular.io/api/common/http/HttpErrorResponse#description
             }

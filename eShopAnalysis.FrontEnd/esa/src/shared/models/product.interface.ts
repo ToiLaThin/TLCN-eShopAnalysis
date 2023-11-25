@@ -86,3 +86,9 @@ export interface IProductLazyLoadRequest {
     orderType: OrderType;
     filterRequests: IFilterRequest[];
 }
+
+export interface IPaginatedProduct {
+    products: IProduct[];
+    pageNumber: number;
+    pageCount: number;
+}
