@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { IProduct } from 'src/shared/models/product.interface';
 import { ProductHttpService } from 'src/shared/services/http/product-http.service';
 import { SaleListInfoDetailComponent } from './sale-list-info-detail/sale-list-info-detail.component';
@@ -18,7 +18,9 @@ export class SaleListComponent implements OnInit,AfterViewInit  {
   selectedProduct!: IProduct | null;
 
   ngOnInit(): void {
-    this.allProduct$ = this.productService.allProduct$;
+    this.allProduct$ = this.productService.paginatedProducts$.pipe(
+      map(paginatedProducts => paginatedProducts.products)
+    );
     this.selectedProduct = null;
   }
 

@@ -23,8 +23,8 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     this.routeParamsSubscription = this.route.params.subscribe(params => {
       this.productId = params['productId'];
     });
-    this.productSubscription = this.productService.allProduct$.pipe(
-      map(products => products.find(product => product.productId === this.productId)),      
+    this.productSubscription = this.productService.paginatedProducts$.pipe(
+      map(paginatedProducts => paginatedProducts.products.find(product => product.productId === this.productId)),      
       )
       .subscribe(product => this.product = product);
     }

@@ -59,7 +59,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
         {            
             IQueryable<Product> originalQuery = _unitOfWork.ProductRepository.GetAllAsQueryable();
             ProductSpecificationFactory productSpecFactory = new ProductSpecificationFactory(lazyLoadRequestDto);
-           var result = SpecificationEvaluator<Product>.GetQuery(query: originalQuery,
+            var result = SpecificationEvaluator<Product>.GetQuery(query: originalQuery,
                                                                   filterSpec: productSpecFactory.FilterSpecification,
                                                                   orderSpec: productSpecFactory.OrderSpecification,
                                                                   paginateSpec: productSpecFactory.PaginateSpecification

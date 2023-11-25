@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { IProduct, IProductLazyLoadRequest, OrderType, ProductPerPage, SortBy } from 'src/shared/models/product.interface';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { IPaginatedProduct, IProduct, IProductLazyLoadRequest, OrderType, ProductPerPage, SortBy } from 'src/shared/models/product.interface';
 import { environment as env } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
@@ -9,8 +9,8 @@ import { environment as env } from 'src/environments/environment';
 export class ProductHttpService implements OnInit {
 
   lazyLoadRequestSubject!: BehaviorSubject<IProductLazyLoadRequest>;
-  allProductSubject: BehaviorSubject<IProduct[]> = new BehaviorSubject<IProduct[]>([]);
-  allProduct$ = this.allProductSubject.asObservable();  
+  paginatedProductsSub: BehaviorSubject<IPaginatedProduct> = new BehaviorSubject<IPaginatedProduct>({} as IPaginatedProduct);
+  paginatedProducts$: Observable<IPaginatedProduct> = this.paginatedProductsSub.asObservable();  
 
   constructor(private http: HttpClient) {
     // this.getProducts().subscribe((products) => {
@@ -34,14 +34,13 @@ export class ProductHttpService implements OnInit {
 
   private getProducts() {
     // return this.http.get<IProduct[]>(`${env.BASEURL}/api/ProductCatalog/ProductAPI/GetAllProduct`);
-    return this.http.post<IProduct[]>(`${env.BASEURL}/api/ProductCatalog/ProductAPI/GetProductsLazyLoad`, this.lazyLoadRequestSubject.value);
+    return this.http.post<IPaginatedProduct>(`${env.BASEURL}/api/ProductCatalog/ProductAPI/GetProductsLazyLoad`, this.lazyLoadRequestSubject.value);
   }
   
   GetProducts() {
-    this.getProducts().subscribe((products) => {
+    this.getProducts().subscribe((paginatedProducts) => {
       //if return 404, this will not be executed
-      console.log(products)
-      this.allProductSubject.next(products);
+      this.paginatedProductsSub.next(paginatedProducts);
     }, 
     error => {
       // this will log the httpResponse error with status code 404
