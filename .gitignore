@@ -407,3 +407,7 @@ response*.html
 __pycache__/
 #secrets spiders, avoid uploading data of site to github
 spiders/
+
+
+# resources folder from ETL can be generated
+resources/
