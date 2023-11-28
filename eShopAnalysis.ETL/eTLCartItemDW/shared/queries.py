@@ -1,0 +1,1 @@
+# INSERT_BRAND_TO_MSSQL = "INSERT INTO dbo.BrandDim VALUES (%s, %s)"
