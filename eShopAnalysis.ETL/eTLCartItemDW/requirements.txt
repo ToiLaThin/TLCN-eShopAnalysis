@@ -7,3 +7,7 @@ spacy
 nltk
 pyspark
 findspark
+gensim
+matplotlib
+seaborn
+pyLDAvis

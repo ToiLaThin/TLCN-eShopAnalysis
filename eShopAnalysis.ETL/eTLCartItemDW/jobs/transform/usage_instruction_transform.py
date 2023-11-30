@@ -8,8 +8,8 @@ from spacy.tokens import Token
 from jobs.utils.nlp_utils import filter_pos, filter_some_nouns, filter_stop_words, map_list_tokens_to_sublists_tokens, map_to_one_string, filter_simple_structure_sublists
 nlp = spacy.load('en_core_web_md')
 def transform_preprocess_usage_instruction_df_to_sublists_tokens(df: DataFrame) -> list[list[Token]]:
-    """ 
-    Convert each unstructure usage instruction to list of sublist of tokens(been preprocessed 
+    """
+    Convert each unstructure usage instruction to list of sublist of tokens(been preprocessed
     like remove space, punctuation, etc and filter by pos tag spacy))
     .Return list of sublists(which contain list of tokens) for each usage instruction)"""
     result = []
@@ -113,3 +113,40 @@ def transform_sublists_to_reduced_usage_instruction_df(sublists_list: list[list[
     usage_instruction_type_df.to_csv('resources/reduced_usage_instruction_type.csv', index_label='UsageInstructionTypeId')
     print("Usage instruction type dict: ", usage_instruction_type_dict, '\n')
     return usage_instruction_type_df
+
+from jobs.utils.nlp_utils import map_to_processed_tokens
+def transform_to_usage_instruction_df_with_topic_and_word_representation(usage_instruction_df: DataFrame, best_topic_numer: int = 8) -> DataFrame:
+    """
+    Convert usage instruction dataframe to bag of words dataframe
+    Then train LDA model on the bag of words dataframe to get topic and word representation for each topic
+    Return dataframe with columns: TopicId, TopicWords as result"""
+    processed_tokens_lists = []
+    for usage_instruction_text in usage_instruction_df['ProductUsageInstruction']:
+        processed_tokens_lists.append(map_to_processed_tokens(usage_instruction_text))
+        # print(processed_tokens_lists[-1])
+
+    from gensim.corpora.dictionary import Dictionary
+    dictionary = Dictionary(processed_tokens_lists)
+    # fine-tune the dictionary by removing words that are too rare or too common from the dictionary:
+    dictionary.filter_extremes(no_below=3, no_above=0.5, keep_n=1000)
+
+    # convert dictionary to bag of words
+    bow_corpus = [dictionary.doc2bow(token_list) for token_list in processed_tokens_lists]
+
+    from gensim.models import LdaMulticore
+    # train the model on the corpus
+    lda_model = LdaMulticore(corpus=bow_corpus, id2word=dictionary\
+                        , iterations=10, num_topics=best_topic_numer, workers = 4, passes=10\
+                        , random_state=100, per_word_topics=True)
+
+    topic_dict = {}
+    topics_result = lda_model.show_topics(num_topics=best_topic_numer, num_words=5, log=False, formatted=False)
+    for topic_id, tokens_probability_for_topic in topics_result:
+        word_representation = ", ".join([token for token, _prob in tokens_probability_for_topic])
+        print("Topic #{}: {}".format(topic_id, word_representation))
+        topic_dict[topic_id] = word_representation
+
+    print(topic_dict)
+    return_df = pd.DataFrame.from_dict(topic_dict, orient='index', columns=['UsageInstructionTypeName'])
+    return_df.to_csv('resources/lda_topics_usage_instruction_type.csv', index=True)
+    return return_df

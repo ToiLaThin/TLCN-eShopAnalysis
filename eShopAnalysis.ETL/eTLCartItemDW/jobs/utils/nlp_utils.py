@@ -1,3 +1,4 @@
+import spacy
 from spacy.tokens import Token
 import re
 #Used in transform_usage_instruction 
@@ -87,3 +88,32 @@ def map_token_to_stemmed_nltk(token_text: str) -> str:
     return porter_stemmer.stem(token_text)
 
 map_to_lemmatized_spacy = lambda token: token.lemma_.lower()
+
+# Used in LDA Topic Modeling approach
+pos_tag_keep = ['NOUN', 'VERB', 'ADJ', 'ADV']
+filter_pos_lambda = lambda token: token.pos_ in pos_tag_keep
+filter_stop_words_lambda = lambda token: not token.is_stop
+filter_word_lambda = lambda token: token not in ['product', 'warning', 'use']
+map_lemma_lambda = lambda token: token.lemma_
+map_lower_lambda = lambda token_text: token_text.lower()
+def map_remove_punct_numbers_func(text: str):
+    text = re.sub(r'[^\w\s]', '', text)
+    text = re.sub(r'[\d?]', '', text)
+    text = re.sub(r'-', '', text)
+    text = text.strip()
+    return text
+
+nlp = spacy.load('en_core_web_md')
+def map_to_processed_tokens(text: str) -> list[str]:
+    """
+    From a text, return a list of tokens that are lemmatized and lowered,
+    filter by pos tag and stop words
+    """
+    text = map_remove_punct_numbers_func(text)
+    doc = nlp(text)
+    tokens = filter(filter_pos_lambda, doc)
+    tokens = filter(filter_stop_words_lambda, tokens)
+    tokens_lemmed_list = list(map(map_lemma_lambda, tokens))
+    tokens_lemmed_lowered_list = list(map(map_lower_lambda, tokens_lemmed_list))
+    tokens_lemmed_lowered_list = list(filter(filter_word_lambda, tokens_lemmed_lowered_list))
+    return tokens_lemmed_lowered_list
