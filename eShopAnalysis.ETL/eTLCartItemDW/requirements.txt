@@ -5,3 +5,5 @@ pyodbc
 ipykernel
 spacy
 nltk
+pyspark
+findspark

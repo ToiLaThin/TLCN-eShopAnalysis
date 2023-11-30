@@ -59,3 +59,22 @@ def load_subcatalog_df_to_mssql(subcatalog_df: pd.DataFrame):
     mssql_cursor.close()
     logging.log(logging.INFO, 'Connection to MSSQL closed.')
     print(df_subcatalogs)
+
+def load_usage_instruction_df_to_mssql(reduced_usage_instruction_df: pd.DataFrame):
+    mssql_cursor = get_cursor_mssql()
+    usage_instruction_table_name = os.environ.get('MSSQL_DIM_USAGE_INSTRUCTION_TABLE_NAME')
+
+    mssql_cursor.execute(f"""DELETE FROM {usage_instruction_table_name}""")
+    mssql_cursor.commit()
+
+    for index, row in reduced_usage_instruction_df.iterrows():
+        usage_instruction_type_id = index
+        usage_instruction_type_name = row['UsageInstructionTypeName']
+        mssql_cursor.execute(f"""INSERT INTO {usage_instruction_table_name} (UsageInstructionTypeId, UsageInstructionTypeName) VALUES (?, ?)""", usage_instruction_type_id, usage_instruction_type_name)
+    mssql_cursor.commit()
+
+    query = f'SELECT * FROM {usage_instruction_table_name}'
+    df_usage_instruction = pd.read_sql_query(query, mssql_cursor.connection)
+    mssql_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+    print(df_usage_instruction)
