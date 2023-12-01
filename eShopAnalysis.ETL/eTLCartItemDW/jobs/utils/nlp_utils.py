@@ -93,10 +93,12 @@ map_to_lemmatized_spacy = lambda token: token.lemma_.lower()
 pos_tag_keep = ['NOUN', 'VERB', 'ADJ', 'ADV']
 filter_pos_lambda = lambda token: token.pos_ in pos_tag_keep
 filter_stop_words_lambda = lambda token: not token.is_stop
-filter_word_lambda = lambda token: token not in ['product', 'warning', 'use']
+filter_word_lambda = lambda token: token not in ['product', 'warning', 'use', 'store', 'keep']
 map_lemma_lambda = lambda token: token.lemma_
 map_lower_lambda = lambda token_text: token_text.lower()
 def map_remove_punct_numbers_func(text: str):
+    if text is None:
+        return ''
     text = re.sub(r'[^\w\s]', '', text)
     text = re.sub(r'[\d?]', '', text)
     text = re.sub(r'-', '', text)
@@ -117,3 +119,18 @@ def map_to_processed_tokens(text: str) -> list[str]:
     tokens_lemmed_lowered_list = list(map(map_lower_lambda, tokens_lemmed_list))
     tokens_lemmed_lowered_list = list(filter(filter_word_lambda, tokens_lemmed_lowered_list))
     return tokens_lemmed_lowered_list
+
+# TODO get the best number of topics for LDA model
+# def get_the_best_number_of_topics_for_lda_model(df: pd.DataFrame, max_num_topics: int, min_num_topics: int, step: int) -> int:
+#     """Find the best number of topics for LDA model"""
+#     coherence_values = []
+#     model_list = []
+#     for num_topics in range(min_num_topics, max_num_topics, step):
+#         model = gensim.models.LdaMulticore(corpus, num_topics=num_topics, id2word=dictionary, passes=2, workers=2)
+#         model_list.append(model)
+#         coherencemodel = CoherenceModel(model=model, texts=df['ProcessedTokens'], dictionary=dictionary, coherence='c_v')
+#         coherence_values.append(coherencemodel.get_coherence())
+#     max_coherence = max(coherence_values)
+#     max_coherence_idx = coherence_values.index(max_coherence)
+#     best_num_topics = min_num_topics + max_coherence_idx * step
+#     return best_num_topics

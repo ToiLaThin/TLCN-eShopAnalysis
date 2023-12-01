@@ -76,6 +76,7 @@ def extract_mongo_usage_instruction_to_df() -> pd.DataFrame:
     }
     for p in cursor_products:
         product_usage_instruction = p.get('ProductInfo').get('ProductUsageInstruction')
+        # TODO: if statement affect nlp or not?
         if product_usage_instruction not in usage_instruction_dict.values():
             usage_instruction_dict[idx] = product_usage_instruction
             idx += 1
@@ -86,3 +87,95 @@ def extract_mongo_usage_instruction_to_df() -> pd.DataFrame:
     db.client.close()
     logging.log(logging.INFO, 'Connection to MongoDB closed.')
     return df
+
+def extract_mongo_preserve_instruction_to_df() -> pd.DataFrame:
+    MONGODB_PRODUCT_COLLECTION = os.environ.get('MONGODB_PRODUCT_COLLECTION')
+    db = get_db_mongo()
+    product_collection = db.get_collection(MONGODB_PRODUCT_COLLECTION)
+    
+    cursor_products = product_collection.find({})
+    idx = 0
+    preserve_instruction_dict: dict = {
+    }
+    for p in cursor_products:
+        product_preserve_instruction = p.get('ProductInfo').get('ProductPreserveInstruction')
+        # TODO: if statement affect nlp or not?
+        # if product_preserve_instruction not in preserve_instruction_dict.values():
+        preserve_instruction_dict[idx] = product_preserve_instruction
+        idx += 1
+
+    # print(brand_dict.values())
+    df = pd.DataFrame.from_dict(preserve_instruction_dict, orient='index', columns=['PreserveInstructionTypeName'])
+    df.to_csv('./resources/product_preserve_instruction.csv', index=False)
+    db.client.close()
+    logging.log(logging.INFO, 'Connection to MongoDB closed.')
+    return df
+
+def extract_mongo_product_to_df() -> pd.DataFrame:
+    MONGODB_PRODUCT_COLLECTION = os.environ.get('MONGODB_PRODUCT_COLLECTION')
+    db = get_db_mongo()
+    product_collection = db.get_collection(MONGODB_PRODUCT_COLLECTION)
+
+    cursor_products = product_collection.find({})
+    # create an empty dataframe, previousely we create df from dict 
+    # but this time there are more columns, and it's more complex, so we use Series and concat
+    return_df = pd.DataFrame()
+    for p in cursor_products:
+        try:
+            # they must match the prop in the mongo collection
+            product_id = p.get('_id')
+            product_name = p.get('ProductName')
+            product_brand_name = p.get('ProductInfo').get('ProductBrand')
+            product_subcatalog_name = p.get('SubCatalogName')
+            product_preserve_instruction = p.get('ProductInfo').get('ProductPreserveInstruction')
+            product_usage_instruction = p.get('ProductInfo').get('ProductUsageInstruction')
+            have_models = p.get('HaveVariants')
+            have_price_per_cublic = p.get('HavePricePerCublic')
+            product_business_key = p.get('BusinessKey')
+            product_revision = p.get('Revision')
+
+
+            df_row_from_series = pd.Series([product_id, product_name, product_brand_name, product_subcatalog_name\
+                                            , product_preserve_instruction, product_usage_instruction, have_models\
+                                            , have_price_per_cublic, product_business_key, product_revision])\
+                                        .to_frame().T
+            return_df = pd.concat([return_df, df_row_from_series], ignore_index=True)
+        except Exception as e:
+            print(e)
+            continue
+    db.client.close()
+    logging.log(logging.INFO, 'Connection to MongoDB closed.')
+    return_df.columns = ['ProductId', 'ProductName', 'ProductBrandName'\
+                        , 'ProductSubCatalogName', 'ProductPreserveInstruction', 'ProductUsageInstruction'\
+                        , 'HaveModels', 'HavePricePerCublic', 'BusinessKey', 'Revision']
+    return_df.to_csv('./resources/product_not_transformed_yet.csv', index=False)
+    return return_df
+
+def extract_mongo_product_model_to_df() -> pd.DataFrame:
+    MONGODB_PRODUCT_COLLECTION = os.environ.get('MONGODB_PRODUCT_COLLECTION')
+    db = get_db_mongo()
+    product_model_collection = db.get_collection(MONGODB_PRODUCT_COLLECTION)
+
+    cursor_products = product_model_collection.find({})
+    return_df = pd.DataFrame()
+    for p in cursor_products:
+        try:
+            product_models = p.get('ProductModels')
+            product_model_id = product_models[0].get('_id')
+            product_model_name = p.get('ProductName')
+            product_business_key = p.get('BusinessKey')
+            product_id = p.get('_id')
+            product_model_cublic_type_fkey = product_models[0].get('CublicType')
+
+            df_row_from_series = pd.Series([product_model_id, product_model_name, product_business_key\
+                                            , product_id, product_model_cublic_type_fkey])\
+                                        .to_frame().T
+            return_df = pd.concat([return_df, df_row_from_series], ignore_index=True)
+        except Exception as e:
+            print(e)
+            continue
+    db.client.close()
+    logging.log(logging.INFO, 'Connection to MongoDB closed.')
+    return_df.columns = ['ProductModelId', 'ProductModelName', 'BusinessKey', 'ProductId', 'CublicTypeKey']
+    return_df.to_csv('./resources/product_model.csv', index=False)
+    return return_df
