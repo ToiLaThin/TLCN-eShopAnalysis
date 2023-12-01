@@ -139,7 +139,10 @@ def transform_to_usage_instruction_df_with_topic_and_word_representation(usage_i
                         , iterations=10, num_topics=best_topic_numer, workers = 4, passes=10\
                         , random_state=100, per_word_topics=True)
 
-    topic_dict = {}
+    lda_model.save("resources/lda_usage_instruction.model")
+    topic_dict = {
+        -1: "No topic or cannot be classified",
+    }
     topics_result = lda_model.show_topics(num_topics=best_topic_numer, num_words=5, log=False, formatted=False)
     for topic_id, tokens_probability_for_topic in topics_result:
         word_representation = ", ".join([token for token, _prob in tokens_probability_for_topic])

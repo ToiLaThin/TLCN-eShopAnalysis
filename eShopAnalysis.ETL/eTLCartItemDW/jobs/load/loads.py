@@ -78,3 +78,82 @@ def load_usage_instruction_df_to_mssql(reduced_usage_instruction_df: pd.DataFram
     mssql_cursor.close()
     logging.log(logging.INFO, 'Connection to MSSQL closed.')
     print(df_usage_instruction)
+
+def load_preserve_instruction_df_to_mssql(reduced_preserve_instruction_df: pd.DataFrame):
+    mssql_cursor = get_cursor_mssql()
+    preserve_instruction_table_name = os.environ.get('MSSQL_DIM_PRESERVE_INSTRUCTION_TABLE_NAME')
+
+    mssql_cursor.execute(f"""DELETE FROM {preserve_instruction_table_name}""")
+    mssql_cursor.commit()
+
+    for index, row in reduced_preserve_instruction_df.iterrows():
+        preserve_instruction_type_id = index
+        preserve_instruction_type_name = row['PreserveInstructionTypeName']
+        mssql_cursor.execute(f"""INSERT INTO {preserve_instruction_table_name} (PreserveInstructionTypeId, PreserveInstructionTypeName) VALUES (?, ?)""", preserve_instruction_type_id, preserve_instruction_type_name)
+    mssql_cursor.commit()
+
+    query = f'SELECT * FROM {preserve_instruction_table_name}'
+    df_preserve_instruction = pd.read_sql_query(query, mssql_cursor.connection)
+    mssql_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+    print(df_preserve_instruction)
+
+def load_product_df_to_mssql(product_df: pd.DataFrame):
+    mssql_cursor = get_cursor_mssql()
+    product_table_name = os.environ.get('MSSQL_DIM_PRODUCT_TABLE_NAME')
+
+    mssql_cursor.execute(f"""DELETE FROM {product_table_name}""")
+    mssql_cursor.commit()
+
+    for _, row in product_df.iterrows():
+        product_id = row['ProductId']
+        product_name = row['ProductName']
+        brand_fkey = row['BrandKey']
+        usage_instruction_type_fkey = row['UsageInstructionTypeKey']
+        subcatalog_fkey = row['SubCatalogKey']
+        preserve_instruction_type_fkey = row['PreserveInstructionTypeKey']
+        have_models = row['HaveModels']
+        have_price_per_cublic = row['HavePricePerCublic']
+        business_key = row['BusinessKey']
+        revision = row['Revision']
+        mssql_cursor.execute(f"""
+            INSERT INTO {product_table_name} 
+            (ProductId, ProductName, BrandKey, UsageInstructionTypeKey, 
+            SubCatalogKey, PreserveInstructionTypeKey, HaveModels, 
+            HavePricePerCublic, BusinessKey, Revision) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
+            product_id, product_name, brand_fkey, usage_instruction_type_fkey, subcatalog_fkey, 
+            preserve_instruction_type_fkey, have_models, have_price_per_cublic, business_key, revision)
+    mssql_cursor.commit()
+
+    query = f'SELECT * FROM {product_table_name}'
+    df_products = pd.read_sql_query(query, mssql_cursor.connection)
+    mssql_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+    print(df_products)
+
+def load_product_model_df_to_mssql(product_model_df: pd.DataFrame):
+    mssql_cursor = get_cursor_mssql()
+    product_model_table_name = os.environ.get('MSSQL_DIM_PRODUCT_MODEL_TABLE_NAME')
+
+    mssql_cursor.execute(f"""DELETE FROM {product_model_table_name}""")
+    mssql_cursor.commit()
+
+    for _, row in product_model_df.iterrows():
+        product_model_id = row['ProductModelId']
+        product_model_name = row['ProductModelName']
+        business_key = row['BusinessKey']
+        product_fkey = row['ProductId']
+        cublic_type_fkey = row['CublicTypeKey']
+        mssql_cursor.execute(f"""
+            INSERT INTO {product_model_table_name} 
+            (ProductModelId, ProductModelName, BusinessKey, ProductKey, CublicTypeKey) 
+            VALUES (?, ?, ?, ?, ?)""", 
+            product_model_id, product_model_name, business_key, product_fkey, cublic_type_fkey)
+    mssql_cursor.commit()
+
+    query = f'SELECT * FROM {product_model_table_name}'
+    df_product_models = pd.read_sql_query(query, mssql_cursor.connection)
+    mssql_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+    print(df_product_models)
