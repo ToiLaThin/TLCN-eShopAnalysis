@@ -157,3 +157,44 @@ def load_product_model_df_to_mssql(product_model_df: pd.DataFrame):
     mssql_cursor.close()
     logging.log(logging.INFO, 'Connection to MSSQL closed.')
     print(df_product_models)
+
+def load_cart_item_df_to_mssql(cart_item_df: pd.DataFrame):
+    mssql_cursor = get_cursor_mssql()
+    cart_item_table_name = os.environ.get('MSSQL_FACT_CART_ITEM_TABLE_NAME')
+
+    mssql_cursor.execute(f"""DELETE FROM {cart_item_table_name}""")
+    mssql_cursor.commit()
+
+    for _, row in cart_item_df.iterrows():
+        cart_id = row['CartId']
+        cart_item_product_id = row['ProductId']
+        cart_item_product_model_id = row['ProductModelId']
+        cart_item_business_key = row['BusinessKey']
+        cart_item_sale_item_id = row['SaleItemId']
+        cart_item_is_on_sale = row['IsOnSale']
+        cart_item_sale_value = row['SaleValue']
+        cart_item_quantity = row['Quantity']
+        cart_item_unit_price = row['UnitPrice']
+        cart_item_final_price = row['FinalPrice']
+        cart_item_unit_after_sale_price = row['UnitAfterSalePrice']
+        cart_item_final_after_sale_price = row['FinalAfterSalePrice']
+
+        mssql_cursor.execute(f"""
+            INSERT INTO {cart_item_table_name} 
+            (CartId, ProductId, ProductModelId, 
+            BusinessKey, SaleItemKey, IsOnSale, 
+            SaleValue, Quantity, UnitPrice, FinalPrice, 
+            UnitAfterSalePrice, FinalAfterSalePrice) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""\
+                , cart_id, cart_item_product_id, cart_item_product_model_id\
+                , cart_item_business_key, cart_item_sale_item_id, cart_item_is_on_sale\
+                , cart_item_sale_value, cart_item_quantity\
+                , cart_item_unit_price, cart_item_final_price, cart_item_unit_after_sale_price, cart_item_final_after_sale_price
+        )
+        mssql_cursor.commit()
+        
+    query = f'SELECT * FROM {cart_item_table_name}'
+    df_cart_items = pd.read_sql_query(query, mssql_cursor.connection)
+    mssql_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+    print(df_cart_items)

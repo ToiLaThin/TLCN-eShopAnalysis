@@ -154,9 +154,9 @@ def extract_mongo_product_to_df() -> pd.DataFrame:
 def extract_mongo_product_model_to_df() -> pd.DataFrame:
     MONGODB_PRODUCT_COLLECTION = os.environ.get('MONGODB_PRODUCT_COLLECTION')
     db = get_db_mongo()
-    product_model_collection = db.get_collection(MONGODB_PRODUCT_COLLECTION)
+    product_collection = db.get_collection(MONGODB_PRODUCT_COLLECTION)
 
-    cursor_products = product_model_collection.find({})
+    cursor_products = product_collection.find({})
     return_df = pd.DataFrame()
     for p in cursor_products:
         try:
@@ -179,3 +179,18 @@ def extract_mongo_product_model_to_df() -> pd.DataFrame:
     return_df.columns = ['ProductModelId', 'ProductModelName', 'BusinessKey', 'ProductId', 'CublicTypeKey']
     return_df.to_csv('./resources/product_model.csv', index=False)
     return return_df
+
+def extract_mssql_cart_item_to_df() -> pd.DataFrame:
+    MSSQL_SRC_CART_ITEM_TABLE_NAME = os.environ.get('MSSQL_SRC_CART_ITEM_TABLE_NAME')
+    mssql_data_src_cursor = get_mssql_data_src_cursor()    
+    query = f'SELECT * FROM {MSSQL_SRC_CART_ITEM_TABLE_NAME}'
+    df_cart_item = pd.read_sql_query(query, mssql_data_src_cursor.connection)
+    mssql_data_src_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+
+    # this can be in transform
+    columns_to_keep = ['CartId', 'ProductId', 'ProductModelId', 'BusinessKey'\
+                       , 'SaleItemId', 'IsOnSale', 'SaleValue', 'Quantity', 'UnitPrice'\
+                       , 'FinalPrice', 'UnitAfterSalePrice', 'FinalAfterSalePrice']
+    df_cart_item = df_cart_item[columns_to_keep]
+    return df_cart_item

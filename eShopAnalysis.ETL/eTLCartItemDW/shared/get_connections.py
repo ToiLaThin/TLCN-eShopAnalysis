@@ -6,6 +6,7 @@ import logging
 import traceback
 
 load_dotenv('config.env')
+
 def get_cursor_mssql():
     """Get cursor for MSSQL database"""
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -34,4 +35,19 @@ def get_db_mongo():
         return db
     except Exception as e:
         logging.error('Error connecting to MongoDB database')
+        logging.error(traceback.format_exc())
+
+def get_mssql_data_src_cursor():
+    """Get cursor for MSSQL database"""
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    MSSQL_SERVER = os.environ.get('MSSQL_SERVER')
+    MSSQL_SRC_DATABASE = os.environ.get('MSSQL_SRC_DATABASE')
+    CONNECTION_STRING = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + MSSQL_SERVER + ';DATABASE=' + MSSQL_SRC_DATABASE + ';Trusted_Connection=yes;'
+    try:
+        conn = pyodbc.connect(CONNECTION_STRING)
+        cursor = conn.cursor()
+        logging.info('Connected to MSSQL database')
+        return cursor
+    except Exception as e:
+        logging.error('Error connecting to MSSQL database')
         logging.error(traceback.format_exc())
