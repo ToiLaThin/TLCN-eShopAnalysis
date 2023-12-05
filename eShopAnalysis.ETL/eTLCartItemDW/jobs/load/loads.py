@@ -4,7 +4,7 @@ from shared.queries import *
 load_dotenv('config.env')
 
 def load_brand_df_to_mssql(brand_df: pd.DataFrame):
-    mssql_cursor = get_cursor_mssql()
+    mssql_cursor = get_cursor_data_dw_mssql()
     brand_table_name = os.environ.get('MSSQL_DIM_BRAND_TABLE_NAME')
 
     mssql_cursor.execute(f"""DELETE FROM {brand_table_name}""")
@@ -22,7 +22,7 @@ def load_brand_df_to_mssql(brand_df: pd.DataFrame):
     # print(df_brands)
 
 def load_catalog_df_to_mssql(catalog_df: pd.DataFrame):
-    mssql_cursor = get_cursor_mssql()
+    mssql_cursor = get_cursor_data_dw_mssql()
     catalog_table_name = os.environ.get('MSSQL_DIM_CATALOG_TABLE_NAME')
 
     mssql_cursor.execute(f"""DELETE FROM {catalog_table_name}""")
@@ -41,7 +41,7 @@ def load_catalog_df_to_mssql(catalog_df: pd.DataFrame):
     print(df_catalogs)
 
 def load_subcatalog_df_to_mssql(subcatalog_df: pd.DataFrame):
-    mssql_cursor = get_cursor_mssql()
+    mssql_cursor = get_cursor_data_dw_mssql()
     subcatalog_table_name = os.environ.get('MSSQL_DIM_SUBCATALOG_TABLE_NAME')
 
     mssql_cursor.execute(f"""DELETE FROM {subcatalog_table_name}""")
@@ -61,7 +61,7 @@ def load_subcatalog_df_to_mssql(subcatalog_df: pd.DataFrame):
     print(df_subcatalogs)
 
 def load_usage_instruction_df_to_mssql(reduced_usage_instruction_df: pd.DataFrame):
-    mssql_cursor = get_cursor_mssql()
+    mssql_cursor = get_cursor_data_dw_mssql()
     usage_instruction_table_name = os.environ.get('MSSQL_DIM_USAGE_INSTRUCTION_TABLE_NAME')
 
     mssql_cursor.execute(f"""DELETE FROM {usage_instruction_table_name}""")
@@ -80,7 +80,7 @@ def load_usage_instruction_df_to_mssql(reduced_usage_instruction_df: pd.DataFram
     print(df_usage_instruction)
 
 def load_preserve_instruction_df_to_mssql(reduced_preserve_instruction_df: pd.DataFrame):
-    mssql_cursor = get_cursor_mssql()
+    mssql_cursor = get_cursor_data_dw_mssql()
     preserve_instruction_table_name = os.environ.get('MSSQL_DIM_PRESERVE_INSTRUCTION_TABLE_NAME')
 
     mssql_cursor.execute(f"""DELETE FROM {preserve_instruction_table_name}""")
@@ -99,7 +99,7 @@ def load_preserve_instruction_df_to_mssql(reduced_preserve_instruction_df: pd.Da
     print(df_preserve_instruction)
 
 def load_product_df_to_mssql(product_df: pd.DataFrame):
-    mssql_cursor = get_cursor_mssql()
+    mssql_cursor = get_cursor_data_dw_mssql()
     product_table_name = os.environ.get('MSSQL_DIM_PRODUCT_TABLE_NAME')
 
     mssql_cursor.execute(f"""DELETE FROM {product_table_name}""")
@@ -133,7 +133,7 @@ def load_product_df_to_mssql(product_df: pd.DataFrame):
     print(df_products)
 
 def load_product_model_df_to_mssql(product_model_df: pd.DataFrame):
-    mssql_cursor = get_cursor_mssql()
+    mssql_cursor = get_cursor_data_dw_mssql()
     product_model_table_name = os.environ.get('MSSQL_DIM_PRODUCT_MODEL_TABLE_NAME')
 
     mssql_cursor.execute(f"""DELETE FROM {product_model_table_name}""")
@@ -159,7 +159,7 @@ def load_product_model_df_to_mssql(product_model_df: pd.DataFrame):
     print(df_product_models)
 
 def load_cart_item_df_to_mssql(cart_item_df: pd.DataFrame):
-    mssql_cursor = get_cursor_mssql()
+    mssql_cursor = get_cursor_data_dw_mssql()
     cart_item_table_name = os.environ.get('MSSQL_FACT_CART_ITEM_TABLE_NAME')
 
     mssql_cursor.execute(f"""DELETE FROM {cart_item_table_name}""")

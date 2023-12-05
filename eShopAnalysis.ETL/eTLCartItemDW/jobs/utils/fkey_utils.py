@@ -1,6 +1,6 @@
 import pandas as pd
 import logging
-from shared.get_connections import get_cursor_mssql
+from shared.get_connections import get_cursor_data_dw_mssql
 
 from dotenv import load_dotenv
 import os
@@ -33,7 +33,7 @@ def map_product_brand_to_fkey(brand_name: str, dim_lookup: DimLookUp) -> int:
     """
     if dim_lookup.lookup_brands_df.empty:
         try:
-            mssql_cursor = get_cursor_mssql()
+            mssql_cursor = get_cursor_data_dw_mssql()
             brand_table_name = os.environ.get('MSSQL_DIM_BRAND_TABLE_NAME')
             brands_df = pd.read_sql_query(f'SELECT * FROM {brand_table_name}', mssql_cursor.connection)
             dim_lookup.set_lookup_brands_df(brands_df)
@@ -54,7 +54,7 @@ def map_product_subcatalog_to_fkey(subcatalog_name: str, dim_lookup: DimLookUp) 
     """
     if dim_lookup.lookup_subcatalogs_df.empty:
         try:
-            mssql_cursor = get_cursor_mssql()
+            mssql_cursor = get_cursor_data_dw_mssql()
             subcatalog_table_name = os.environ.get('MSSQL_DIM_SUBCATALOG_TABLE_NAME')
             subcatalogs_df = pd.read_sql_query(f'SELECT * FROM {subcatalog_table_name}', mssql_cursor.connection)
             dim_lookup.set_lookup_subcatalogs_df(subcatalogs_df)
