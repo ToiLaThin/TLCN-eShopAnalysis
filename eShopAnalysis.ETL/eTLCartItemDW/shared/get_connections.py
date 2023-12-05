@@ -7,12 +7,12 @@ import traceback
 
 load_dotenv('config.env')
 
-def get_cursor_mssql():
-    """Get cursor for MSSQL database"""
+def get_cursor_data_dw_mssql():
+    """Get cursor for MSSQL database data warehouse"""
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     MSSQL_SERVER = os.environ.get('MSSQL_SERVER')
-    MSSQL_DATABASE = os.environ.get('MSSQL_DATABASE')
-    CONNECTION_STRING = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + MSSQL_SERVER + ';DATABASE=' + MSSQL_DATABASE + ';Trusted_Connection=yes;'
+    MSSQL_DW_DATABASE = os.environ.get('MSSQL_DW_DATABASE')
+    CONNECTION_STRING = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + MSSQL_SERVER + ';DATABASE=' + MSSQL_DW_DATABASE + ';Trusted_Connection=yes;'
     try:
         conn = pyodbc.connect(CONNECTION_STRING)
         cursor = conn.cursor()
@@ -24,7 +24,7 @@ def get_cursor_mssql():
 
 
 def get_db_mongo():
-    """Get cursor for MongoDB database"""
+    """Get cursor for MongoDB source database"""
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     MONGO_CONNECTION_STRING = os.environ.get('MONGO_CONNECTION_STRING')
     MONGO_DATABASE = os.environ.get('MONGO_DATABASE')
@@ -38,7 +38,7 @@ def get_db_mongo():
         logging.error(traceback.format_exc())
 
 def get_mssql_data_src_cursor():
-    """Get cursor for MSSQL database"""
+    """Get cursor for MSSQL database data source"""
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     MSSQL_SERVER = os.environ.get('MSSQL_SERVER')
     MSSQL_SRC_DATABASE = os.environ.get('MSSQL_SRC_DATABASE')
