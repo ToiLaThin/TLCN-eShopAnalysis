@@ -24,7 +24,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _service;
-        private readonly IMapper _mapper;
+        private readonly IMapper _mapper;        
 
         public ProductController(IProductService service, IMapper mapper)
         {
@@ -144,6 +144,22 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
             return actionResultDto;
         }
 
+        [HttpPost("UpdatePriceProductModel")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProductModelDto), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<ProductModelDto>> UpdatePriceProductModel([FromBody] ProductModelUpdatePriceRequestDto productModelUpdatePriceRequestDto)
+        {
+            var serviceResult = await _service.UpdateProductModelPrice(
+                    productId: productModelUpdatePriceRequestDto.ProductId,
+                    productModelId: productModelUpdatePriceRequestDto.ProductModelId,
+                    newPrice: productModelUpdatePriceRequestDto.NewPrice);
+
+            ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
+                                         Ok(_mapper.Map<ProductModel, ProductModelDto>(serviceResult.Data)) :
+                                         NotFound(serviceResult.Error);
+            return actionResultDto;
+        }
 
         //for any microservice want to add new stock inventory
         [HttpPost("BackChannel/UpdateProductToOnSale")]

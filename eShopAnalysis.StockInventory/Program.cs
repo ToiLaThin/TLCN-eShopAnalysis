@@ -4,6 +4,7 @@ using eShopAnalysis.EventBus.Extension;
 using eShopAnalysis.StockInventory.Data;
 using eShopAnalysis.StockInventory.Repository;
 using eShopAnalysis.StockInventory.Utilities;
+using eShopAnalysis.StockInventoryAPI.IntegrationEvents;
 using eShopAnalysis.StockInventoryAPI.Services;
 using eShopAnalysis.StockInventoryAPI.Utilities.Behaviors;
 using Serilog;
@@ -13,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 //this will config all required by event bus, review appsettings.json EventBus section and EventBus Connection string
 //new just subscribe integration event and integration event handler
 builder.Services.AddEventBus(builder.Configuration);
-//builder.Services.AddTransient<IIntegrationEventHandler<GracePeriodConfirmedIntegrationEvent>, GracePeriodConfirmedIntegrationEventHandler>();
+builder.Services.AddTransient<IIntegrationEventHandler<ProductModelPriceUpdatedIntegrationEvent>, ProductModelPriceUpdatedIntegrationEventHandling>();
 builder.Host.UseSerilog((context, config) => {
     config.ReadFrom.Configuration(context.Configuration);
 });
@@ -35,7 +36,7 @@ builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
 var eventBus = app.Services.GetRequiredService<IEventBus>();
-//eventBus.Subscribe<UserCheckoutAcceptedIntegrationEvent, IIntegrationEventHandler<UserCheckoutAcceptedIntegrationEvent>>();
+eventBus.Subscribe<ProductModelPriceUpdatedIntegrationEvent, IIntegrationEventHandler<ProductModelPriceUpdatedIntegrationEvent>>();
 app.UseSerilogRequestLogging();
 if (app.Environment.IsDevelopment())
 {

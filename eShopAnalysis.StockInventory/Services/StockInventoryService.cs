@@ -18,6 +18,8 @@ namespace eShopAnalysis.StockInventoryAPI.Services
 
         Task<ServiceResponseDto<IEnumerable<StockInventory>>> GetAll();
 
+        Task<ServiceResponseDto<IEnumerable<StockInventory>>> UpdateIdsAfterProductModelPriceChanged(Guid oldProductId, Guid newProductId, Guid oldProductModelId, Guid newProductModelId);
+
         Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> GetStockOfModels(IEnumerable<Guid> modelIds);
 
         Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> DecreaseStockItems(IEnumerable<StockDecreaseRequestDto> itemStocks);
@@ -142,6 +144,34 @@ namespace eShopAnalysis.StockInventoryAPI.Services
                 return ServiceResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result);
             }
             return ServiceResponseDto<IEnumerable<ItemStockResponseDto>>.Failure("Error");
+        }
+
+        public async Task<ServiceResponseDto<IEnumerable<StockInventory>>> UpdateIdsAfterProductModelPriceChanged(Guid oldProductId, Guid newProductId, Guid oldProductModelId, Guid newProductModelId)
+        {
+            //find all stockInventory with productId is oldProductId, then replace them all with newProductId
+            string oldProductIdStr = oldProductId.ToString();
+            string newProductIdStr = newProductId.ToString();
+            //string oldProductModelIdStr = oldProductModelId.ToString();
+            //string newProductModelIdStr = newProductModelId.ToString();
+
+            var stockToUpdates = _repo.GetAsQueryable().Where(st => st.ProductId == oldProductIdStr).ToList();
+            if (stockToUpdates.Count <= 0) {
+                return ServiceResponseDto<IEnumerable<StockInventory>>.Failure("no stock inventory");
+            }
+
+            foreach(var st in  stockToUpdates) {
+                st.ProductId = newProductId.ToString();
+                //in those stockInventory, the stock with productModelId is oldProductModelId, replace that with newProductModelId
+                if (st.ProductModelId == oldProductModelId.ToString()) {
+                    st.ProductModelId = newProductModelId.ToString();
+                }
+
+                //save changes asynchronously
+                await _repo.UpdateAsync(st);
+            }
+
+            var stockAfterUpdated = _repo.GetAsQueryable().Where(st => st.ProductId ==  newProductIdStr).ToList();
+            return ServiceResponseDto<IEnumerable<StockInventory>>.Success(stockAfterUpdated);
         }
     }
 }
