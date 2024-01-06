@@ -23,6 +23,22 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
         protected Product(Product sourceClone) : base(sourceClone) { 
             //implement how you want to clone
             //create a new row with the exact infomation and business key but different productId and increase in revision
+            this.ProductId = Guid.NewGuid();
+            this.BusinessKey = sourceClone.BusinessKey;
+            this.Revision = sourceClone.Revision + 1;
+
+            this.ProductModels = sourceClone.ProductModels;
+            this.ProductName = sourceClone.ProductName;
+            this.ProductCoverImage = sourceClone.ProductCoverImage;
+            this.SubCatalogId = sourceClone.SubCatalogId;
+            this.SubCatalogName = sourceClone.SubCatalogName;
+            this.IsOnSale = sourceClone.IsOnSale;
+            this.ProductDisplayPriceOnSale = sourceClone.ProductDisplayPriceOnSale;
+            this.ProductDisplaySaleValue = sourceClone.ProductDisplaySaleValue;
+            this.ProductDisplaySaleType = sourceClone.ProductDisplaySaleType;
+            this.HaveVariants = sourceClone.HaveVariants;
+            this.HavePricePerCublic = sourceClone.HavePricePerCublic;
+            this.ProductInfo = sourceClone.ProductInfo;
         }
 
         //so many constructor, which one will be used
@@ -149,6 +165,22 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
             ProductDisplaySaleType = DiscountType.NoDiscount;
             ProductDisplayPriceOnSale = -1;
             return this;
+        }
+
+        public ProductModel UpdateProductModelPrice(Guid productModelId, double newPrice)
+        {
+            //fine the model
+            var productModelToUpdate = this.ProductModels.Where(pm => pm.ProductModelId == productModelId).FirstOrDefault();
+            if (productModelToUpdate == null)
+                return null;
+
+            //validated on frontend, it's not too big for the old price and not too low 
+            productModelToUpdate.ProductModelId = Guid.NewGuid();
+            productModelToUpdate.Price = newPrice;
+
+            
+
+            return productModelToUpdate;
         }
     }
 }

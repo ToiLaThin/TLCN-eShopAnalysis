@@ -1,4 +1,6 @@
-﻿using eShopAnalysis.ProductCatalogAPI.Application.Dto;
+﻿using eShopAnalysis.EventBus.Abstraction;
+using eShopAnalysis.ProductCatalogAPI.Application.Dto;
+using eShopAnalysis.ProductCatalogAPI.Application.IntegrationEvents.Event;
 using eShopAnalysis.ProductCatalogAPI.Application.Result;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
@@ -22,6 +24,8 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
         //Product UpdateProduct(Product product); //for testing only
         //Product UpdateCatalogInfo(Product product);//only modify name and info
 
+        Task<ServiceResponseDto<ProductModel>> UpdateProductModelPrice(Guid productId, Guid productModelId, double newPrice);
+
         Task<ServiceResponseDto<Product>> UpdateSubCatalog(Guid productId, Guid subCatalogId, string subCatalogName);
         Task<ServiceResponseDto<Product>> UpdateProductToOnSale(Guid productId, Guid productModelId, Guid saleItemId, DiscountType discountType, double discountValue);
 
@@ -37,9 +41,11 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
         //unit of work can commit transaction, rollback(in case back channel service failed,
         //and mediator so we can communicate with CatalogRepo)
         private readonly IUnitOfWork _unitOfWork;
-        public ProductService(IUnitOfWork unitOfWork)
+        private readonly IEventBus _eventBus;
+        public ProductService(IUnitOfWork unitOfWork, IEventBus eventBus)
         {
             _unitOfWork = unitOfWork;
+            _eventBus = eventBus;
         }
         #region Product Services
 
@@ -167,7 +173,39 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             var result = ServiceResponseDto<Product>.Success(updatedProduct);
             await _unitOfWork.ProductRepository.SaveChangesAsync(updatedProduct);
             return result;
-        }      
+        }
+
+        public async Task<ServiceResponseDto<ProductModel>> UpdateProductModelPrice(Guid productId, Guid productModelId, double newPrice)
+        {
+            var product = await _unitOfWork.ProductRepository.GetAsync(productId);
+            double oldPrice = product.ProductModels.Where(pm => pm.ProductModelId == productModelId).Single().Price;
+            if (product == null ) {
+                return ServiceResponseDto<ProductModel>.Failure("product cannot be found");
+            }
+
+            //clone the product, then in that new product, update the product model
+            var productCloned = product.Clone();
+            Product productConverted = ((Product)productCloned);
+            var updatedProductModel = productConverted.UpdateProductModelPrice(productModelId, newPrice);
+            if (updatedProductModel == null) {
+                return ServiceResponseDto<ProductModel>.Failure("product model cannot be found or updated");
+            }
+
+            //add the product to db , publish integration event, set old product to be discontinue(later)
+            _unitOfWork.ProductRepository.Add(productConverted);            
+            _eventBus.Publish(new ProductModelPriceUpdatedIntegrationEvent(
+                oldProductId: productId,
+                newProductId: productConverted.ProductId,
+                oldProductModelId: productModelId,
+                newProductModelId: updatedProductModel.ProductModelId,
+                oldPrice: oldPrice,
+                newPrice: newPrice)
+            );
+
+            var result = ServiceResponseDto<ProductModel>.Success(updatedProductModel);
+            return result;
+
+        }
         #endregion
 
     }

@@ -19,9 +19,4 @@
     <ProjectReference Include="..\eShopAnalysis.EventBus\eShopAnalysis.EventBus.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="IntegrationEvents\EventHandling\" />
-    <Folder Include="IntegrationEvents\Event\" />
-  </ItemGroup>
-
 </Project>

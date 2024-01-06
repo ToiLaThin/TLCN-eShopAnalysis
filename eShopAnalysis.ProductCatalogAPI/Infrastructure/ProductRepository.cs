@@ -22,7 +22,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure
 
         public void Add(Product product, IClientSessionHandle sessionHandle = null)
         {
-            if (sessionHandle != null) {
+            if (sessionHandle == null) {
                 _context.ProductCollection.InsertOne(product);
                 return;
             }
