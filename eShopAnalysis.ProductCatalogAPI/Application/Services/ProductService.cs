@@ -214,8 +214,10 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
                 newProductModelId: updatedProductModel.ProductModelId,
                 oldPrice: oldPrice,
                 newPrice: newPrice,
+                newPriceOnSaleModel: updatedProductModel.PriceOnSaleModel,
                 oldSaleItemId: oldSaleItemId,
-                newSaleItemId: newSaleItemId
+                newSaleItemId: newSaleItemId,
+                productName: productConverted.ProductName
                 )
             );
 

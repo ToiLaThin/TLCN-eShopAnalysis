@@ -8,6 +8,7 @@ namespace eShopAnalysis.NotificationHub
     public static class EventsToSentClient
     {
         public const string OrderStatusChanged = "OrderStatusChanged";
+        public const string ProductModelPriceChanged = "ProductModelPriceChanged";
     }
 
     [Authorize(
