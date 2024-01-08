@@ -1,7 +1,7 @@
 ﻿using eShopAnalysis.EventBus.Abstraction;
 using Newtonsoft.Json;
 
-namespace eShopAnalysis.StockInventoryAPI.IntegrationEvents
+namespace eShopAnalysis.CouponSaleItemAPI.Application.IntegrationEvents
 {
     //publish to saleItem, stockInventory (to modify the ProductId and ProductModelId)
     //publish to notificationHub to adjust cart on localStorage

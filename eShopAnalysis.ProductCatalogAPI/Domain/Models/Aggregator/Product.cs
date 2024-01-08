@@ -177,8 +177,21 @@ namespace eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator
             //validated on frontend, it's not too big for the old price and not too low 
             productModelToUpdate.ProductModelId = Guid.NewGuid();
             productModelToUpdate.Price = newPrice;
+            if (productModelToUpdate.IsOnSaleModel) {
+                Guid newSaleItemId = Guid.NewGuid();
+                productModelToUpdate.UpdateThisModelToOnSale(newSaleItemId, productModelToUpdate.SaleType, productModelToUpdate.SaleValueModel);
 
-            
+
+                //update product best sale model (model with price is minimum)
+                double minPriceOnSaleOfModels = this.ProductModels.Where(pm => pm.IsOnSaleModel).Min(pm => pm.PriceOnSaleModel);
+                ProductModel bestModelCurrentlyOnSale = ProductModels.Where(pm => pm.IsOnSaleModel)
+                                                                     .Single(pm => pm.PriceOnSaleModel == minPriceOnSaleOfModels);
+                this.IsOnSale = true;
+                this.ProductDisplaySaleType = bestModelCurrentlyOnSale.SaleType;
+                this.ProductDisplaySaleValue = bestModelCurrentlyOnSale.SaleValueModel;
+                this.ProductDisplayPriceOnSale = bestModelCurrentlyOnSale.PriceOnSaleModel;
+            }            
+
 
             return productModelToUpdate;
         }

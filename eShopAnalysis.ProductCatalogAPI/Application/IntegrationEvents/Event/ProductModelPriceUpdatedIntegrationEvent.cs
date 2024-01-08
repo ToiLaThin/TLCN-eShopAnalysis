@@ -25,13 +25,21 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.IntegrationEvents.Event
         [JsonProperty]
         public double NewPrice { get; }
 
+        [JsonProperty]
+        public Guid? OldSaleItemId { get; }
+
+        [JsonProperty]
+        public Guid? NewSaleItemId { get; }
+
         [JsonConstructor]
         public ProductModelPriceUpdatedIntegrationEvent(Guid oldProductId,
                                                         Guid newProductId,
                                                         Guid oldProductModelId,
                                                         Guid newProductModelId,
                                                         double oldPrice,
-                                                        double newPrice)
+                                                        double newPrice,
+                                                        Guid? oldSaleItemId,
+                                                        Guid? newSaleItemId)
         {
             this.OldProductId = oldProductId;
             this.NewProductId = newProductId;
@@ -39,6 +47,10 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.IntegrationEvents.Event
             this.NewProductModelId = newProductModelId;
             this.OldPrice = oldPrice;
             this.NewPrice = newPrice;
+
+            //neu model khong duoc sale thi hai SaleItemId Guid deu la null
+            this.OldSaleItemId = oldSaleItemId;
+            this.NewSaleItemId = newSaleItemId;
         }
     }
 }
