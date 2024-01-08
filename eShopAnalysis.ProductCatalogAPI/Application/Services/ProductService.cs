@@ -178,7 +178,16 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
         public async Task<ServiceResponseDto<ProductModel>> UpdateProductModelPrice(Guid productId, Guid productModelId, double newPrice)
         {
             var product = await _unitOfWork.ProductRepository.GetAsync(productId);
-            double oldPrice = product.ProductModels.Where(pm => pm.ProductModelId == productModelId).Single().Price;
+            ProductModel productModelToFind = product.ProductModels.Where(pm => pm.ProductModelId == productModelId).Single();
+            double oldPrice = productModelToFind.Price;
+
+            //get oldSaleItemId
+            bool isToFindModelOnSale = productModelToFind.IsOnSaleModel;
+            Guid? oldSaleItemId = null;
+            Guid? newSaleItemId = null;
+            if (isToFindModelOnSale) {
+                oldSaleItemId = productModelToFind.SaleItemId;
+            }
             if (product == null ) {
                 return ServiceResponseDto<ProductModel>.Failure("product cannot be found");
             }
@@ -191,6 +200,11 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
                 return ServiceResponseDto<ProductModel>.Failure("product model cannot be found or updated");
             }
 
+            //if model is on sale, we should store newSaleItemId
+            if (isToFindModelOnSale) {
+                newSaleItemId = updatedProductModel.SaleItemId;
+            }
+
             //add the product to db , publish integration event, set old product to be discontinue(later)
             _unitOfWork.ProductRepository.Add(productConverted);            
             _eventBus.Publish(new ProductModelPriceUpdatedIntegrationEvent(
@@ -199,7 +213,10 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
                 oldProductModelId: productModelId,
                 newProductModelId: updatedProductModel.ProductModelId,
                 oldPrice: oldPrice,
-                newPrice: newPrice)
+                newPrice: newPrice,
+                oldSaleItemId: oldSaleItemId,
+                newSaleItemId: newSaleItemId
+                )
             );
 
             var result = ServiceResponseDto<ProductModel>.Success(updatedProductModel);
