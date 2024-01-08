@@ -9,10 +9,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNet.SignalR;
+using eShopAnalysis.NotificationHub.Application.IntegrationEvents.Event;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEventBus(builder.Configuration);
 builder.Services.AddTransient<IIntegrationEventHandler<OrderStatusChangedToCheckoutedIntegrationEvent>, OrderStatusChangedToCheckoutedIntegrationEventHandling>();
+builder.Services.AddTransient<IIntegrationEventHandler<ProductModelPriceUpdatedIntegrationEvent>, ProductModelPriceUpdatedIntegrationEventHandling>();
 string hubCorPolicyKey = "NotificationHubCorPolicy";
 builder.Services.AddCors(corsOption =>
 {
@@ -71,6 +73,7 @@ builder.Services.AddControllers();
 var app = builder.Build();
 var eventBus = app.Services.GetRequiredService<IEventBus>();
 eventBus.Subscribe<OrderStatusChangedToCheckoutedIntegrationEvent, IIntegrationEventHandler<OrderStatusChangedToCheckoutedIntegrationEvent>>();
+eventBus.Subscribe<ProductModelPriceUpdatedIntegrationEvent, IIntegrationEventHandler<ProductModelPriceUpdatedIntegrationEvent>>();
 app.MapHub<NotificationHub>("/NotificationHub", signalROptions =>
 {
     signalROptions.Transports = HttpTransportType.WebSockets | HttpTransportType.ServerSentEvents;

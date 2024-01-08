@@ -26,10 +26,16 @@ namespace eShopAnalysis.CouponSaleItemAPI.Application.IntegrationEvents
         public double NewPrice { get; }
 
         [JsonProperty]
+        public double? NewPriceOnSaleModel { get; }
+
+        [JsonProperty]
         public Guid? OldSaleItemId { get; }
 
         [JsonProperty]
         public Guid? NewSaleItemId { get; }
+
+        [JsonProperty]
+        public string ProductName { get; }
 
         [JsonConstructor]
         public ProductModelPriceUpdatedIntegrationEvent(Guid oldProductId,
@@ -38,8 +44,10 @@ namespace eShopAnalysis.CouponSaleItemAPI.Application.IntegrationEvents
                                                         Guid newProductModelId,
                                                         double oldPrice,
                                                         double newPrice,
+                                                        double? newPriceOnSaleModel,
                                                         Guid? oldSaleItemId,
-                                                        Guid? newSaleItemId)
+                                                        Guid? newSaleItemId,
+                                                        string productName)
         {
             this.OldProductId = oldProductId;
             this.NewProductId = newProductId;
@@ -47,10 +55,15 @@ namespace eShopAnalysis.CouponSaleItemAPI.Application.IntegrationEvents
             this.NewProductModelId = newProductModelId;
             this.OldPrice = oldPrice;
             this.NewPrice = newPrice;
+            this.NewPriceOnSaleModel = newPriceOnSaleModel;
+
 
             //neu model khong duoc sale thi hai SaleItemId Guid deu la null
             this.OldSaleItemId = oldSaleItemId;
             this.NewSaleItemId = newSaleItemId;
+
+            //for toast to display the product name to user
+            this.ProductName = productName;
         }
     }
 }

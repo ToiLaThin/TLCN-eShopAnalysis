@@ -5,6 +5,7 @@ using eShopAnalysis.EventBus.Abstraction;
 
 namespace eShopAnalysis.CouponSaleItemAPI.IntegrationEvents
 {
+    //received from productCatalog Service when product model price changed
     public class ProductModelPriceUpdatedIntegrationEventHandling: IIntegrationEventHandler<ProductModelPriceUpdatedIntegrationEvent>
     {
         private readonly ISaleItemService _saleItemService;

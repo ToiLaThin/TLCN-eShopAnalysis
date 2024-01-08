@@ -1,7 +1,7 @@
 ﻿using eShopAnalysis.EventBus.Abstraction;
 using Newtonsoft.Json;
 
-namespace eShopAnalysis.StockInventoryAPI.IntegrationEvents
+namespace eShopAnalysis.NotificationHub.Application.IntegrationEvents.Event
 {
     //publish to saleItem, stockInventory (to modify the ProductId and ProductModelId)
     //publish to notificationHub to adjust cart on localStorage
@@ -56,7 +56,6 @@ namespace eShopAnalysis.StockInventoryAPI.IntegrationEvents
             this.OldPrice = oldPrice;
             this.NewPrice = newPrice;
             this.NewPriceOnSaleModel = newPriceOnSaleModel;
-
 
             //neu model khong duoc sale thi hai SaleItemId Guid deu la null
             this.OldSaleItemId = oldSaleItemId;

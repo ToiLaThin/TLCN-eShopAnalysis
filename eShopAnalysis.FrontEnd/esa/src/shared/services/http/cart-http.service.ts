@@ -42,6 +42,31 @@ export class CartHttpService {
     localStorage.setItem(this.itemsInCartKey, JSON.stringify(itemsInCart));
   }
 
+  //to update product model in cart when the price is updated (through integration event and notification hub signalR)
+  public updateProductModelPriceInCart(oldProductId: string, 
+    oldProductModelId: string, 
+    newProductId: string, 
+    newProductModelId: string, 
+    newPrice: number, 
+    newPriceOnSaleModel: number) {
+      let itemsInCart = this.itemsInCartSubject.getValue();
+      let itemToFind = itemsInCart.find(item => item.productModelId === oldProductModelId && item.productId === oldProductId);
+      if (itemToFind) {
+        itemToFind.productId = newProductId;
+        itemToFind.productModelId = newProductModelId;
+        itemToFind.unitPrice = newPrice;
+        itemToFind.finalPrice = itemToFind.quantity * newPrice;
+        itemToFind.unitAfterSalePrice = itemToFind.isOnSale === false ? undefined : newPriceOnSaleModel;
+        itemToFind.finalAfterSalePrice = itemToFind.isOnSale === false ? undefined : 
+                             newPriceOnSaleModel === undefined ? undefined : 
+                             newPriceOnSaleModel * itemToFind.quantity; 
+        this.itemsInCartSubject.next(itemsInCart);
+        localStorage.setItem(this.itemsInCartKey, JSON.stringify(itemsInCart));
+      } else {
+        alert('product model not found in cart');
+      }
+  }
+
   public confirmCart(cartConfirmRequest: ICartConfirmRequest) : Observable<any>{
     return this.http.post<ICartConfirmRequest>(`${env.BASEURL}/api/Aggregate/WriteAggregator/CheckCouponAndAddCart`, cartConfirmRequest);
   }

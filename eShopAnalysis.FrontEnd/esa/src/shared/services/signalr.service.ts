@@ -5,13 +5,15 @@ import { AuthStatus } from '../types/auth-status.enum';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { environment as env } from 'src/environments/environment';
 import * as signalR from '@microsoft/signalr';
+import { CartHttpService } from './http/cart-http.service';
 
 @Injectable()
 export class SignalrService {
 
   hubConnection!: HubConnection;
   constructor(private toastrService: ToastrService,
-              private authService: AuthService) { 
+              private authService: AuthService,
+              private cartHttpService: CartHttpService) { 
     this.initConnection();
   }
 
@@ -49,6 +51,18 @@ export class SignalrService {
                                       ${message.dateCheckouted} by 
                                       ${message.paidAmount}`);
   
+      });
+
+      this.hubConnection.on('ProductModelPriceChanged', (message) => {
+        this.toastrService.info(`Product ${message.productName} 's model price changed to ${message.newPrice}`);
+        this.cartHttpService.updateProductModelPriceInCart(
+          message.oldProductId,
+          message.oldProductModelId,
+          message.newProductId,
+          message.newProductModelId,
+          message.newPrice,
+          message.newPriceOnSaleModel
+        );        
       });
     }
   }
