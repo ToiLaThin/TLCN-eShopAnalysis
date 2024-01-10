@@ -46,7 +46,9 @@ namespace eShopAnalysis.ProductInteractionAPI.Service
 
         public async Task<ServiceResponseDto<IEnumerable<Bookmark>>> GetBookmarksOfUserAsync(Guid userId)
         {
-            var bookmarksOfUser = await _bookmarkRepository.GetBookmarksOfUserAsync(userId);
+            var bookmarksOfUser = _bookmarkRepository.GetAllAsQueryable()
+                                                     .Where(b => b.UserId.Equals(userId))
+                                                     .ToList();
             if (bookmarksOfUser == null)
             {
                 return ServiceResponseDto<IEnumerable<Bookmark>>.Failure("bookmark list of user is null");

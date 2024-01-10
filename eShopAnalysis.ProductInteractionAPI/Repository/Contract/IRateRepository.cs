@@ -4,10 +4,9 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
 {
     public interface IRateRepository
     {
-        //lazy , not call to db until ToList()
         //the logic of did the user buy the product or not before they can rate
         //that is on frontend and on aggregate service
-        IQueryable<Rate> GetAllAsQueryableAsync();
+        IQueryable<Rate> GetAllAsQueryable();
 
         //TODO the repo may have only the basic of operation, these kind of logic should be moved into the service layer
         //Task<IEnumerable<Rate>> GetRatedMappingsOfUserAsync(Guid userId);

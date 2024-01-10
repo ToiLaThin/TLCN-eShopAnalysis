@@ -5,9 +5,10 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
     public interface IBookmarkRepository
     {
         //lazy , not call to db until ToList()
-        IQueryable<Bookmark> GetAllAsQueryableAsync();
-
-        Task<IEnumerable<Bookmark>> GetBookmarksOfUserAsync(Guid userId);
+        IQueryable<Bookmark> GetAllAsQueryable();
+        
+        //repo should only have the basic operation, not business logic
+        //Task<IEnumerable<Bookmark>> GetBookmarksOfUserAsync(Guid userId);
 
         Task<Bookmark> GetAsync(Guid userId, Guid productBusinessKey);
 

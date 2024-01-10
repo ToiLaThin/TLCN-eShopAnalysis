@@ -9,7 +9,12 @@ namespace eShopAnalysis.ProductInteractionAPI.Service
 
         Task<ServiceResponseDto<Like>> Get(Guid likeId);
 
-        Task<ServiceResponseDto<Like>> Add(Guid userId, Guid productBusinessKey);
+        Task<ServiceResponseDto<Like>> LikeProductFromUser(Guid userId, Guid productBusinessKey);
+
+        //undo the like buttn but not dislike
+        Task<ServiceResponseDto<Like>> UnLikeProductFromUser(Guid userId, Guid productBusinessKey);
+
+        Task<ServiceResponseDto<Like>> DisLikeProductFromUser(Guid userId, Guid productBusinessKey);
 
         Task<ServiceResponseDto<Like>> Remove(Guid userId, Guid productBusinessKey);
 

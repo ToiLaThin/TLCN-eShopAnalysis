@@ -53,7 +53,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Service
 
         public async Task<ServiceResponseDto<IEnumerable<Comment>>> GetCommentsAboutProductAsync(Guid productBusinessKey)
         {
-            var commentsAboutProduct = _commentRepository.GetAllAsQueryableAsync()
+            var commentsAboutProduct = _commentRepository.GetAllAsQueryable()
                                                          .Where(c => c.ProductBusinessKey.Equals(productBusinessKey))
                                                          .ToList();
             if (commentsAboutProduct == null) {
@@ -64,7 +64,8 @@ namespace eShopAnalysis.ProductInteractionAPI.Service
 
         public async Task<ServiceResponseDto<IEnumerable<Comment>>> GetCommentsOfUserAsync(Guid userId)
         {
-            var commentsOfUser = _commentRepository.GetAllAsQueryableAsync()
+            //can still async without await, the reverse is not true
+            var commentsOfUser = _commentRepository.GetAllAsQueryable()
                                                          .Where(c => c.UserId.Equals(userId))
                                                          .ToList();
             if (commentsOfUser == null) {
