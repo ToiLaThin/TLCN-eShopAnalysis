@@ -28,7 +28,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
             return commentAdded;
         }
 
-        public IQueryable<Comment> GetAllAsQueryableAsync()
+        public IQueryable<Comment> GetAllAsQueryable()
         {
             IQueryable<Comment> allQueryableComments = _context.CommentCollection.AsQueryable();
             return allQueryableComments;

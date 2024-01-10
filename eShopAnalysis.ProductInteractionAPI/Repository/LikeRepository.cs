@@ -15,9 +15,9 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
             _context = context;
         }
 
-        public async Task<Like> AddAsync(Guid userId, Guid productBusinessKey)
+        public async Task<Like> AddAsync(Guid userId, Guid productBusinessKey, LikeStatus status)
         {
-            Like likedMappingToAdd = new Like(userId, productBusinessKey);
+            Like likedMappingToAdd = new Like(userId, productBusinessKey, status);
             await _context.LikeCollection.InsertOneAsync(likedMappingToAdd);
 
             var filter = Builders<Like>.Filter.And(
@@ -30,7 +30,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
             return likedMappingAdded;
         }
 
-        public IQueryable<Like> GetAllAsQueryableAsync()
+        public IQueryable<Like> GetAllAsQueryable()
         {
             IQueryable<Like> allQueryalleLikedMappings = _context.LikeCollection.AsQueryable();
             return allQueryalleLikedMappings;
@@ -56,14 +56,14 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
             return findResult;
         }
 
-        public async Task<IEnumerable<Like>> GetLikedOfUserAsync(Guid userId)
-        {
-            var filterUser = Builders<Like>.Filter.Eq(l => l.UserId, userId);
+        //public async Task<IEnumerable<Like>> GetLikedOfUserAsync(Guid userId)
+        //{
+        //    var filterUser = Builders<Like>.Filter.Eq(l => l.UserId, userId);
 
-            var findResult = await _context.LikeCollection.FindAsync(filterUser);
-            IEnumerable<Like> userLikedMappings = await findResult.ToListAsync();
-            return userLikedMappings;
-        }
+        //    var findResult = await _context.LikeCollection.FindAsync(filterUser);
+        //    IEnumerable<Like> userLikedMappings = await findResult.ToListAsync();
+        //    return userLikedMappings;
+        //}
 
         public async Task<Like> RemoveAsync(Guid userId, Guid productBusinessKey)
         {
@@ -75,6 +75,27 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
                 l => l.UserId.Equals(userId) && l.ProductBusinessKey.Equals(productBusinessKey)
             );
             return deletedLikedMapping; //null or the liked mapping deleted
+        }
+
+        public async Task<Like> UpdateAsync(Guid userId, Guid productBusinessKey, LikeStatus updatedLikeStatus)
+        {            
+            Like oldLikeMapping = await _context.LikeCollection.Find(l => l.UserId.Equals(userId) && l.ProductBusinessKey.Equals(productBusinessKey))
+                                                               .SingleOrDefaultAsync();
+            if (oldLikeMapping == null) {
+                return null;
+            }
+
+            oldLikeMapping.Status = updatedLikeStatus;
+            var filter = Builders<Like>.Filter.And(
+               Builders<Like>.Filter.Eq(l => l.UserId, userId),
+               Builders<Like>.Filter.Eq(l => l.ProductBusinessKey, productBusinessKey)
+            );
+            Like? updatedLikeMapping = await _context.LikeCollection.FindOneAndReplaceAsync(filter, oldLikeMapping);
+
+            if (updatedLikeMapping == null) {
+                return null;
+            }
+            return updatedLikeMapping;
         }
     }
 }

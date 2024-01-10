@@ -53,9 +53,9 @@ namespace eShopAnalysis.ProductInteractionAPI.Service
 
         public async Task<ServiceResponseDto<IEnumerable<Rate>>> GetRatedMappingsAboutProductAsync(Guid productBusinessKey)
         {
-            var ratesAboutProduct = _rateRepository.GetAllAsQueryableAsync()
-                                                          .Where(c => c.ProductBusinessKey.Equals(productBusinessKey))
-                                                          .ToList();
+            var ratesAboutProduct = _rateRepository.GetAllAsQueryable()
+                                                   .Where(c => c.ProductBusinessKey.Equals(productBusinessKey))
+                                                   .ToList();
             if (ratesAboutProduct == null) {
                 return ServiceResponseDto<IEnumerable<Rate>>.Failure("The rate list about product is null, not even empty");
             }
@@ -64,9 +64,9 @@ namespace eShopAnalysis.ProductInteractionAPI.Service
 
         public async Task<ServiceResponseDto<IEnumerable<Rate>>> GetRatedMappingsOfUserAsync(Guid userId)
         {
-            var ratesOfUser = _rateRepository.GetAllAsQueryableAsync()
-                                                         .Where(c => c.UserId.Equals(userId))
-                                                         .ToList();
+            var ratesOfUser = _rateRepository.GetAllAsQueryable()
+                                             .Where(c => c.UserId.Equals(userId))
+                                             .ToList();
             if (ratesOfUser == null) {
                 return ServiceResponseDto<IEnumerable<Rate>>.Failure("The user 's rate list is null, not even empty");
             }

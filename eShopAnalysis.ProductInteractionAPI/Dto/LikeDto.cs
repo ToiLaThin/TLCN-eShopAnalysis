@@ -1,4 +1,6 @@
-﻿namespace eShopAnalysis.ProductInteractionAPI.Dto
+﻿using eShopAnalysis.ProductInteractionAPI.Models;
+
+namespace eShopAnalysis.ProductInteractionAPI.Dto
 {
     public class LikeDto
     {
@@ -7,5 +9,7 @@
         public Guid ProductBusinessKey { get; set; }
 
         public Guid UserId { get; set; }
+
+        public LikeStatus Status { get; set; }
     }
 }

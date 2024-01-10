@@ -28,7 +28,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
 
         }
 
-        public IQueryable<Bookmark> GetAllAsQueryableAsync()
+        public IQueryable<Bookmark> GetAllAsQueryable()
         {
             //just for testing
             IQueryable<Bookmark> allQueryableBookmarks = _context.BookmarkCollection.AsQueryable();
@@ -53,14 +53,14 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
             return findResult;
         }
 
-        public async Task<IEnumerable<Bookmark>> GetBookmarksOfUserAsync(Guid userId)
-        {
-            var filterUser = Builders<Bookmark>.Filter.Eq(b => b.UserId, userId);
+        //public async Task<IEnumerable<Bookmark>> GetBookmarksOfUserAsync(Guid userId)
+        //{
+        //    var filterUser = Builders<Bookmark>.Filter.Eq(b => b.UserId, userId);
 
-            var findResult = await _context.BookmarkCollection.FindAsync(filterUser);
-            IEnumerable<Bookmark> userBookmarks = await findResult.ToListAsync();
-            return userBookmarks;
-        }
+        //    var findResult = await _context.BookmarkCollection.FindAsync(filterUser);
+        //    IEnumerable<Bookmark> userBookmarks = await findResult.ToListAsync();
+        //    return userBookmarks;
+        //}
 
         public async Task<Bookmark> RemoveAsync(Guid userId, Guid productBusinessKey)
         {

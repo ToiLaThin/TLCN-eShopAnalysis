@@ -6,7 +6,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
     {
         //TODO test if getAsQueryable called to db by debug and check when the query is printed out
         //but i THINK mostly it is more likely to exec after ToList()
-        IQueryable<Comment> GetAllAsQueryableAsync();
+        IQueryable<Comment> GetAllAsQueryable();
 
         //the repo may have only the basic of operation, these kind of logic should be moved into the service layer
         //Task<IEnumerable<Comment>> GetCommentsOfUserAsync(Guid userId);

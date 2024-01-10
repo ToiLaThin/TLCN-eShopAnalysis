@@ -44,18 +44,44 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<LikeDto>> LikeProductFromUser(Guid userId, Guid productBusinessKey)
         {
-            var serviceResult = await _likeService.Add(userId, productBusinessKey);
+            var serviceResult = await _likeService.LikeProductFromUser(userId, productBusinessKey);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
                                          Ok(_mapper.Map<Like, LikeDto>(serviceResult.Data)) :
                                          NotFound(serviceResult.Error);
             return actionResultDto;
         }
 
-        [HttpDelete("UnLikeProductFromUser")]
+        [HttpPost("UnLikeProductFromUser")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(LikeDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<LikeDto>> UnLikeProductFromUser(Guid userId, Guid productBusinessKey)
+        {
+            var serviceResult = await _likeService.UnLikeProductFromUser(userId, productBusinessKey);
+            ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
+                                         Ok(_mapper.Map<Like, LikeDto>(serviceResult.Data)) :
+                                         NotFound(serviceResult.Error);
+            return actionResultDto;
+        }
+
+        [HttpPost("DisLikeProductFromUser")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(LikeDto), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<LikeDto>> DisLikeProductFromUser(Guid userId, Guid productBusinessKey)
+        {
+            var serviceResult = await _likeService.DisLikeProductFromUser(userId, productBusinessKey);
+            ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
+                                         Ok(_mapper.Map<Like, LikeDto>(serviceResult.Data)) :
+                                         NotFound(serviceResult.Error);
+            return actionResultDto;
+        }
+
+        [HttpDelete("RemoveLikeProductFromUser")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(LikeDto), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<LikeDto>> RemoveLikeProductFromUser(Guid userId, Guid productBusinessKey)
         {
             var serviceResult = await _likeService.Remove(userId, productBusinessKey);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?

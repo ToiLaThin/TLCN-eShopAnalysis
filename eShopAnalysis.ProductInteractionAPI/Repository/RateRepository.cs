@@ -27,7 +27,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
             return rateAdded;
         }
 
-        public IQueryable<Rate> GetAllAsQueryableAsync()
+        public IQueryable<Rate> GetAllAsQueryable()
         {
             IQueryable<Rate> allQueryableRates = _context.RateCollection.AsQueryable();
             return allQueryableRates;
