@@ -22,5 +22,23 @@ namespace eShopAnalysis.ProductInteractionAPI.Data
                 return _db.GetCollection<Bookmark>("BookmarkCollection");
             }
         }
+
+        public IMongoCollection<Like> LikeCollection {
+            get {
+                return _db.GetCollection<Like>("LikeCollection");
+            }
+        }
+
+        public IMongoCollection<Comment> CommentCollection {
+            get {
+                return _db.GetCollection<Comment>("CommentCollection");
+            }
+        }
+
+        public IMongoCollection<Rate> RateCollection {
+            get {
+                return _db.GetCollection<Rate>("RateCollection");
+            }
+        }
     }
 }
