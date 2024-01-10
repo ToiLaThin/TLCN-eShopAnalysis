@@ -26,6 +26,12 @@ builder.Services.AddScoped<MongoDbContext>();
 
 builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();
 builder.Services.AddScoped<IBookmarkService, BookmarkService>();
+builder.Services.AddScoped<ILikeRepository, LikeRepository>();
+builder.Services.AddScoped<ILikeService, LikeService>();
+builder.Services.AddScoped<IRateRepository, RateRepository>();
+builder.Services.AddScoped<IRateService, RateService>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 
 var mapperConfig = new MapperConfiguration(cfg =>
 {
