@@ -20,21 +20,29 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.Service
             }
 
             UserRewardPoint newUserRewardPoint = new UserRewardPoint() { UserId = userId, RewardPoint = initRewardPoint };
+            var transaction = await _unitOfWork.BeginTransactionAsync();
             UserRewardPoint addedUserRewardPoint = await _unitOfWork.UserRewardPointRepository.AddAsync(newUserRewardPoint);
             if (addedUserRewardPoint == null) {
+                _unitOfWork.RollbackTransaction();
                 return ServiceResponseDto<UserRewardPoint>.Failure("Cannot add this user reward instance");
             }
+            //must call to have DbContext.SaveChanges() => only then it 's saved to db
+            await _unitOfWork.CommitTransactionAsync(transaction);
             return ServiceResponseDto<UserRewardPoint>.Success(addedUserRewardPoint);
         }
 
         public async Task<ServiceResponseDto<UserRewardPoint>> DeleteExistingInstance(Guid userId)
         {
+            var transaction = await _unitOfWork.BeginTransactionAsync();
             UserRewardPoint userRewardPointToDel = await _unitOfWork.UserRewardPointRepository.GetAsync(userId);
             if (userRewardPointToDel == null) {
+                _unitOfWork.RollbackTransaction();
                 return ServiceResponseDto<UserRewardPoint>.Failure("Cannot delete this user reward instance because it is not existed");
             }
 
             UserRewardPoint deletedUserRewardPoint = _unitOfWork.UserRewardPointRepository.Delete(userRewardPointToDel);
+            //must call to have DbContext.SaveChanges() => only then it 's saved to db
+            await _unitOfWork.CommitTransactionAsync(transaction);
             return ServiceResponseDto<UserRewardPoint>.Success(deletedUserRewardPoint);
         }
 
