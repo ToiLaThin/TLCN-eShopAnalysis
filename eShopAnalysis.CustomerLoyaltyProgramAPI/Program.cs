@@ -1,8 +1,10 @@
 using AutoMapper;
+using eShopAnalysis.CouponSaleItemAPI.UnitOfWork;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Data;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Repository;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Service;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Utilities.Behaviors;
+using eShopAnalysis.CustomerLoyaltyProgramAPI.Utilities.Factory;
 using eShopAnalysis.EventBus.Abstraction;
 using eShopAnalysis.EventBus.Extension;
 using Microsoft.EntityFrameworkCore;
@@ -11,13 +13,14 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEventBus(builder.Configuration);
+//builder.Services.AddEventBus(builder.Configuration);
 //builder.Services.AddTransient<IIntegrationEventHandler<UserAppliedCouponToCartIntegrationEvent>, UserAppliedCouponToCartIntegrationEventHandling>();
 
 builder.Host.UseSerilog((context, config) => {
     config.ReadFrom.Configuration(context.Configuration);
 });
 builder.Services.AddScoped<LoggingBehaviorActionFilter>();
+builder.Services.AddScoped<IRewardTransactionFactory, RewardTransactionFactory>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -27,6 +30,8 @@ builder.Services.AddDbContext<PostgresDbContext>(ctxOptions =>
               .LogTo(Console.WriteLine, LogLevel.Information); //how to log db command from serilog
 });
 
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRewardPointRepository, UserRewardPointRepository>();
 builder.Services.AddScoped<IRewardTransactionRepository, RewardTransactionRepository>();
 builder.Services.AddScoped<IRewardTransactionService, RewardTransactionService>();
@@ -41,7 +46,7 @@ builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
 app.UseSerilogRequestLogging();
-var eventBus = app.Services.GetRequiredService<IEventBus>();
+//var eventBus = app.Services.GetRequiredService<IEventBus>();
 //eventBus.Subscribe<UserAppliedCouponToCartIntegrationEvent, IIntegrationEventHandler<UserAppliedCouponToCartIntegrationEvent>>();
 if (app.Environment.IsDevelopment())
 {

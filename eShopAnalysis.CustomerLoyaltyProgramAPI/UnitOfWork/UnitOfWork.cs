@@ -65,10 +65,10 @@ namespace eShopAnalysis.CouponSaleItemAPI.UnitOfWork
                 await this._dbContext.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
-            catch
+            catch (Exception ex) 
             {
                 RollbackTransaction();
-                throw;
+                throw ex;
             }
             finally
             {
