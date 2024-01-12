@@ -48,7 +48,7 @@ export class CouponAddComponent implements OnInit {
       dateAdded: new Date(this.modelCouponFrmGrp.value.dateAdded),
       dateEnded: new Date(this.modelCouponFrmGrp.value.dateEnded),
       couponStatus: Status.Active,
-      rewardPointRequire: 0
+      rewardPointRequire: this.modelCouponFrmGrp.value.rewardPointRequire
 
     }
     console.log(newCoupon);

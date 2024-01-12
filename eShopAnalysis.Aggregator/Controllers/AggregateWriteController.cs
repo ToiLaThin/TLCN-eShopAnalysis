@@ -18,19 +18,22 @@ namespace eShopAnalysis.ApiGateway.Controllers
         private readonly IBackChannelStockInventoryService _backChannelStockInventoryService;
         private readonly IBackChannelCouponSaleItemService _backChannelCouponSaleItemService;
         private readonly IBackChannelProductCatalogService _backChannelProductCatalogService;
+        private readonly IBackChannelCustomerLoyaltyProgramService _backChannelCustomerLoyaltyProgramService;
 
 
         public AggregateWriteController(
             IBackChannelStockInventoryService backChannelStockInventoryService,
             IBackChannelCartOrderService backChannelCartOrderService,
             IBackChannelCouponSaleItemService backChannelCouponSaleItemService,
-            IBackChannelProductCatalogService backChannelProductCatalogService
+            IBackChannelProductCatalogService backChannelProductCatalogService,
+            IBackChannelCustomerLoyaltyProgramService backChannelCustomerLoyaltyProgramService
             )
         {
             _backChannelStockInventoryService = backChannelStockInventoryService;
             _backChannelCartOrderService = backChannelCartOrderService;
             _backChannelCouponSaleItemService = backChannelCouponSaleItemService;
             _backChannelProductCatalogService = backChannelProductCatalogService;
+            _backChannelCustomerLoyaltyProgramService = backChannelCustomerLoyaltyProgramService;
         }        
 
         [HttpPost("ApproveOrdersAndModifyStocks")]
@@ -94,6 +97,22 @@ namespace eShopAnalysis.ApiGateway.Controllers
                     return NotFound(backChannelResponse.Error);
                 }
                 requestToCartApiDto.Coupon = backChannelResponse.Data;
+
+                //and if the coupon is valid we must also change the reward point if reward point in coupon > 0
+                if (backChannelResponse.Data.RewardPointRequire > 0) {
+                    CouponDiscountType couponDiscountType = RewardTransactionHelperAdapter.ToCouponDiscountTypeAdapter(backChannelResponse.Data.DiscountType);
+                    RewardTransactionForApplyCouponAddRequestDto requestDto = new RewardTransactionForApplyCouponAddRequestDto()
+                    {
+                        UserId = cartConfirmRequestDto.UserId,
+                        //mismatch type between 2 enum: DiscountType & CouponDiscountType => need adapter helper method
+                        DiscountType = couponDiscountType,
+                        DiscountValue = backChannelResponse.Data.DiscountValue,
+                        PointTransition = (-1) * backChannelResponse.Data.RewardPointRequire //because the controller require point to < 0
+                    };
+                    var rewardTransBackChannelResp = await _backChannelCustomerLoyaltyProgramService.AddRewardTransactionForApplyCoupon(requestDto);
+                    //if NOT success eventual consistency
+                }
+                
             }
 
             //if no coupon apply, the request to cart api will have no coupon
