@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Dto;
+using eShopAnalysis.CustomerLoyaltyProgramAPI.Dto.BackchannelDto;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Models;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Service;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Utilities.Behaviors;
@@ -42,47 +43,34 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.Controllers
 
         //TODO convert to backchannel
         [HttpPost("BackChannel/AddRewardTransactionForApplyCoupon")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(RewardTransactionDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<RewardTransactionDto>> AddRewardTransactionForApplyCoupon(
-            [FromHeader] Guid userId, 
-            [FromHeader] CouponDiscountType discountType,
-            [FromHeader] double discountValue,
-            [FromHeader] int pointTransition
-            )
+        public async Task<BackChannelResponseDto<RewardTransactionDto>> AddRewardTransactionForApplyCoupon([FromBody] RewardTransactionForApplyCouponAddRequestDto requestDto)
         {
             var serviceResult = await _rewardTransactionService.AddRewardTransactionForApplyCoupon(
-                    userId,
-                    discountType,
-                    discountValue,
-                    pointTransition);
+                    userId: requestDto.UserId,
+                    couponDiscountType: requestDto.DiscountType,
+                    discountValue: requestDto.DiscountValue,
+                    pointTransition: requestDto.PointTransition);
             if (serviceResult.IsFailed) {
-                return NotFound(serviceResult.Error);
+                return BackChannelResponseDto<RewardTransactionDto>.Failure(serviceResult.Error);
             }
             var resultDto = _mapper.Map<RewardTransactionDto>(serviceResult.Data);
-            return Ok(resultDto);
+            return BackChannelResponseDto<RewardTransactionDto>.Success(resultDto);
         }
 
         [HttpPost("BackChannel/AddRewardTransactionForCompleteOrdering")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(RewardTransaction), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<RewardTransactionDto>> AddRewardTransactionForCompleteOrdering(
-            [FromHeader] Guid userId,
-            [FromHeader] int pointTransition,
-            [FromHeader] double orderPrice
-            )
+        public async Task<BackChannelResponseDto<RewardTransactionDto>> AddRewardTransactionForCompleteOrdering([FromBody] RewardTransactionForCompleteOrderingAddRequestDto requestDto)
         {
             var serviceResult = await _rewardTransactionService.AddRewardTransactionForCompleteOrdering(
-                    userId,
-                    pointTransition, 
-                    orderPrice);
+                    userId: requestDto.UserId,
+                    pointTransition: requestDto.PointTransition, 
+                    orderPrice: requestDto.OrderPrice);
             if (serviceResult.IsFailed) {
-                return NotFound(serviceResult.Error);
+                return BackChannelResponseDto<RewardTransactionDto>.Failure(serviceResult.Error);
             }
             var resultDto = _mapper.Map<RewardTransactionDto>(serviceResult.Data);
-            return Ok(resultDto);
+            return BackChannelResponseDto<RewardTransactionDto>.Success(resultDto);
         }
 
         [HttpDelete("DeleteExistingRewardTransactionInstance")]

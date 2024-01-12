@@ -2,7 +2,7 @@
 
 namespace eShopAnalysis.Aggregator.Models.Dto
 {
-    //can also used for backchannel too
+    //can also used for backchannel too, send to StockInventory back channel to decrease stock quantity of product models
     public class StockDecreaseRequestDto
     {
         [JsonProperty]

@@ -23,7 +23,7 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(UserRewardPointDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<UserRewardPointDto>> GetRewardPointOfUser(Guid userId)
+        public async Task<ActionResult<UserRewardPointDto>> GetRewardPointOfUser([FromHeader] Guid userId)
         {
             var serviceResult = await _userRewardPointService.GetRewardPointOfUser(userId);
             if (serviceResult.IsFailed) {

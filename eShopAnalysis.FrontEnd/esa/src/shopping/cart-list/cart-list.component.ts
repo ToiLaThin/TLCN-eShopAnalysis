@@ -6,6 +6,7 @@ import { CouponHttpService } from 'src/shared/services/http/coupon-http.service'
 import { ICoupon } from 'src/shared/models/coupon.interface';
 import { DiscountType } from 'src/shared/models/saleItem.interface';
 import { AuthService } from 'src/shared/services/auth.service';
+import { RewardPointHttpService } from 'src/shared/services/http/reward-point-http.service';
 
 @Component({
   selector: 'esa-cart-list',
@@ -27,7 +28,8 @@ export class CartListComponent implements OnInit {
   @ViewChild('couponCodeApply', {read: ElementRef}) couponCodeInputted!: ElementRef<HTMLInputElement>;
   constructor(private cartService: CartHttpService, 
               private authService: AuthService, 
-              private couponService: CouponHttpService) { }
+              private couponService: CouponHttpService,
+              private rewardService: RewardPointHttpService) { }
 
   ngOnInit(): void {
     this.cartItems$ = this.cartService.itemsInCart$;
@@ -71,6 +73,7 @@ export class CartListComponent implements OnInit {
         }
         this.cartService.itemsInCartSubject.next([]);
         localStorage.removeItem(this.cartService.itemsInCartKey);
+        this.rewardService.GetCurrentUserRewardPoint();
         console.log('cart confirmed');
         
       },
@@ -94,13 +97,26 @@ export class CartListComponent implements OnInit {
       (coupons) => { 
         let coupon = coupons.find(coupon => coupon.couponCode === inputtedCouponCode);
         if (coupon !== undefined) {
-          (this.checkCartPriceValidForCoupon(coupon) === true) ? this.notifyServiceCouponApplied(coupon) : console.log("Cart price not valid for coupon");
+          (this.checkCartPriceValidForCoupon(coupon) === true && this.checkRewardPointValidForCoupon(coupon) === true) ? 
+            this.notifyServiceCouponApplied(coupon) : console.log("Cart price not valid for coupon");
         } else {
           console.log("No coupon valid");
         }
       }
     );
     subscription.unsubscribe(); //unsubscribe after first emit
+  }
+
+  //check if the user has enough reward point to use the coupon
+  checkRewardPointValidForCoupon(coupon: ICoupon): boolean {
+    if (coupon.rewardPointRequire !== undefined && this.rewardService.CurrUserRewardPoint !== undefined) {
+      if (coupon.rewardPointRequire <= this.rewardService.CurrUserRewardPoint) {
+        console.log("You have enough points to use this coupon")
+        return true;
+      }
+    }
+    alert("You do not have enough points to use this coupon")
+    return false;
   }
 
   checkCartPriceValidForCoupon(coupon: ICoupon): boolean {

@@ -39,5 +39,6 @@
             </p>
         </ng-container>
         <p><a href="">Hello</a></p>
+        <p *ngIf="(this.authStatus$| async) === AuthStatus.Authenticated">Your current reward point: {{this.userRewardPoint$ | async}}</p>
     </esa-dropdown-menu>
 </ng-template>

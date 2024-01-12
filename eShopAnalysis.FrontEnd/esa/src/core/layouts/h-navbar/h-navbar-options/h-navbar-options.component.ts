@@ -6,6 +6,7 @@ import { OrderHttpService } from 'src/shared/services/http/order-http.service';
 import { ShowDropDownService } from 'src/shared/services/show-drop-down.service';
 import { ThemeToggleService } from 'src/shared/services/theme-toggle.service';
 import { AuthStatus } from 'src/shared/types/auth-status.enum';
+import { RewardPointHttpService } from 'src/shared/services/http/reward-point-http.service';
 
 @Component({
   selector: 'esa-h-navbar-options',
@@ -21,13 +22,15 @@ export class HNavbarOptionsComponent implements OnInit {
   authStatus$!: Observable<AuthStatus>;
   cartItemsCount$!: Observable<number>;
   isTrackingOrder$!: Observable<boolean>;
+  userRewardPoint$!: Observable<number | undefined>;
   get AuthStatus() { return AuthStatus; } //for template to use enum
 
   constructor(private showDropDownService: ShowDropDownService, 
               private toggleThemeService: ThemeToggleService, 
               private authService: AuthService,
               private cartService: CartHttpService,
-              private orderService: OrderHttpService) { 
+              private orderService: OrderHttpService,
+              private rewardService: RewardPointHttpService) { 
       this.showDropDown$ = this.showDropDownService.showHNavBarDropDown$;
       this.isDarkTheme$ = this.toggleThemeService.isDarkTheme$;
       this.userName$ = this.authService.userName$;
@@ -39,9 +42,16 @@ export class HNavbarOptionsComponent implements OnInit {
           if (order === null) return false;
           return true;
         })
+      );            
+      this.userRewardPoint$ = this.rewardService.userRewardPoint$.pipe(
+        map((uRewardPoint) => {
+          return uRewardPoint?.rewardPoint; 
+        })
       );
+      
   }
   ngOnInit(): void {
+    
   }
   
   toggleTheme() {

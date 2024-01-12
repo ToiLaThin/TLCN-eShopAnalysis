@@ -19,6 +19,7 @@ builder.Services.AddScoped<IBackChannelCartOrderService, BackChannelCartOrderSer
 builder.Services.AddScoped<IBackChannelStockInventoryService, BackChannelStockInventoryService>();
 builder.Services.AddScoped<IBackChannelCouponSaleItemService, BackChannelCouponSaleItemService>();
 builder.Services.AddScoped<IBackChannelProductCatalogService, BackChannelProductCatalogService>();
+builder.Services.AddScoped<IBackChannelCustomerLoyaltyProgramService, BackChannelCustomerLoyaltyProgramService>();
 builder.Services.AddScoped(typeof(IBackChannelBaseService<,>), typeof(BackChannelBaseService<,>));
 builder.Services.AddHttpClient(); //resolve IHttpClientFactory
 var app = builder.Build();

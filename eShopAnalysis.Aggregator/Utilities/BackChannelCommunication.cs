@@ -13,5 +13,7 @@
         public string SaleItemAPIBaseUri { get; set; }
 
         public string ProductAPIBaseUri { get; set; }
+
+        public string CustomerLoyaltyProgramAPIBaseUri { get; set; }
     }
 }
