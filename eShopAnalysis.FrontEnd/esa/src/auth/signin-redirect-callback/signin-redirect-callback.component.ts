@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/shared/services/auth.service';
+import { LikeProductHttpService } from 'src/shared/services/http/like-product-http.service';
 import { RewardPointHttpService } from 'src/shared/services/http/reward-point-http.service';
 import { SignalrService } from 'src/shared/services/signalr.service';
 
@@ -15,12 +16,16 @@ export class SigninRedirectCallbackComponent implements OnInit {
     private _authService: AuthService, 
     private _router: Router, 
     private _signalrService: SignalrService, 
-    private _rewardService: RewardPointHttpService) { }
+    private _rewardService: RewardPointHttpService,
+    private _likeProductService: LikeProductHttpService
+    ) { }
 
   ngOnInit(): void {
     this._authService.finishLogin().then(() => {
       this._signalrService.initConnection();
       this._rewardService.GetCurrentUserRewardPoint(); //will load user reward point to the frontend from backend through http
+      this._likeProductService.GetLikeProductMappings(); //will load user liked product to the frontend from backend through http
+
       this._router.navigate(['/'], { replaceUrl: true });
     });
   }
