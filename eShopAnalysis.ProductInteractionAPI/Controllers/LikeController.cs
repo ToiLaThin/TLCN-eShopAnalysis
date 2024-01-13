@@ -25,7 +25,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(IEnumerable<LikeDto>), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<IEnumerable<LikeDto>>> GetUserProductLikedMappingsOfUser(Guid userId)
+        public async Task<ActionResult<IEnumerable<LikeDto>>> GetUserProductLikedMappingsOfUser([FromHeader] Guid userId)
         {
             var serviceResult = await _likeService.GetLikedMappingsOfUserAsync(userId);
             if (serviceResult.IsFailed) {
@@ -42,7 +42,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(LikeDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<LikeDto>> LikeProductFromUser(Guid userId, Guid productBusinessKey)
+        public async Task<ActionResult<LikeDto>> LikeProductFromUser([FromHeader] Guid userId, [FromHeader] Guid productBusinessKey)
         {
             var serviceResult = await _likeService.LikeProductFromUser(userId, productBusinessKey);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
@@ -55,7 +55,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(LikeDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<LikeDto>> UnLikeProductFromUser(Guid userId, Guid productBusinessKey)
+        public async Task<ActionResult<LikeDto>> UnLikeProductFromUser([FromHeader] Guid userId, [FromHeader] Guid productBusinessKey)
         {
             var serviceResult = await _likeService.UnLikeProductFromUser(userId, productBusinessKey);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
@@ -68,7 +68,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(LikeDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<LikeDto>> DisLikeProductFromUser(Guid userId, Guid productBusinessKey)
+        public async Task<ActionResult<LikeDto>> DisLikeProductFromUser([FromHeader] Guid userId, [FromHeader] Guid productBusinessKey)
         {
             var serviceResult = await _likeService.DisLikeProductFromUser(userId, productBusinessKey);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?

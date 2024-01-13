@@ -7,6 +7,47 @@
             <div class="product-detail-info-title">
                 <h2>{{product?.productName}}</h2>
                 <span>{{product?.subCatalogName}}</span>
+                <div class="product-interaction" *ngIf="(this.authStatus$ | async) === AuthStatus.Authenticated">
+                    <ng-container 
+                        *ngIf="
+                            (this.isProductLiked$ | async) !== undefined &&
+                            (this.isProductLiked$ | async) === true; 
+                            then likedTemplated 
+                            else unlikedTemplate
+                        "
+                    >
+                    </ng-container>
+                    <ng-template #likedTemplated>
+                        <button (click)="likeProduct()">
+                            <i class="fas fa-thumbs-up"></i>
+                        </button>
+                    </ng-template>
+                    <ng-template #unlikedTemplate>
+                        <button (click)="likeProduct()">
+                            <i class="far fa-thumbs-up"></i>
+                        </button>
+                    </ng-template>
+
+                    <ng-container 
+                        *ngIf="
+                            (this.isProductDisliked$ | async) !== undefined &&
+                            (this.isProductDisliked$ | async) === true; 
+                            then dislikedTemplated 
+                            else unDislikedTemplate
+                        "
+                    >
+                    </ng-container>
+                    <ng-template #dislikedTemplated>
+                        <button (click)="dislikeProduct()">
+                            <i class="fas fa-thumbs-down"></i>
+                        </button>
+                    </ng-template>
+                    <ng-template #unDislikedTemplate>
+                        <button (click)="dislikeProduct()">
+                            <i class="far fa-thumbs-down"></i>
+                        </button>
+                    </ng-template>
+                </div>
             </div>
             <div class="product-detail-info-price">
                 Giam gia <span style="color: red;">{{product?.productDisplayPriceOnSale | currency}}</span>
