@@ -18,7 +18,22 @@
                 <div class="product-price">{{product.productModels[0].price}}đ</div>
             </ng-container>
             <div class="product-links">
-                <a href="#"><i class="fa fa-heart"></i></a>
+                <ng-container *ngIf="
+                    (this.authStatus$ | async) === this.AuthStatus.Authenticated && 
+                    (this.isProductBookmarked$ | async) !== undefined && 
+                    (this.isProductBookmarked$ | async) === true; 
+                    then bookmarkedTemplate
+                    else unBookmarkedTemplate
+                    "
+                >
+                </ng-container>
+                <ng-template #bookmarkedTemplate>
+                    <a><i class="fas fa-heart"></i></a>
+                </ng-template>
+                <ng-template #unBookmarkedTemplate>
+                    <a><i class="far fa-heart"></i></a>
+                </ng-template>
+                <!-- This is quick ordering -->
                 <a href="#"><i class="fa fa-shopping-cart"></i></a>
             </div>
         </div>

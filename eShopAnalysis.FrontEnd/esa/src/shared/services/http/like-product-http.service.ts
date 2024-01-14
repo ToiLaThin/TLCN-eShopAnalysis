@@ -28,12 +28,18 @@ export class LikeProductHttpService implements OnInit{
   }
 
   public get UserLikedProductBusinessKeys() { 
+    if (this.userLikeProductMappingsSub.value === null) {
+      return [];
+    }
     return this.userLikeProductMappingsSub.value
     .filter((likedProducts) => likedProducts.status === LikeStatus.Liked.valueOf())
     .map((likeProduct) => likeProduct.productBusinessKey); 
   }
 
   public get UserDislikedProductBusinessKeys() {
+    if (this.userLikeProductMappingsSub.value === null) {
+      return [];
+    }
     return this.userLikeProductMappingsSub.value
     .filter((likedProducts) => likedProducts.status === LikeStatus.Disliked.valueOf())
     .map((likeProduct) => likeProduct.productBusinessKey); 
