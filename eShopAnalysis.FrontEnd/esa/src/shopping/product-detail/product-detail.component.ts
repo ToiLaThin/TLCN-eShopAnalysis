@@ -9,6 +9,7 @@ import { LikeStatus } from 'src/shared/models/productInteractions.interface';
 import { AuthStatus } from 'src/shared/types/auth-status.enum';
 import { AuthService } from 'src/shared/services/auth.service';
 import { BookmarkHttpService } from 'src/shared/services/http/bookmark-http.service';
+import { RateProductHttpService } from 'src/shared/services/http/rate-product-http.service';
 
 @Component({
   selector: 'esa-product-detail',
@@ -24,13 +25,17 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   isProductLiked$!: Observable<boolean>;
   isProductDisliked$!: Observable<boolean>;
   isProductBookmarked$!: Observable<boolean>;
+  isProductRated$!: Observable<boolean>;
   authStatus$!: Observable<AuthStatus>;
+  productRating$!: Observable<number>;
   public get AuthStatus() { return AuthStatus; } //for template to use enum
 
+  allRatings = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
   constructor(private cartService: CartHttpService, 
               private productService: ProductHttpService,
               private _likeProductService: LikeProductHttpService,
               private _bookmarkProductService: BookmarkHttpService,
+              private _rateProductService: RateProductHttpService,
               private authService: AuthService,
               private route: ActivatedRoute) { 
 
@@ -92,11 +97,33 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       }),
       tap((isBookmarked) => console.log("Is product bookmarked: ", isBookmarked))      
     );
+
+    this.isProductRated$ = this._rateProductService.userProductRateMappings$.pipe(
+      map((userProductRateMappings) => {
+        if (userProductRateMappings === null || userProductRateMappings.length === 0) { 
+          return false;
+        }
+        return userProductRateMappings.some(
+          (rateMapping) => rateMapping.productBusinessKey === this.product?.businessKey)
+      }),
+      tap((isRated) => console.log("Is product rated: ", isRated))      
+    );
+
+    this.productRating$ = this._rateProductService.userProductRateMappings$.pipe(
+      map((userProductRateMappings) => {
+        if (userProductRateMappings === null || userProductRateMappings.length === 0) { 
+          return 0;
+        }
+        let ProductRateMappingWithThisBusinessKey = userProductRateMappings.find(
+          (rateMapping) => rateMapping.productBusinessKey === this.product?.businessKey
+        );
+        return ProductRateMappingWithThisBusinessKey?.rating as number;
+      }),
+      tap((rating) => console.log("Product rating: ", rating))
+    )
   }
 
-  ngOnInit(): void {    
-    
-  }
+  ngOnInit(): void {}
     
   ngOnDestroy(): void {
     this.productSubscription.unsubscribe();
@@ -179,6 +206,13 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     //else bookmark it
     this._bookmarkProductService.bookmarkProduct(this.product?.businessKey as string).subscribe(
       (_) => this._bookmarkProductService.GetBookmarkProductMappings()
+    );
+  }
+
+  rateProduct() {
+    let ratingInputChecked = document.querySelector('input[name="rating2"]:checked') as HTMLInputElement;
+    this._rateProductService.rateProduct(this.product?.businessKey as string, ratingInputChecked.value).subscribe(
+      (_) => this._rateProductService.GetUserProductRateMappings()
     );
   }
 

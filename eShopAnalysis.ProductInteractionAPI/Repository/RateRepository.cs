@@ -64,5 +64,41 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
             );
             return deletedRate;
         }
+
+        public async Task<Rate> UpdateAsync(Guid userId, Guid productBusinessKey, double newRating)
+        {
+            Rate oldRate = await _context.RateCollection.Find(r => r.UserId.Equals(userId) && r.ProductBusinessKey.Equals(productBusinessKey))
+                                                              .SingleOrDefaultAsync();
+            if (oldRate == null) {
+                return null;
+            }
+
+            oldRate.Rating = newRating;
+            var filter = Builders<Rate>.Filter.And(
+               Builders<Rate>.Filter.Eq(r => r.UserId, userId),
+               Builders<Rate>.Filter.Eq(r => r.ProductBusinessKey, productBusinessKey)
+            );
+            Rate? updatedRate = await _context.RateCollection.FindOneAndReplaceAsync(filter, oldRate);
+
+            if (updatedRate == null) {
+                return null;
+            }
+            return updatedRate;
+        }
+
+        public async Task<Rate> UpdateAsync(Rate rateToUpdate, double newRating)
+        {
+            rateToUpdate.Rating = newRating;
+            var filter = Builders<Rate>.Filter.And(
+               Builders<Rate>.Filter.Eq(r => r.UserId, rateToUpdate.UserId),
+               Builders<Rate>.Filter.Eq(r => r.ProductBusinessKey, rateToUpdate.ProductBusinessKey)
+            );
+            Rate? updatedRate = await _context.RateCollection.FindOneAndReplaceAsync(filter, rateToUpdate);
+
+            if (updatedRate == null) {
+                return null;
+            }
+            return updatedRate;
+        }
     }
 }
