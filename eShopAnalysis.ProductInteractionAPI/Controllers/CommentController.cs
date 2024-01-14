@@ -25,7 +25,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(IEnumerable<CommentDto>), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<IEnumerable<CommentDto>>> GetCommentsOfUser(Guid userId)
+        public async Task<ActionResult<IEnumerable<CommentDto>>> GetCommentsOfUser([FromHeader] Guid userId)
         {
             var serviceResult = await _commentService.GetCommentsOfUserAsync(userId);
             if (serviceResult.IsFailed) {
@@ -43,7 +43,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(IEnumerable<CommentDto>), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<IEnumerable<CommentDto>>> GetCommentsAboutProduct(Guid productBusinessKey)
+        public async Task<ActionResult<IEnumerable<CommentDto>>> GetCommentsAboutProduct([FromHeader] Guid productBusinessKey)
         {
             var serviceResult = await _commentService.GetCommentsAboutProductAsync(productBusinessKey);
             if (serviceResult.IsFailed) {
@@ -60,7 +60,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(CommentDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<CommentDto>> CommentProductFromUser(Guid userId, Guid productBusinessKey, string commentDetail)
+        public async Task<ActionResult<CommentDto>> CommentProductFromUser([FromHeader] Guid userId, [FromHeader] Guid productBusinessKey,[FromHeader] string commentDetail)
         {
             var serviceResult = await _commentService.Add(userId, productBusinessKey, commentDetail);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
@@ -73,7 +73,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(CommentDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<CommentDto>> UnCommentProductFromUser(Guid userId, Guid productBusinessKey)
+        public async Task<ActionResult<CommentDto>> UnCommentProductFromUser([FromHeader] Guid userId, [FromHeader] Guid productBusinessKey)
         {
             var serviceResult = await _commentService.Remove(userId, productBusinessKey);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
@@ -86,7 +86,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(CommentDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<CommentDto>> UpdateCommentProductFromUser(Guid userId, Guid productBusinessKey, string updatedCommentDetail)
+        public async Task<ActionResult<CommentDto>> UpdateCommentProductFromUser([FromHeader] Guid userId, [FromHeader] Guid productBusinessKey, [FromHeader] string updatedCommentDetail)
         {
             var serviceResult = await _commentService.Update(userId, productBusinessKey, updatedCommentDetail);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?

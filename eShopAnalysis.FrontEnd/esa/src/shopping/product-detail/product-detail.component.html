@@ -141,5 +141,24 @@
                     <button mat-raised-button color="primary" (click)="addModelToCart($event, model)">Add to Cart</button>
                 </div>
             </ng-container>
+
+            <ng-container *ngIf="(this.authStatus$ | async) === AuthStatus.Authenticated else loginToComment">
+                <form #commentForm="ngForm" (ngSubmit)="commentProduct(commentForm.value)">
+                    <div>
+                        <label for="commentDetail">Your Comment</label>
+                        <br>
+                        <textarea name="commentDetail" cols="30" rows="10" ngModel></textarea>
+                    </div>
+                    <button mat-raised-button color="primary" type="submit">Comment</button>
+                </form>
+            </ng-container>
+            <ng-template #loginToComment>
+                <p>Please login to comment</p>
+            </ng-template>
+            <ng-container *ngFor="let comment of this.productComments$ | async">
+                <div class="product-detail-info-comment">
+                    <p>{{comment.dateModified}} - {{comment.commentDetail}}</p>
+                </div>
+            </ng-container>
         </div>
     </div>
