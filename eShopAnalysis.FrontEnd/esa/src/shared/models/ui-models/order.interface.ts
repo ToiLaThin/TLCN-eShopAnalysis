@@ -12,3 +12,11 @@ export interface IOrderViewModel {
     subTotal: number;
     totalDiscount: number;
 }
+
+export interface IComment {
+    commentId: string;
+    productBusinessKey: string;
+    userId: string;
+    commentDetail: string;
+    dateModified: Date;
+}

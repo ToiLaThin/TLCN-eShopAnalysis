@@ -10,6 +10,8 @@ import { AuthStatus } from 'src/shared/types/auth-status.enum';
 import { AuthService } from 'src/shared/services/auth.service';
 import { BookmarkHttpService } from 'src/shared/services/http/bookmark-http.service';
 import { RateProductHttpService } from 'src/shared/services/http/rate-product-http.service';
+import { CommentProductHttpService } from 'src/shared/services/http/comment-product-http.service';
+import { IComment } from 'src/shared/models/ui-models/order.interface';
 
 @Component({
   selector: 'esa-product-detail',
@@ -20,6 +22,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
   productSubscription!: Subscription;
   routeParamsSubscription!: Subscription;
+  productCommentsSubscription!: Subscription;
   productId!: string;
   product!: IProduct | undefined;
   isProductLiked$!: Observable<boolean>;
@@ -28,6 +31,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   isProductRated$!: Observable<boolean>;
   authStatus$!: Observable<AuthStatus>;
   productRating$!: Observable<number>;
+  productComments$!: Observable<IComment[]>;
   public get AuthStatus() { return AuthStatus; } //for template to use enum
 
   allRatings = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
@@ -37,6 +41,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
               private _bookmarkProductService: BookmarkHttpService,
               private _rateProductService: RateProductHttpService,
               private authService: AuthService,
+              private _commentProductService: CommentProductHttpService,
               private route: ActivatedRoute) { 
 
     this.routeParamsSubscription = this.route.params.subscribe(params => {
@@ -121,13 +126,26 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       }),
       tap((rating) => console.log("Product rating: ", rating))
     )
+
+    this.productComments$ = this._commentProductService.productComments$.pipe(
+      map((productComments) => {
+        if (productComments === null || productComments.length === 0) {
+          return [];
+        }
+        return productComments;
+      }),
+      tap((comment) => console.log("Product comment: ", comment))
+    )
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.productCommentsSubscription = this._commentProductService.GetProductComments(this.product?.businessKey as string);
+  }
     
   ngOnDestroy(): void {
     this.productSubscription.unsubscribe();
     this.routeParamsSubscription.unsubscribe();
+    this.productCommentsSubscription.unsubscribe();
   }
 
   addModelToCart(event: Event, model: IProductModel) {
@@ -215,5 +233,16 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       (_) => this._rateProductService.GetUserProductRateMappings()
     );
   }
+
+  commentProduct(commentFormValue: any) {
+    this._commentProductService.commentProduct(
+      this.authService.userId as string, 
+      this.product?.businessKey as string, 
+      commentFormValue.commentDetail
+    ).subscribe(
+      (_) => this._commentProductService.GetProductComments(this.product?.businessKey as string)
+    );
+  }
+
 
 }
