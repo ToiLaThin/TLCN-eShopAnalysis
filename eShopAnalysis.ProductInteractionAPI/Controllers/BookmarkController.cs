@@ -25,7 +25,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(IEnumerable<BookmarkDto>), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<IEnumerable<BookmarkDto>>> GetProductBookmarkedOfUser(Guid userId)
+        public async Task<ActionResult<IEnumerable<BookmarkDto>>> GetProductBookmarkedOfUser([FromHeader] Guid userId)
         {
             var serviceResult = await _bookmarkService.GetBookmarksOfUserAsync(userId);
             if (serviceResult.IsFailed) {
@@ -42,7 +42,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(BookmarkDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<BookmarkDto>> BookmarkProductFromUser(Guid userId, Guid productBusinessKey)
+        public async Task<ActionResult<BookmarkDto>> BookmarkProductFromUser([FromHeader] Guid userId, [FromHeader] Guid productBusinessKey)
         {
             var serviceResult = await _bookmarkService.Add(userId, productBusinessKey);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
@@ -55,7 +55,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(BookmarkDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<BookmarkDto>> UnBookmarkProductFromUser(Guid userId, Guid productBusinessKey)
+        public async Task<ActionResult<BookmarkDto>> UnBookmarkProductFromUser([FromHeader] Guid userId, [FromHeader] Guid productBusinessKey)
         {
             var serviceResult = await _bookmarkService.Remove(userId, productBusinessKey);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?

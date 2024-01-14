@@ -8,6 +8,7 @@ import { LikeProductHttpService } from 'src/shared/services/http/like-product-ht
 import { LikeStatus } from 'src/shared/models/productInteractions.interface';
 import { AuthStatus } from 'src/shared/types/auth-status.enum';
 import { AuthService } from 'src/shared/services/auth.service';
+import { BookmarkHttpService } from 'src/shared/services/http/bookmark-http.service';
 
 @Component({
   selector: 'esa-product-detail',
@@ -22,12 +23,14 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   product!: IProduct | undefined;
   isProductLiked$!: Observable<boolean>;
   isProductDisliked$!: Observable<boolean>;
+  isProductBookmarked$!: Observable<boolean>;
   authStatus$!: Observable<AuthStatus>;
   public get AuthStatus() { return AuthStatus; } //for template to use enum
 
   constructor(private cartService: CartHttpService, 
               private productService: ProductHttpService,
               private _likeProductService: LikeProductHttpService,
+              private _bookmarkProductService: BookmarkHttpService,
               private authService: AuthService,
               private route: ActivatedRoute) { 
 
@@ -45,6 +48,9 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     this.isProductLiked$ = this._likeProductService.userLikeProductMappings$.pipe(
       tap((likeProductMappings) => console.log("Init Like product mappings: ", likeProductMappings)),
       map((likeProductMappings) => {
+        if (likeProductMappings === null) {
+          return false;
+        }
         let likeProductWithThisBusinessKey = likeProductMappings.find(
           //enum comparision problem
           //https://stackoverflow.com/questions/39785320/how-to-compare-enums-in-typescript
@@ -61,6 +67,10 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
     this.isProductDisliked$ = this._likeProductService.userLikeProductMappings$.pipe(
       map((likeProductMappings) => {
+        // TODO: rxjs operator to return false skip other operators if condition met
+        // if (likeProductMappings === null) {
+        //   return false;
+        // }
         return likeProductMappings.filter(
           (likeProduct) => likeProduct.status === LikeStatus.Disliked.valueOf()
         )
@@ -70,6 +80,17 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
         (dislikedProducts) => dislikedProducts.productBusinessKey === this.product?.businessKey)
       ),
       tap((isDisliked) => console.log("Is product disliked: ", isDisliked))      
+    );
+
+    this.isProductBookmarked$ = this._bookmarkProductService.userBookmarkProductMappings$.pipe(
+      map((bookmarkProductMappings) => {
+        if (bookmarkProductMappings === null) {
+          return false;
+        }
+        return bookmarkProductMappings.some(
+          (bookmarkProduct) => bookmarkProduct.productBusinessKey === this.product?.businessKey)
+      }),
+      tap((isBookmarked) => console.log("Is product bookmarked: ", isBookmarked))      
     );
   }
 
@@ -143,6 +164,21 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     //else dislike it
     this._likeProductService.dislikeProduct(this.product?.businessKey as string).subscribe(
       (_) => this._likeProductService.GetLikeProductMappings()
+    );
+  }
+
+  bookmarkProduct() {
+    let isProductBookmarked = this._bookmarkProductService.IsProductBookmarked(this.product?.businessKey as string);
+    //if the product is bookmarked, then unbookmark
+    if (isProductBookmarked === true) {
+      this._bookmarkProductService.unBookmarkProduct(this.product?.businessKey as string).subscribe(
+        (_) => this._bookmarkProductService.GetBookmarkProductMappings()
+      );
+      return;
+    }
+    //else bookmark it
+    this._bookmarkProductService.bookmarkProduct(this.product?.businessKey as string).subscribe(
+      (_) => this._bookmarkProductService.GetBookmarkProductMappings()
     );
   }
 
