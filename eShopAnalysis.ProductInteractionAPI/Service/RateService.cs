@@ -13,23 +13,29 @@ namespace eShopAnalysis.ProductInteractionAPI.Service
         {
             _rateRepository = rateRepository;
         }
-        public async Task<ServiceResponseDto<Rate>> Add(Guid userId, Guid productBusinessKey, double rating)
+        public async Task<ServiceResponseDto<Rate>> RateProductFromUser(Guid userId, Guid productBusinessKey, double rating)
         {
-            bool rateExisted = await _rateRepository.GetAsync(userId, productBusinessKey) != null;
-            if (rateExisted == true) {
-                return ServiceResponseDto<Rate>.Failure("Cannot added rate because user already rate this product");
-            }
-
             //we can add logic that check the validity of rating here
             if (rating < 0 || rating > 5) {
                 return ServiceResponseDto<Rate>.Failure("Cannot added rate because rating is not in valid range");
             }
 
+            Rate? rateToFind = await _rateRepository.GetAsync(userId, productBusinessKey);
+            bool rateExisted = rateToFind != null;
+            if (rateExisted == true) {
+                //update NOT add instance since user already rate the product
+                Rate? rateUpdated = await _rateRepository.UpdateAsync(rateToFind, rating);
+                if (rateUpdated == null) {
+                    return ServiceResponseDto<Rate>.Failure("Cannot update existing rate because cannot find it or something, please check the repo");
+                }
+                return ServiceResponseDto<Rate>.Success(rateUpdated);
+            }
+
+            // add if no instance mapping between user and product
             var rateAdded = await _rateRepository.AddAsync(userId, productBusinessKey, rating);
             if (rateAdded == null) {
                 return ServiceResponseDto<Rate>.Failure("Cannot added rate because cannot find it");
             }
-
             return ServiceResponseDto<Rate>.Success(rateAdded);
         }
 

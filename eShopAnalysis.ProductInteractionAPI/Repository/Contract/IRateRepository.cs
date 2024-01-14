@@ -20,6 +20,9 @@ namespace eShopAnalysis.ProductInteractionAPI.Repository
 
         Task<Rate> RemoveAsync(Guid userId, Guid productBusinessKey);
 
-        //updated ? maybe later
+        //found rate in the service, so we can use that instance again
+        Task<Rate> UpdateAsync(Rate rateToUpdate, double newRating);
+
+        Task<Rate> UpdateAsync(Guid userId, Guid productBusinessKey, double newRating);
     }
 }

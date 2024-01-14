@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/shared/services/auth.service';
 import { BookmarkHttpService } from 'src/shared/services/http/bookmark-http.service';
 import { LikeProductHttpService } from 'src/shared/services/http/like-product-http.service';
+import { RateProductHttpService } from 'src/shared/services/http/rate-product-http.service';
 import { RewardPointHttpService } from 'src/shared/services/http/reward-point-http.service';
 import { SignalrService } from 'src/shared/services/signalr.service';
 
@@ -18,7 +19,8 @@ export class SignoutRedirectCallbackComponent implements OnInit {
     private _signalrService: SignalrService,
     private _rewardService: RewardPointHttpService,
     private _likeProductService: LikeProductHttpService,
-    private _bookmarkProductService: BookmarkHttpService
+    private _bookmarkProductService: BookmarkHttpService,
+    private _rateProductService: RateProductHttpService
     ) { }
 
   ngOnInit(): void {
@@ -27,6 +29,7 @@ export class SignoutRedirectCallbackComponent implements OnInit {
       this._rewardService.ClearUserRewardPoint();
       this._likeProductService.ClearLikeProductMappings();
       this._bookmarkProductService.ClearUserBookmarkProductMappings();
+      this._rateProductService.ClearUserProductRateMappings();
       this._router.navigate(['/'], { replaceUrl: true });
     });
   }

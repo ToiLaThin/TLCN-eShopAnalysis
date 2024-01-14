@@ -26,7 +26,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(IEnumerable<RateDto>), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<IEnumerable<RateDto>>> GetRatedMappingsOfUser(Guid userId)
+        public async Task<ActionResult<IEnumerable<RateDto>>> GetRatedMappingsOfUser([FromHeader] Guid userId)
         {
             var serviceResult = await _rateService.GetRatedMappingsOfUserAsync(userId);
             if (serviceResult.IsFailed) {
@@ -44,7 +44,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(IEnumerable<RateDto>), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<IEnumerable<RateDto>>> GetRatedMappingsAboutProduct(Guid productBusinessKey)
+        public async Task<ActionResult<IEnumerable<RateDto>>> GetRatedMappingsAboutProduct([FromHeader] Guid productBusinessKey)
         {
             var serviceResult = await _rateService.GetRatedMappingsAboutProductAsync(productBusinessKey);
             if (serviceResult.IsFailed) {
@@ -61,9 +61,9 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(RateDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<RateDto>> RateProductFromUser(Guid userId, Guid productBusinessKey, double rating)
+        public async Task<ActionResult<RateDto>> RateProductFromUser([FromHeader] Guid userId, [FromHeader] Guid productBusinessKey, [FromHeader] double rating)
         {
-            var serviceResult = await _rateService.Add(userId, productBusinessKey, rating);
+            var serviceResult = await _rateService.RateProductFromUser(userId, productBusinessKey, rating);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
                                          Ok(_mapper.Map<Rate, RateDto>(serviceResult.Data)) :
                                          NotFound(serviceResult.Error);
@@ -74,7 +74,7 @@ namespace eShopAnalysis.ProductInteractionAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(RateDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<RateDto>> UnRateProductFromUser(Guid userId, Guid productBusinessKey)
+        public async Task<ActionResult<RateDto>> UnRateProductFromUser([FromHeader] Guid userId, [FromHeader] Guid productBusinessKey)
         {
             var serviceResult = await _rateService.Remove(userId, productBusinessKey);
             ActionResult actionResultDto = (serviceResult.IsSuccess == true) ?
