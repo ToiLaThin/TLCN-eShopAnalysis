@@ -125,6 +125,20 @@
       "UpstreamPathTemplate": "/api/CustomerLoyaltyProgram/{any}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "Priority": 0
+    },
+    {
+      "DownstreamPathTemplate": "/api/StockProviderRequestAPI/{any}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7012
+
+        }
+      ],
+      "UpstreamPathTemplate": "/api/StockProviderRequest/{any}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "Priority": 0
     }
 
     //oidc client make a request of https://localhost:7003/Auth/IdentityServer/.well-known/openid-configuration
