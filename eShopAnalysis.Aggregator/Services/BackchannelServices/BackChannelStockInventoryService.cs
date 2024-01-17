@@ -22,14 +22,20 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
             _serviceProvider = serviceProvider;
             _backChannelUrls = backChannelUrls;
         }
+
+        /// <summary>
+        /// Get the stock (product model with quantity in inventory) of product model inside the order
+        /// </summary>
+        /// <param name="productModelIds">product model id inside the order</param>
+        /// <returns></returns>
         public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> GetOrderItemsStock(IEnumerable<Guid> productModelIds)
         {
-            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<OrderItemsStockRequestDto, IEnumerable<ItemStockResponseDto>>>();
-            var result = await baseService.SendAsync(new BackChannelRequestDto<OrderItemsStockRequestDto>()
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<ItemsStockRequestDto, IEnumerable<ItemStockResponseDto>>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<ItemsStockRequestDto>()
             {
                 ApiType = ApiType.POST,
                 Url = $"{_backChannelUrls.Value.StockInventoryAPIBaseUri}/GetStockOfModels",
-                Data = new OrderItemsStockRequestDto(productModelIds)
+                Data = new ItemsStockRequestDto(productModelIds)
             });
             return result;
         }

@@ -1,4 +1,5 @@
 ﻿using eShopAnalysis.EventBus.Abstraction;
+using eShopAnalysis.ProductCatalogAPI.Application.BackChannelDto;
 using eShopAnalysis.ProductCatalogAPI.Application.Dto;
 using eShopAnalysis.ProductCatalogAPI.Application.IntegrationEvents.Event;
 using eShopAnalysis.ProductCatalogAPI.Application.Result;
@@ -35,6 +36,8 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
         Task<ServiceResponseDto<ProductModel>> AddNewProductModel(Guid productId, ProductModel subCatalog);
         //SubCatalog UpdateSubCatalog(Guid catalogId, SubCatalog subCatalog);
         //SubCatalog DeleteSubCatalog(Guid catalogId, Guid subCatalogId);
+
+        Task<ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>> GetProductModelInfosOfProvider(IEnumerable<ProductModelInfoRequestMetaDto> productModelInfoReqMetas);
     }
     public class ProductService : IProductService
     {
@@ -224,6 +227,60 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             var result = ServiceResponseDto<ProductModel>.Success(updatedProductModel);
             return result;
 
+        }
+
+
+        //TODO: please review & refactor this, there must be better way to do this
+        public async Task<ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>> GetProductModelInfosOfProvider(IEnumerable<ProductModelInfoRequestMetaDto> productModelInfoReqMetas)
+        {
+            if (productModelInfoReqMetas == null || productModelInfoReqMetas.Count() == 0) {
+                return ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Failure("invalid input params");
+            }
+            IEnumerable<Guid> distinctProductIds = productModelInfoReqMetas.Select(x => x.ProductId).Distinct();
+            int numberOfProductModelIdBeforeDistinct = productModelInfoReqMetas.Select(x => x.ProductModelId).Count();
+            //according to https://stackoverflow.com/a/5080563/23165722, this operation is O(n)
+            IEnumerable<Guid> distinctProductModelIds = productModelInfoReqMetas.Select(x => x.ProductModelId).Distinct();
+            if (numberOfProductModelIdBeforeDistinct != distinctProductModelIds.Count()) {
+                return ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Failure("product model id cannot be duplicated or reduce, it will even cause error when aggregate in read aggregate controller");
+            }
+
+            //called to db to get document of Product
+            //TODO: filter to be product isUsed = true only
+            var allRelatedProducts = _unitOfWork.ProductRepository.GetAllAsQueryable()
+                                                                  .Where(p => distinctProductIds.Contains(p.ProductId))
+                                                                  .Select(p => p)
+                                                                  .ToList();
+
+            IEnumerable<ProductModelInfoResponseDto> result = new List<ProductModelInfoResponseDto>();
+            //async method in foreach: https://www.codeproject.com/Articles/5316619/Using-Asynchrony-Methods-in-Foreach-Sentences
+
+            foreach ( var product in allRelatedProducts)
+            {
+                IEnumerable<ProductModel> validProductModels = product.ProductModels.Where(pm => distinctProductModelIds.Contains(pm.ProductModelId))
+                                                              .Select(pm => pm);
+
+                //this can be list since multiple model of a product is requested
+                if (validProductModels.Any() == false) {
+                    return ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Failure("product model cannot be found even product id appear?");
+                }
+
+                IEnumerable<ProductModelInfoResponseDto> productModelInfosToAddToResult = validProductModels.Select(pm => new ProductModelInfoResponseDto
+                {
+                    ProductId = product.ProductId,
+                    ProductModelName = product.ProductName,
+                    BusinessKey = product.BusinessKey,
+                    ProductModelId = pm.ProductModelId,
+                    Price = pm.Price,
+                    ProductCoverImage = product.ProductCoverImage
+                });
+
+                result = result.Concat(productModelInfosToAddToResult);
+            }
+
+            if (result == null || result.Count() == 0) {
+                return ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Failure("no valid ProductModelInfoResponseDto to return");
+            }
+            return ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Success(result);
         }
         #endregion
 

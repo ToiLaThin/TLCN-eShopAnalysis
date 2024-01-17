@@ -1,8 +1,10 @@
 ﻿using eShopAnalysis.Aggregator.Models.Dto;
+using eShopAnalysis.Aggregator.Services.BackchannelDto;
 using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using eShopAnalysis.Aggregator.Utilities.Behaviors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace eShopAnalysis.Aggregator.Controllers
 {
@@ -74,5 +76,50 @@ namespace eShopAnalysis.Aggregator.Controllers
             }
             return NotFound("GetToApprovedOrders failed or GetOrderItemsStock failed");
         }
+
+        //post but to get only
+        [HttpPost("GetProductModelInfosWithStockOfProvider")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IEnumerable<ProductModelInfoWithStockAggregate>), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<IEnumerable<ProductModelInfoWithStockAggregate>>> GetProductModelInfosWithStockOfProvider([FromBody] IEnumerable<ProductModelInfoRequestMetaDto> productModelInfoRequestMetas)
+        {
+            IEnumerable<Guid> allProviderProductModelIds = productModelInfoRequestMetas.Select(pMIRM => pMIRM.ProductModelId).ToList();
+
+            var productModelInfosResult = await _backChannelProductCatalogService.GetProductModelInfosOfProvider(productModelInfoRequestMetas);
+            if (productModelInfosResult.IsFailed || productModelInfosResult.IsException) {
+                return NotFound(productModelInfosResult.Error);
+            }
+            var itemsStockResult = await _backChannelStockInventoryService.GetOrderItemsStock(allProviderProductModelIds);//ItemStockRequestDto will be create inside here
+            if (itemsStockResult.IsFailed || itemsStockResult.IsException) {
+                return NotFound(itemsStockResult.Error);
+            }
+
+            IEnumerable<ItemStockResponseDto> itemStockResponses = itemsStockResult.Data;
+            IEnumerable<ProductModelInfoResponseDto> productModelInfoResponses = productModelInfosResult.Data;
+
+            //must use query syntax to join three IEnumerable
+            IEnumerable<ProductModelInfoWithStockAggregate> productModelInfoWithStockAggregates = (
+                from pMI in productModelInfoResponses
+                join iS in itemStockResponses on pMI.ProductModelId equals iS.ProductModelId
+                join pMIReqMeta in productModelInfoRequestMetas on pMI.ProductModelId equals pMIReqMeta.ProductModelId
+                select new ProductModelInfoWithStockAggregate()
+                {
+                    ProductModelId = pMI.ProductModelId,
+                    ProductId = pMI.ProductId,
+                    BusinessKey = pMI.BusinessKey,
+                    ProductModelName = pMI.ProductModelName,
+                    ProductCoverImage = pMI.ProductCoverImage,
+                    Price = pMI.Price,
+                    UnitRequestPrice = pMIReqMeta.UnitRequestPrice,
+                    CurrentQuantity = iS.CurrentQuantity
+                });
+            if (productModelInfoWithStockAggregates == null || productModelInfoWithStockAggregates.Count() <=0 ) {
+                return NotFound("join result is null");
+            }
+            return Ok(productModelInfoWithStockAggregates);
+        }
     }
+
+
 }

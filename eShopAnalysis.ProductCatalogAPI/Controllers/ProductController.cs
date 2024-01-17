@@ -15,6 +15,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using System.Collections.Generic;
 using System.Net;
 
 namespace eShopAnalysis.ProductCatalogAPI.Controllers
@@ -202,6 +203,17 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
             var response = (serviceResult.IsSuccess == true) ?
                                          BackChannelResponseDto<ProductDto>.Success(_mapper.Map<Product, ProductDto>(serviceResult.Data)) :
                                          BackChannelResponseDto<ProductDto>.Failure(serviceResult.Error);
+            return response;
+        }
+
+        [HttpPost("BackChannel/GetProductModelInfosOfProvider")]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<BackChannelResponseDto<IEnumerable<ProductModelInfoResponseDto>>> GetProductModelInfosOfProvider([FromBody] IEnumerable<ProductModelInfoRequestMetaDto> productModelInfoReqMetas)
+        {
+            var serviceResult = await _service.GetProductModelInfosOfProvider(productModelInfoReqMetas);
+            var response = (serviceResult.IsSuccess == true) ?
+                                         BackChannelResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Success((serviceResult.Data)) :
+                                         BackChannelResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Failure(serviceResult.Error);
             return response;
         }
     }
