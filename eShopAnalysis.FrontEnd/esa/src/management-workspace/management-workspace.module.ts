@@ -11,7 +11,7 @@ const managementWorkspaceRoutes: Routes = [
   {
     path:'',
     component: ManagementWorkspaceComponent,
-
+    
     canActivate: [AuthenticatedGuard],
     
     children: [
@@ -20,6 +20,11 @@ const managementWorkspaceRoutes: Routes = [
         loadChildren: () => import('./product-catalog/product-catalog.module').then(m => m.ProductCatalogModule),
         outlet: 'primary',
       },   
+      {
+        path: 'provider-stock',
+        loadChildren: () => import('./provider-stock/provider-stock.module').then(m => m.ProviderStockModule),
+        outlet: 'primary',
+      },
       {
         path: 'sale-coupon',
         loadChildren: () => import('./sale-coupon/sale-coupon.module').then(m => m.SaleCouponModule),

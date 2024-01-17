@@ -69,7 +69,7 @@ namespace eShopAnalysis.StockInventory.Controllers
 
         [HttpPost("BackChannel/GetStockOfModels")]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> GetStockOfModels([FromBody] OrderItemsStockRequestDto orderItemsStockReq)
+        public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> GetStockOfModels([FromBody] ItemsStockRequestDto orderItemsStockReq)
         {
             if (orderItemsStockReq == null) {
                 return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Exception("argument is null");

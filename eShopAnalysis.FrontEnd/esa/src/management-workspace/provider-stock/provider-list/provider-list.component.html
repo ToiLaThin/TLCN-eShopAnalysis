@@ -1,0 +1,13 @@
+<ng-container *ngFor="let providerReq of (allProviderReqs$ | async)">
+    <div style="border: 1px solid red; margin-bottom: 1rem;">
+        <p>Provider Name: 
+            <a (click)="viewProviderStock(providerReq.providerRequirementId)"
+                style="cursor: pointer;"
+            >
+                {{providerReq.providerName}}
+            </a>
+        </p>
+        <p>Min Price To Be Accepted: {{providerReq.minPriceToBeAccepted}}</p>
+        <p>Min Qty To Be Accepted: {{providerReq.minQuantityToBeAccepted}}</p>
+    </div>
+</ng-container>

@@ -1,0 +1,14 @@
+<div style="border: 1px solid dodgerblue; margin-bottom: 1rem;">
+    <p>Provider Name: {{(selectedProviderReq$ | async)?.providerName}} </p>
+    <p>Min Price To Be Accepted: {{(selectedProviderReq$ | async)?.minPriceToBeAccepted}}</p>
+    <p>Min Qty To Be Accepted:s {{(selectedProviderReq$ | async)?.minQuantityToBeAccepted}}</p>
+</div>
+
+<ng-container *ngFor="let productModelInfoWithStock of (allSelectedProviderProductModelInfosWithStock$ | async)">
+    <div style="border: 1px solid red; margin-bottom: 1rem;">
+        <p>Product Model Name: {{productModelInfoWithStock.productModelName}}</p>
+        <p>Product Model Image: <img src="{{productModelInfoWithStock.productCoverImage}}"></p>
+        <p>Product Model Price on Shop: {{productModelInfoWithStock.price}}</p>
+        <p>Product Model Price from provider: {{productModelInfoWithStock.unitRequestPrice}}</p>
+    </div>
+</ng-container>
