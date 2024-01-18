@@ -1,7 +1,4 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
-
-namespace eShopAnalysis.StockProviderRequestAPI.Dto
+﻿namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
     public class StockItemRequestDto
     {
@@ -19,7 +16,7 @@ namespace eShopAnalysis.StockProviderRequestAPI.Dto
     }
 
     /// <summary>
-    /// received from AggregateWrite controller to add new stock request transaction through backchannel
+    /// sent to StockProviderRequest to add new stock request transaction through backchannel
     /// </summary>
     public class StockRequestTransactionDto
     {

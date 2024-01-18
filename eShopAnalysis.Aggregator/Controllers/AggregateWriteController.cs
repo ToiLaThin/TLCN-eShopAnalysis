@@ -19,6 +19,7 @@ namespace eShopAnalysis.ApiGateway.Controllers
         private readonly IBackChannelCouponSaleItemService _backChannelCouponSaleItemService;
         private readonly IBackChannelProductCatalogService _backChannelProductCatalogService;
         private readonly IBackChannelCustomerLoyaltyProgramService _backChannelCustomerLoyaltyProgramService;
+        private readonly IBackChannelStockProviderRequestService _backChannelStockProviderRequestService;
 
 
         public AggregateWriteController(
@@ -26,7 +27,8 @@ namespace eShopAnalysis.ApiGateway.Controllers
             IBackChannelCartOrderService backChannelCartOrderService,
             IBackChannelCouponSaleItemService backChannelCouponSaleItemService,
             IBackChannelProductCatalogService backChannelProductCatalogService,
-            IBackChannelCustomerLoyaltyProgramService backChannelCustomerLoyaltyProgramService
+            IBackChannelCustomerLoyaltyProgramService backChannelCustomerLoyaltyProgramService,
+            IBackChannelStockProviderRequestService backChannelStockProviderRequestService
             )
         {
             _backChannelStockInventoryService = backChannelStockInventoryService;
@@ -34,6 +36,7 @@ namespace eShopAnalysis.ApiGateway.Controllers
             _backChannelCouponSaleItemService = backChannelCouponSaleItemService;
             _backChannelProductCatalogService = backChannelProductCatalogService;
             _backChannelCustomerLoyaltyProgramService = backChannelCustomerLoyaltyProgramService;
+            _backChannelStockProviderRequestService = backChannelStockProviderRequestService;
         }        
 
         [HttpPost("ApproveOrdersAndModifyStocks")]
@@ -183,6 +186,32 @@ namespace eShopAnalysis.ApiGateway.Controllers
                 //TODO can use compensation trans to delete added product or use polly to retry since this is idempotency(delete can be idempotency with check)
             }
             return Ok(addProductBackChannelRes.Data);
+        }
+
+        [HttpPost("AddStockReqTransAndIncreaseStockItems")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(StockRequestTransactionDto), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult> AddStockReqTransAndIncreaseStockItems([FromBody] StockRequestTransactionDto stockReqTrans)
+        {
+            if (stockReqTrans == null) {
+                throw new ArgumentNullException(nameof(stockReqTrans));
+            }
+
+            stockReqTrans.TotalQuantity = stockReqTrans.StockItemRequests.Aggregate(0, (sumAllStockItemsQty, stockItemReq) => sumAllStockItemsQty + stockItemReq.ItemQuantity);
+            stockReqTrans.TotalTransactionPrice = stockReqTrans.StockItemRequests.Aggregate(0.0, (sumAllStockItemsPrice, stockItemReq) => sumAllStockItemsPrice + stockItemReq.UnitRequestPrice);
+            var addStockReqTransBackChannelRes = await _backChannelStockProviderRequestService.AddNewStockRequestTransaction(stockReqTrans);
+            if (addStockReqTransBackChannelRes.IsFailed || addStockReqTransBackChannelRes.IsException) {
+                return NotFound(addStockReqTransBackChannelRes.Error);
+            }
+
+            var stockIncreaseReqs = stockReqTrans.StockItemRequests.Select(stockItemReq => new StockIncreaseRequestDto(stockItemReq.ProductModelId, stockItemReq.ItemQuantity));
+            var stockIncreaseBackChannelRes = await _backChannelStockInventoryService.IncreaseStockItems(stockIncreaseReqs);
+            if (stockIncreaseBackChannelRes.IsFailed || stockIncreaseBackChannelRes.IsException) {
+                throw new Exception("testing, but this is critial error");
+                //TODO can use compensation trans to delete added stock request trans or use polly to retry since this is idempotency(delete can be idempotency with check)
+            }
+            return Ok(addStockReqTransBackChannelRes.Data);
         }
     }
 }

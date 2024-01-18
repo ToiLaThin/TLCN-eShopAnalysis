@@ -53,6 +53,6 @@ namespace eShopAnalysis.StockProviderRequestAPI.Models
         [BsonRepresentation(BsonType.DateTime)]
         public DateTime DateCreated{ get; set; }
 
-        List<StockItemRequest> StockItemRequests { get; set; }
+        public List<StockItemRequest> StockItemRequests { get; set; }
     }
 }

@@ -41,7 +41,7 @@ namespace eShopAnalysis.StockProviderRequestAPI.Controllers
 
         [HttpPost("AddNewProviderRequirement")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(IEnumerable<ProviderRequirementDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProviderRequirementDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<ProviderRequirementDto>> AddNewProviderRequirement([FromBody] ProviderRequirement providerReq)
         {

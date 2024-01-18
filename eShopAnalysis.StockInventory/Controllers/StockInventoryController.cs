@@ -95,5 +95,18 @@ namespace eShopAnalysis.StockInventory.Controllers
             }
             return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result.Data);
         }
+
+        [HttpPost("BackChannel/IncreaseStockItems")]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> IncreaseStockItems([FromBody] IEnumerable<StockIncreaseRequestDto> stockIncreaseReqs)
+        {
+            if (stockIncreaseReqs == null) { throw new ArgumentNullException(nameof(stockIncreaseReqs)); }
+            var result = await _service.IncreaseStockItems(stockIncreaseReqs);
+            if (result.IsFailed || result.IsException)
+            {
+                return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Failure(result.Error);
+            }
+            return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result.Data);
+        }
     }
 }
