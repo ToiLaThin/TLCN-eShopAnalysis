@@ -23,6 +23,8 @@ namespace eShopAnalysis.StockInventoryAPI.Services
         Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> GetStockOfModels(IEnumerable<Guid> modelIds);
 
         Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> DecreaseStockItems(IEnumerable<StockDecreaseRequestDto> itemStocks);
+
+        Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> IncreaseStockItems(IEnumerable<StockIncreaseRequestDto> itemStocks);
     }
 
 
@@ -110,6 +112,9 @@ namespace eShopAnalysis.StockInventoryAPI.Services
         public async Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> DecreaseStockItems(IEnumerable<StockDecreaseRequestDto> decreaseReqs)
         {
             var requestedModelIds = decreaseReqs.Select(req => req.ProductModelId.ToString()).ToList();
+            if (requestedModelIds.Count != requestedModelIds.Distinct().Count()) {
+                throw new Exception("multiple decrease req for one single stockItem(with same ProductModelId)");
+            }
             var stocksToDecrease = _repo.GetAsQueryable()
                                         .Where(st => requestedModelIds.Contains(st.ProductModelId))
                                         .ToList();
@@ -121,9 +126,11 @@ namespace eShopAnalysis.StockInventoryAPI.Services
                     //TODO unit of work for stock to make sure all are updated or none
                     //if multiple decrease req for one single stockItem(with same ProductModelId)
                     //will have error => we must group in the aggregator controller, also , this help reduce the payload(done)
-                    var req = decreaseReqs.Single(req => req.ProductModelId == Guid.Parse(stock.ProductModelId));
+
+                    //will throw exception not return null
+                    var req = decreaseReqs.SingleOrDefault(req => req.ProductModelId == Guid.Parse(stock.ProductModelId));
                     if (req == null) { 
-                        throw new Exception("Critical error"); 
+                        throw new Exception("multiple decrease req for one single stockItem(with same ProductModelId)"); 
                     }
                     stock.CurrentQuantity -= req.QuantityToDecrease;
                     _repo.UpdateAsync(stock); //async here help improve performance, not use await to further improve performance
@@ -172,6 +179,51 @@ namespace eShopAnalysis.StockInventoryAPI.Services
 
             var stockAfterUpdated = _repo.GetAsQueryable().Where(st => st.ProductId ==  newProductIdStr).ToList();
             return ServiceResponseDto<IEnumerable<StockInventory>>.Success(stockAfterUpdated);
+        }
+
+        public async Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> IncreaseStockItems(IEnumerable<StockIncreaseRequestDto> increaseReqs)
+        {
+            var requestedModelIds = increaseReqs.Select(req => req.ProductModelId.ToString()).ToList();
+            if (requestedModelIds.Count != requestedModelIds.Distinct().Count()) {
+                throw new Exception("multiple increase req for one single stockItem(with same ProductModelId)");
+            }
+            var stocksToIncrease = _repo.GetAsQueryable()
+                                        .Where(st => requestedModelIds.Contains(st.ProductModelId))
+                                        .ToList();
+
+
+            if (stocksToIncrease != null && stocksToIncrease.Count() > 0)
+            {
+                foreach (var stock in stocksToIncrease)
+                {
+                    //TODO unit of work for stock to make sure all are updated or none
+                    //if multiple increase req for one single stockItem(with same ProductModelId)
+                    //will have error => we must group in the aggregator controller, also , this help reduce the payload(done)
+
+                    //will throw exception not return null
+                    var req = increaseReqs.SingleOrDefault(req => req.ProductModelId == Guid.Parse(stock.ProductModelId));
+                    if (req == null) {
+                        throw new Exception("multiple increase req for one single stockItem(with same ProductModelId)");
+                    }
+                    stock.CurrentQuantity += req.QuantityToIncrease;
+                    _repo.UpdateAsync(stock); //async here help improve performance, not use await to further improve performance
+                }
+                //get result after update
+                IEnumerable<ItemStockResponseDto> result = _repo.GetAsQueryable()
+                                        .Where(st => requestedModelIds
+                                        .Contains(st.ProductModelId))
+                                        .ToList()
+                                        .Select(st => {
+                                            return new ItemStockResponseDto
+                                            {
+                                                ProductModelId = Guid.Parse(st.ProductModelId),
+                                                CurrentQuantity = st.CurrentQuantity,
+                                            };
+                                        });
+
+                return ServiceResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result);
+            }
+            return ServiceResponseDto<IEnumerable<ItemStockResponseDto>>.Failure("Error");
         }
     }
 }

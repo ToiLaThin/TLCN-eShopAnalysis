@@ -63,5 +63,17 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
             });
             return result;
         }
+
+        public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> IncreaseStockItems(IEnumerable<StockIncreaseRequestDto> stockIncreaseReqs)
+        {
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<IEnumerable<StockIncreaseRequestDto>, IEnumerable<ItemStockResponseDto>>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<IEnumerable<StockIncreaseRequestDto>>()
+            {
+                ApiType = ApiType.POST,
+                Url = $"{_backChannelUrls.Value.StockInventoryAPIBaseUri}/IncreaseStockItems",
+                Data = stockIncreaseReqs
+            });
+            return result;
+        }
     }
 }

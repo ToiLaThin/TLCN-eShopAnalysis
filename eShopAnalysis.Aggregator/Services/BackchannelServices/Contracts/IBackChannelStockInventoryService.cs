@@ -11,6 +11,8 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
 
         Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> DecreaseStockItems(IEnumerable<StockDecreaseRequestDto> stockDecreaseReqs);
 
+        Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> IncreaseStockItems(IEnumerable<StockIncreaseRequestDto> stockIncreaseReqs);
+
         Task<BackChannelResponseDto<IEnumerable<StockInventoryDto>>> AddNewStockInventories(IEnumerable<StockInventoryDto> stocksToAdd);
     }
 }

@@ -2,13 +2,36 @@
     <p>Provider Name: {{(selectedProviderReq$ | async)?.providerName}} </p>
     <p>Min Price To Be Accepted: {{(selectedProviderReq$ | async)?.minPriceToBeAccepted}}</p>
     <p>Min Qty To Be Accepted:s {{(selectedProviderReq$ | async)?.minQuantityToBeAccepted}}</p>
+    <button (click)="confirmRequestToProvider()">Confirm</button>
 </div>
 
-<ng-container *ngFor="let productModelInfoWithStock of (allSelectedProviderProductModelInfosWithStock$ | async)">
+<ng-container *ngFor="let mergeItem of (allProductModelInfoMergeStockItemReqs$ | async)">
     <div style="border: 1px solid red; margin-bottom: 1rem;">
-        <p>Product Model Name: {{productModelInfoWithStock.productModelName}}</p>
-        <p>Product Model Image: <img src="{{productModelInfoWithStock.productCoverImage}}"></p>
-        <p>Product Model Price on Shop: {{productModelInfoWithStock.price}}</p>
-        <p>Product Model Price from provider: {{productModelInfoWithStock.unitRequestPrice}}</p>
+        <div>
+            <p>Product Model Image: 
+                <img src="{{mergeItem.productCoverImage}}" style="width: 100px; height: auto;">
+            </p>
+        </div>
+        <div>
+            <p>Product Model Name: {{mergeItem.productModelName}}</p>
+            <p>Product Model Price on Shop: {{mergeItem.price}}</p>
+            <p>Product Model Price from provider: {{mergeItem.unitRequestPrice}}</p>
+            <p>Total Request Price: {{mergeItem.totalItemRequestPrice}}</p>
+            <p>Current Quantity in stock: <span style="color: red;">{{mergeItem.currentQuantity}}</span></p>
+            <p>Quantity after stock request: <span style="color: green;">{{mergeItem.afterRequestQuantity}}</span></p>
+        </div>
+        <div style="display: flex; flex-direction: row;">
+            <button 
+                style="padding: 1rem; font-size: large; font-weight: bolder; cursor: pointer;"
+                (click)="increaseStockQuantity(mergeItem.productModelId)">
+                +
+            </button>
+            <span style="border: 1px solid dodgerblue;">{{mergeItem.itemQuantity}}</span>
+            <button 
+                style="padding: 1rem; font-size: large; font-weight: bolder; cursor: pointer;"
+                (click)="decreaseStockQuantity(mergeItem.productModelId)">
+                -
+            </button>
+        </div>
     </div>
 </ng-container>
