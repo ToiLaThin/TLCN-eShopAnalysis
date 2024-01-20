@@ -37,21 +37,13 @@ export class ProductAddComponent implements OnInit, OnDestroy {
   cublicKeyArr = Object.keys(CublicType).map(x => parseInt(x)).filter(x => !isNaN(x));
   cublicKeyValueArr = this.cublicKeyArr.map((key) => {
     //if we have variants, we do not want to show N, check in toggleHaveVariants()
-    if (this.haveVariants === true) {
-            if (key !== CublicType.N) {
-              return {
-                key,
-                value: CublicType[key]
-              }
-            } else {
-              return undefined;
-            }
-    } else {
-            return {
-              key,
-              value: CublicType[key]
-            }
-    };
+    if (this.haveVariants !== true) { 
+      return { key, value: CublicType[key] }
+    }
+    if (key === CublicType.N) { 
+      return undefined; 
+    } 
+    return { key, value: CublicType[key] }
   });
 
   //template for a product model form should be add in the form array

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ICustomerOrderInfoConfirmedRequest } from 'src/shared/models/customerOrderInfo.interface';
 import { AuthService } from '../auth.service';
-import { IOrderDraftViewModel, IOrderViewModel } from 'src/shared/models/ui-models/order.interface';
+import { IOrderDraftViewModel, IOrderViewModel } from 'src/shared/models/order.interface';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment as env } from 'src/environments/environment';
 import { IPaymentRequest, IPaymentResponse } from 'src/shared/models/payment.interface';

@@ -12,6 +12,7 @@ import { CatalogHttpService } from 'src/shared/services/http/catalog-http.servic
   styleUrls: ['./product-list.component.scss']
 })
 export class ProductListComponent implements OnInit {
+  //TODO this component , some logic should be inside service , not the component 
 
   fromPrice: number = 0;
   toPrice: number = 10000000;

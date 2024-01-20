@@ -24,13 +24,27 @@
     <esa-dropdown-menu>
         <p style="display: flex; justify-content: space-between;">
             <ng-container>
-                <i class="fa-solid fa-sun" *ngIf="(this.isDarkTheme$ | async) === false" style="font-size: 2rem;"></i>
-                <i class="fa-solid fa-moon" *ngIf="(this.isDarkTheme$ | async) === true" style="font-size: 2rem;"></i>
+                <i class="fa-solid fa-sun" 
+                    *ngIf="(this.isDarkTheme$ | async) === false" 
+                    style="font-size: 2rem;">
+                </i>
+                <i class="fa-solid fa-moon" 
+                    *ngIf="(this.isDarkTheme$ | async) === true" 
+                    style="font-size: 2rem;">
+                </i>
             </ng-container>
             <esa-toggle-switch (toggle)="toggleTheme()"></esa-toggle-switch>
         </p>
-        <p *ngIf="(this.authStatus$| async) === AuthStatus.Anonymouse" (click)="login()"><a>Login</a></p>
-        <p *ngIf="(this.authStatus$| async) === AuthStatus.Authenticated" (click)="logout()"><a>Logout</a></p>
+        <p *ngIf="(this.authStatus$| async) === AuthStatus.Anonymouse" 
+            (click)="login()"
+        >
+            <a>Login</a>
+        </p>
+        <p *ngIf="(this.authStatus$| async) === AuthStatus.Authenticated" 
+            (click)="logout()"
+        >
+            <a>Logout</a>
+        </p>
         <p><a routerLink="/shopping/order-draft-list">My Draft Orders</a></p>
         <ng-container *ngIf="(this.authStatus$| async) === AuthStatus.Authenticated">
             <p *ngIf="(this.isTrackingOrder$ | async) === true"
@@ -39,6 +53,8 @@
             </p>
         </ng-container>
         <p><a href="">Hello</a></p>
-        <p *ngIf="(this.authStatus$| async) === AuthStatus.Authenticated">Your current reward point: {{this.userRewardPoint$ | async}}</p>
+        <p *ngIf="(this.authStatus$| async) === AuthStatus.Authenticated">
+            Your current reward point: {{this.userRewardPoint$ | async}}
+        </p>
     </esa-dropdown-menu>
 </ng-template>

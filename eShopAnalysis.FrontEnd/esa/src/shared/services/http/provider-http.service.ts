@@ -48,7 +48,7 @@ export class ProviderHttpService {
         this.allSelectedProviderProductModelInfosWithStockSub.next(productModelInfos);
         let allSelectedProviderProductModelInfosWithStock = this.allSelectedProviderProductModelInfosWithStockSub.getValue();
         let allProductModelInfoMergeStockItemReqs = allSelectedProviderProductModelInfosWithStock.map(productModelInfo => {
-          //INIT state
+          //INIT state, can use speard operator with obj but use this systax for sure
           let productModelInfoMergeStockItemReq = {
             productId: productModelInfo.productId,
             productModelId: productModelInfo.productModelId,

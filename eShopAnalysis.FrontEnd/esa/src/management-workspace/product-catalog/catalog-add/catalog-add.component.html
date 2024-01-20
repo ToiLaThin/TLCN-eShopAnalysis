@@ -1,6 +1,11 @@
-<form [formGroup]="newCatalogFrmGrp" (ngSubmit)="addCatalog()" class="container">
+<form [formGroup]="newCatalogFrmGrp" 
+      (ngSubmit)="addCatalog()" 
+      class="container">
     <div class="form-header">
-        <a [routerLink]="['/management', {outlets: { primary: null } }]" class="form-close-btn"><span>&times;</span></a>
+        <a [routerLink]="['/management', {outlets: { primary: null } }]" 
+           class="form-close-btn">
+           <span>&times;</span>
+        </a>
     </div>
     <div class="form-body">
         <div class="form-group">
@@ -8,7 +13,7 @@
                 <label for="catalogName">catalogName: </label>
                 <input formControlName="catalogName" 
                        id="catalogName"
-                       required 
+                       required
                 >
             </div>
         </div>
@@ -27,7 +32,7 @@
         <div>
             <label for="catalogImage">catalogImage: </label>
             <input formControlName="catalogImage" 
-                       id="catalogImage"                        
+                   id="catalogImage"
             >
         </div>
         <br>        

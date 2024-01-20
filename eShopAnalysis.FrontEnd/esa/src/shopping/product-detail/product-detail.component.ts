@@ -11,7 +11,7 @@ import { AuthService } from 'src/shared/services/auth.service';
 import { BookmarkHttpService } from 'src/shared/services/http/bookmark-http.service';
 import { RateProductHttpService } from 'src/shared/services/http/rate-product-http.service';
 import { CommentProductHttpService } from 'src/shared/services/http/comment-product-http.service';
-import { IComment } from 'src/shared/models/ui-models/order.interface';
+import { IComment } from 'src/shared/models/order.interface';
 
 @Component({
   selector: 'esa-product-detail',
@@ -22,7 +22,6 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
   productSubscription!: Subscription;
   routeParamsSubscription!: Subscription;
-  productCommentsSubscription!: Subscription;
   productId!: string;
   product!: IProduct | undefined;
   isProductLiked$!: Observable<boolean>;
@@ -48,6 +47,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       this.productId = params['productId'];
     });
 
+    //ko dùng async nên phải có subcription để unsubscribe khi component destroy
     this.productSubscription = this.productService.paginatedProducts$.pipe(
       map(paginatedProducts => paginatedProducts.products.find(product => product.productId === this.productId)),      
     )
@@ -139,13 +139,12 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.productCommentsSubscription = this._commentProductService.GetProductComments(this.product?.businessKey as string);
+    this._commentProductService.GetProductComments(this.product?.businessKey as string);
   }
     
   ngOnDestroy(): void {
     this.productSubscription.unsubscribe();
     this.routeParamsSubscription.unsubscribe();
-    this.productCommentsSubscription.unsubscribe();
   }
 
   addModelToCart(event: Event, model: IProductModel) {

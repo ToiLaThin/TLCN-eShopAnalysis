@@ -61,11 +61,12 @@ export class RateProductHttpService implements OnInit{
     return rateProduct?.rating;
   }
 
-  public GetUserProductRateMappings(): Subscription {
-    let subscription = this.getUserProductRateMappings().subscribe((userProductRateMappings) => {
+  //https://angular.io/guide/http-request-data-from-server
+  //observable from http does not need to be unsubscribed
+  public GetUserProductRateMappings() {
+    this.getUserProductRateMappings().subscribe((userProductRateMappings) => {
       this.userProductRateMappings.next(userProductRateMappings);
     });
-    return subscription;
   }
 
   public ClearUserProductRateMappings() {

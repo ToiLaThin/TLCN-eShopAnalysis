@@ -26,8 +26,9 @@ export class CatalogListComponent implements OnInit {
   }
 
   viewSubCatalog(catalogId?: string) {
-    this.router.navigateByUrl(`/management/product-catalog/subcatalog-list/${catalogId}`, 
-                              { replaceUrl: true}
-                              );
+    this.router.navigateByUrl(
+      `/management/product-catalog/subcatalog-list/${catalogId}`, 
+      { replaceUrl: true}
+    );
   }
 }

@@ -27,6 +27,8 @@ export class RewardPointHttpService {
     return this.http.get<IUserRewardPoint>(`${env.BASEURL}/api/CustomerLoyaltyProgram/UserRewardPointAPI/GetRewardPointOfUser`, { headers: headers });
   }
 
+  //https://angular.io/guide/http-request-data-from-server
+  //observable from http does not need to be unsubscribed
   public GetCurrentUserRewardPoint() {
     //a public version so we can check then call this method
     this.getCurrentUserRewardPoint().subscribe((userRewardPoint) => {
