@@ -1,4 +1,3 @@
-using eShopAnalysis.Aggregator.Services.BackchannelService;
 using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using eShopAnalysis.Aggregator.Utilities;
 using eShopAnalysis.Aggregator.Utilities.Behaviors;
