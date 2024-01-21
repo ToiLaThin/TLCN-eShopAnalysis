@@ -1,5 +1,4 @@
 ﻿using eShopAnalysis.Aggregator.Result;
-using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;

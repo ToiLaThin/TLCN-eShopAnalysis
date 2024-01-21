@@ -1,10 +1,9 @@
 ﻿using eShopAnalysis.Aggregator.Result;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
-using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using eShopAnalysis.Aggregator.Utilities;
 using Microsoft.Extensions.Options;
 
-namespace eShopAnalysis.Aggregator.Services.BackchannelService
+namespace eShopAnalysis.Aggregator.Services.BackchannelServices
 {
     public class BackChannelProductCatalogService : IBackChannelProductCatalogService
     {        

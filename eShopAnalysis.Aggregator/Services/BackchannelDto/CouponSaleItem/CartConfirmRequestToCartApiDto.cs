@@ -32,18 +32,13 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelDto
         public double FinalAfterSalePrice { get; set; }
     }
 
-    //request from frontend
-    public class CartConfirmRequestDto
-    {
-        public IEnumerable<CartItem> CartItems { get; set; }
 
-        public Guid UserId { get; set; }
 
-        //not require
-        public string? CouponCode { get; set; }
-    }
-
-    //Request to send CartOrder to add cart once determine if we have coupon or not
+    /// <summary>
+    /// request to send CartOrder Backchannel 
+    /// to add cart once determine if we have coupon or not 
+    /// in aggregate CheckCouponAndAddCart
+    /// </summary>
     public class CartConfirmRequestToCartApiDto
     {
         public IEnumerable<CartItem> CartItems { get; set; }

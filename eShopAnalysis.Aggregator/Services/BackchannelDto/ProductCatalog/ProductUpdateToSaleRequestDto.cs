@@ -1,8 +1,9 @@
-﻿using eShopAnalysis.Aggregator.Services.BackchannelDto;
-
-namespace eShopAnalysis.Aggregator.Services.BackchannelDto
+﻿namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
-    //request to ProductCatalog to update to on sale
+    /// <summary>
+    /// request to ProductCatalog to update to on sale 
+    /// in Aggregate write AddSaleItemAndUpdateProductToOnSale
+    /// </summary>
     public class ProductUpdateToSaleRequestDto
     {
         public Guid ProductId { get; set; }

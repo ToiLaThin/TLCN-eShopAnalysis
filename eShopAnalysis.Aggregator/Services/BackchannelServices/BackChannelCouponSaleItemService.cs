@@ -1,5 +1,4 @@
 ﻿
-using eShopAnalysis.Aggregator.Dto;
 using eShopAnalysis.Aggregator.Result;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
 using eShopAnalysis.Aggregator.Services.BackchannelServices;
@@ -18,10 +17,10 @@ namespace eShopAnalysis.CartOrderAPI.Application.BackchannelServices
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<BackChannelResponseDto<SaleItemDto>> AddSaleItem(SaleItem saleItem)
+        public async Task<BackChannelResponseDto<SaleItemDto>> AddSaleItem(SaleItemDto saleItem)
         {
-            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<SaleItem, SaleItemDto>>();
-            var result = await baseService.SendAsync(new BackChannelRequestDto<SaleItem>()
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<Aggregator.Services.BackchannelDto.SaleItemDto, Aggregator.Services.BackchannelDto.SaleItemDto>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<SaleItemDto>()
             {
                 ApiType = ApiType.POST,
                 Url = $"{_backChannelUrls.Value.SaleItemAPIBaseUri}/AddSaleItem",

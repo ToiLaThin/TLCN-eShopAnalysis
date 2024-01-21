@@ -1,6 +1,13 @@
-﻿namespace eShopAnalysis.Aggregator.Services.BackChannelDto
+﻿namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
-    //response from stock inventory when add stock of newly created product and the request too
+    /// <summary>
+    /// request to stock inventory from aggregate 
+    /// to add stock of newly created product
+    /// response from stock inventory to aggregate 
+    /// to add stock of newly created product
+    /// 
+    /// in aggregate write AddNewProductAndModelsStock
+    /// </summary>
     public class StockInventoryDto
     {
         public Guid  StockInventoryId { get; set; } //convert glid to guid for dto 

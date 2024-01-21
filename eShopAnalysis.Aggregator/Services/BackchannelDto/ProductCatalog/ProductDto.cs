@@ -1,7 +1,11 @@
 ﻿
 namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
-    //response from update product to on sale from ProductCatalog
+    //
+    /// <summary>
+    /// is used from Client to Aggregate & Aggregate to BackChannel ProductCatalog request to add product && response from update product to on sale from ProductCatalog
+    /// is response from Aggregate to Client also
+    /// </summary>
     public class ProductDto
     {
         public Guid ProductId { get; set; }

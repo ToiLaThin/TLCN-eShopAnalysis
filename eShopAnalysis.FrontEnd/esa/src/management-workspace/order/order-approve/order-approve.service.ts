@@ -74,7 +74,7 @@ export class OrderApproveService {
   public confirmApprovingOrders() {
     let ordersApproved = this.ordersApprovedGetter();
     if (ordersApproved.length > 0) {
-      this.http.post(`${env.BASEURL}/api/Aggregate/WriteAggregator/ApproveOrdersAndModifyStocks`, ordersApproved).subscribe(res => {
+      this.http.post(`${env.BASEURL}/api/Aggregate/WriteAggregator/ApproveOrdersAndModifyStocks`, ordersApproved).subscribe((_) => {
         this.reset();
         alert("Order approved successfully");
       });

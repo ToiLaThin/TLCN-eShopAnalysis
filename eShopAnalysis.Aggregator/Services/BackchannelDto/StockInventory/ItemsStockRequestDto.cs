@@ -7,6 +7,9 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelDto
     /// khi muốn lấy số lượng của các product models trong một order
     /// hay khi muốn lấy số lượng của các product model trong một provider requirement để aggregate thành một DTO khác khi lên UI
     /// .Lưu ý, nếu refactor name thì cần lưu ý là model này được duplicate ở service StockInventory, nên cũng nhớ thay đổi tên của nó ở StockInventory
+    /// 
+    /// request to aggregate to StockInventory
+    /// in agregator read GetOrderToApproveWithStock
     /// </summary>
     public record ItemsStockRequestDto
     {

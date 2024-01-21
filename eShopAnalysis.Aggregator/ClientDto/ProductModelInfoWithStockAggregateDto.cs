@@ -1,10 +1,11 @@
-﻿namespace eShopAnalysis.Aggregator.Models.Dto
+﻿namespace eShopAnalysis.Aggregator.ClientDto
 {
     /// <summary>
     /// Aggregate of ProductModelInfoResponseDto & ItemStockResponseDto & unitRequestPrice & ProductModelInfoRequestMetaDto(have unitRequestPrice) by ProductModelId
-    /// To return to UI at provider detail: list all product model of that provider provide
+    /// response to Client
+    /// at provider detail: list all product model of that provider provide
     /// </summary>
-    public class ProductModelInfoWithStockAggregate
+    public class ProductModelInfoWithStockAggregateDto
     {
         public Guid ProductId { get; set; }
 

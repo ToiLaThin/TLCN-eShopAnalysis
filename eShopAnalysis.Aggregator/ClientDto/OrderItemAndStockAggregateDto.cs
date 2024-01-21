@@ -1,16 +1,9 @@
-﻿
-using eShopAnalysis.Aggregator.Services.BackchannelDto;
+﻿using eShopAnalysis.Aggregator.Services.BackchannelDto;
 
-namespace eShopAnalysis.Aggregator.Models.Dto
-{
-    public class ItemStockDto
+namespace eShopAnalysis.Aggregator.ClientDto
+{ 
+    public class OrderItemsDto
     {
-        public Guid ProductModelId { get; set; }
-
-        public int CurrentQuantity { get; set; }
-    }
-
-    public class OrderItemsDto {
         public Guid OrderId { get; set; }
 
         public OrderStatus OrderStatus { get; set; }
@@ -22,7 +15,10 @@ namespace eShopAnalysis.Aggregator.Models.Dto
         public double TotalPriceFinal { get; set; }
     }
 
-    //the data sent to the frontend
+    /// <summary>
+    /// response from Aggregate to frontend
+    /// contain info about order item & its stock to approve order
+    /// </summary>
     public class OrderItemAndStockAggregateDto
     {
         public IEnumerable<OrderItemsDto> OrderItems { get; set; }

@@ -53,7 +53,7 @@ export class ProductHttpService implements OnInit {
   }
 
   public AddProduct(product: IProduct) {
-    this.addProduct(product).subscribe((product) => {
+    this.addProduct(product).subscribe((_) => {
       alert("Add product successfully");
       this.GetProducts();
     });

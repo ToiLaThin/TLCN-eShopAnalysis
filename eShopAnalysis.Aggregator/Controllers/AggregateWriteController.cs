@@ -1,12 +1,9 @@
 ﻿
-using eShopAnalysis.Aggregator.Dto;
-using eShopAnalysis.Aggregator.Models.Dto;
+using eShopAnalysis.Aggregator.ClientDto;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
-using eShopAnalysis.Aggregator.Services.BackChannelDto;
 using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using eShopAnalysis.Aggregator.Utilities.Behaviors;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
 
 namespace eShopAnalysis.ApiGateway.Controllers
 {
@@ -41,9 +38,9 @@ namespace eShopAnalysis.ApiGateway.Controllers
 
         [HttpPost("ApproveOrdersAndModifyStocks")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(IEnumerable<ItemStockResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<IEnumerable<ItemStockResponseDto>>> ApproveOrdersAndModifyStocks([FromBody] IEnumerable<OrderApprovedAggregate> orderApprovedAggregates)
+        public async Task<ActionResult<string>> ApproveOrdersAndModifyStocks([FromBody] IEnumerable<Aggregator.ClientDto.OrderApprovedAggregateDto> orderApprovedAggregates)
         {
             //convert this to sequential update stock first then update orders status , if failed then put the update
             //order status to event bus, this is more reliable, since put is idempotency
@@ -56,7 +53,7 @@ namespace eShopAnalysis.ApiGateway.Controllers
                                                                  .GroupBy(req => req.ProductModelId)
                                                                  .Select(grp =>
                                                                  {
-                                                                     return new StockDecreaseRequestDto
+                                                                     return new Aggregator.Services.BackchannelDto.StockDecreaseRequestDto
                                                                      {
                                                                          ProductModelId = grp.Key,
                                                                          QuantityToDecrease = grp.Sum(grp => grp.QuantityToDecrease),
@@ -70,7 +67,7 @@ namespace eShopAnalysis.ApiGateway.Controllers
                 var resultBulkApprove = await _backChannelCartOrderService.BulkApproveOrder(orderIdsToStockConfirmed);
                 if (resultBulkApprove.IsSuccess)
                 {
-                    return Ok(resultStockUpdate.Data);
+                    return Ok("ApproveOrdersAndModifyStocks succeeded");
                 }
                 //else use eventual consistency, rsult.isFailed mean orderstatus not set
             }
@@ -82,7 +79,7 @@ namespace eShopAnalysis.ApiGateway.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult> CheckCouponAndAddCart([FromBody] CartConfirmRequestDto cartConfirmRequestDto)
+        public async Task<ActionResult> CheckCouponAndAddCart([FromBody] Aggregator.ClientDto.CartConfirmRequestDto cartConfirmRequestDto)
         {
             CartConfirmRequestToCartApiDto requestToCartApiDto = new CartConfirmRequestToCartApiDto
             {
@@ -131,9 +128,23 @@ namespace eShopAnalysis.ApiGateway.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult> AddSaleItemAndUpdateProductToOnSale([FromBody] SaleItem saleItem)
+        public async Task<ActionResult> AddSaleItemAndUpdateProductToOnSale([FromBody] Aggregator.ClientDto.SaleItemDto saleItemDto)
         {
-            var addSaleItemBackChannelResult = await _backChannelCouponSaleItemService.AddSaleItem(saleItem);
+            //could use automapper here, this part show that model with same name is different
+            Aggregator.Services.BackchannelDto.SaleItemDto backChannelSaleItemDto = new()
+            {
+                SaleItemId = saleItemDto.SaleItemId,
+                ProductId = saleItemDto.ProductId,
+                ProductModelId = saleItemDto.ProductModelId,
+                BusinessKey = saleItemDto.BusinessKey,
+                DateAdded = saleItemDto.DateAdded,
+                DateEnded = saleItemDto.DateEnded,
+                SaleItemStatus = saleItemDto.SaleItemStatus,
+                DiscountType = saleItemDto.DiscountType,
+                DiscountValue = saleItemDto.DiscountValue,
+                RewardPointRequire = saleItemDto.RewardPointRequire,
+            };
+            var addSaleItemBackChannelResult = await _backChannelCouponSaleItemService.AddSaleItem(backChannelSaleItemDto);
             if (addSaleItemBackChannelResult.IsFailed || addSaleItemBackChannelResult.IsException)
             {
                 return NotFound(addSaleItemBackChannelResult.Error);

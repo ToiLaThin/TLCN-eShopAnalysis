@@ -6,9 +6,11 @@
         ByValue = 1 //or currency
     }
 
-    //sent from aggregator write controller to change reward point balance for apply coupon
-    //to customer loyalty program api
-    //in reward transaction controller
+    /// <summary>
+    /// request from aggregator write to CustomerLoyaltyProgramAPI (at reward transaction controller)
+    /// in CheckCouponAndAddCart
+    /// to change reward point balance for apply coupon 
+    /// </summary>
     public class RewardTransactionForApplyCouponAddRequestDto
     {
         public Guid UserId { get; set; }

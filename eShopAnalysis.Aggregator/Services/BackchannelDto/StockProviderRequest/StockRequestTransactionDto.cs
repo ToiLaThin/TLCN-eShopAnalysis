@@ -1,22 +1,10 @@
 ﻿namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
-    public class StockItemRequestDto
-    {
-        public Guid ProductId { get; set; }
-
-        public Guid ProductModelId { get; set; }
-
-        public Guid BusinessKey { get; set; }
-
-        public int ItemQuantity { get; set; }
-
-        public double UnitRequestPrice { get; set; } //different from unitPrce of product
-
-        public double TotalItemRequestPrice { get; set; }
-    }
-
     /// <summary>
-    /// sent to StockProviderRequest to add new stock request transaction through backchannel
+    /// request Client to Aggregate write
+    /// in AddStockReqTransAndIncreaseStockItems to add stock request trans & increase stock item
+    /// request & response Aggregate writeto StockProviderRequest Backchannel to add stock request transaction
+    /// to add new stock request transaction through backchannel
     /// </summary>
     public class StockRequestTransactionDto
     {
@@ -33,5 +21,20 @@
         public DateTime DateCreated { get; set; }
 
         public List<StockItemRequestDto> StockItemRequests { get; set; }
+
+        public class StockItemRequestDto
+        {
+            public Guid ProductId { get; set; }
+
+            public Guid ProductModelId { get; set; }
+
+            public Guid BusinessKey { get; set; }
+
+            public int ItemQuantity { get; set; }
+
+            public double UnitRequestPrice { get; set; } //different from unitPrce of product
+
+            public double TotalItemRequestPrice { get; set; }
+        }
     }
 }

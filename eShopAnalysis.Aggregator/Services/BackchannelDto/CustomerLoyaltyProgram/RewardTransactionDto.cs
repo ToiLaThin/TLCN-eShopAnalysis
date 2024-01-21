@@ -18,7 +18,9 @@
         public double? DiscountValue { get; set; }
     }
 
-    //response from customer loyalty program reward transaction controller, copy from customer loyalty program 's dto
+    /// <summary>
+    /// response from customer loyalty program api (at reward transaction controller)
+    /// </summary>
     public class RewardTransactionDto
     {
         public Guid RewardTransactionId { get; set; }
