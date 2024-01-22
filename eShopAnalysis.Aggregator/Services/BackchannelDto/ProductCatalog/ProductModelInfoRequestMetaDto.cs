@@ -1,7 +1,9 @@
 ﻿namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
     /// <summary>
-    /// sent from aggregate read to ProductCatalog to obtain more info about product model like image, product name, price, isOnSale, ...
+    /// request from aggregate read to ProductCatalog 
+    /// to obtain more info about product model like image, product name, price, isOnSale, ...
+    /// in Aggregate read GetProductModelInfosWithStockOfProvider
     /// </summary>
     public class ProductModelInfoRequestMetaDto
     {

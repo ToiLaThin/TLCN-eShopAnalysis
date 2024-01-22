@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { IOrderDraftViewModel } from 'src/shared/models/ui-models/order.interface';
+import { IOrderDraftViewModel } from 'src/shared/models/order.interface';
 import { OrderHttpService } from 'src/shared/services/http/order-http.service';
 
 @Component({

@@ -20,7 +20,10 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelDto
         Completed = 6
     }
 
-    //response from cartOrder for aggregate into orderItems with stock
+    /// <summary>
+    /// is used by both ClientDto & BackchannelDto
+    /// response from cartOrder for aggregate into orderItems with stock in ClientDto.OrderItemAndStockAggregateDto.OrderItems
+    /// </summary>
     public class OrderItemQuantityDto
     {
         public Guid ProductModelId { get; set; }
@@ -29,6 +32,10 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 
     //json prop is required for the model to be serialized or deserialized correctly
     //if not , there will be error
+    /// <summary>
+    /// this is response from CartOrder Backchannel to get to approved order
+    /// used in GetOrderToApprovedWithStock to construct OrderItemDto in aggregate model to response to Client
+    /// </summary>
     public class OrderItemsResponseDto
     {
         [JsonProperty]
@@ -48,18 +55,18 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 
         [JsonConstructor]
         public OrderItemsResponseDto(
-            Guid orderId, 
-            OrderStatus orderStatus, 
-            PaymentMethod paymentMethod, 
-            List<OrderItemQuantityDto> orderItemsQty, 
+            Guid orderId,
+            OrderStatus orderStatus,
+            PaymentMethod paymentMethod,
+            List<OrderItemQuantityDto> orderItemsQty,
             double totalPriceFinal)
         {
-            this.OrderId = orderId;
-            this.PaymentMethod = paymentMethod;
-            this.OrderStatus = orderStatus;
-            this.TotalPriceFinal = totalPriceFinal;
-            this.OrderItemsQty = orderItemsQty;
+            OrderId = orderId;
+            PaymentMethod = paymentMethod;
+            OrderStatus = orderStatus;
+            TotalPriceFinal = totalPriceFinal;
+            OrderItemsQty = orderItemsQty;
         }
-        
+
     }
 }

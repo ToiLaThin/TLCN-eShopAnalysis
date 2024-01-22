@@ -1,4 +1,4 @@
-﻿using eShopAnalysis.Aggregator.Models.Dto;
+﻿using eShopAnalysis.Aggregator.ClientDto;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
 using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using eShopAnalysis.Aggregator.Utilities.Behaviors;
@@ -80,9 +80,9 @@ namespace eShopAnalysis.Aggregator.Controllers
         //post but to get only
         [HttpPost("GetProductModelInfosWithStockOfProvider")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(IEnumerable<ProductModelInfoWithStockAggregate>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ProductModelInfoWithStockAggregateDto>), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<IEnumerable<ProductModelInfoWithStockAggregate>>> GetProductModelInfosWithStockOfProvider([FromBody] IEnumerable<ProductModelInfoRequestMetaDto> productModelInfoRequestMetas)
+        public async Task<ActionResult<IEnumerable<ProductModelInfoWithStockAggregateDto>>> GetProductModelInfosWithStockOfProvider([FromBody] IEnumerable<ProductModelInfoRequestMetaDto> productModelInfoRequestMetas)
         {
             IEnumerable<Guid> allProviderProductModelIds = productModelInfoRequestMetas.Select(pMIRM => pMIRM.ProductModelId).ToList();
 
@@ -99,11 +99,11 @@ namespace eShopAnalysis.Aggregator.Controllers
             IEnumerable<ProductModelInfoResponseDto> productModelInfoResponses = productModelInfosResult.Data;
 
             //must use query syntax to join three IEnumerable
-            IEnumerable<ProductModelInfoWithStockAggregate> productModelInfoWithStockAggregates = (
+            IEnumerable<ProductModelInfoWithStockAggregateDto> productModelInfoWithStockAggregates = (
                 from pMI in productModelInfoResponses
                 join iS in itemStockResponses on pMI.ProductModelId equals iS.ProductModelId
                 join pMIReqMeta in productModelInfoRequestMetas on pMI.ProductModelId equals pMIReqMeta.ProductModelId
-                select new ProductModelInfoWithStockAggregate()
+                select new ProductModelInfoWithStockAggregateDto()
                 {
                     ProductModelId = pMI.ProductModelId,
                     ProductId = pMI.ProductId,

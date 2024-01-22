@@ -60,7 +60,7 @@ export class CartListComponent implements OnInit {
 
   confirmCart() {
     let cartRequest : ICartConfirmRequest = {
-      cartItems: this.cartService.itemsInCartSubject.getValue(),
+      cartItems: this.cartService.itemsInCart,
       userId: this.authService.userId,
       couponCode: this.cartService.couponCodeApplied.getValue() //undefined if no coupon applied and  will not have couponCode field in CartConfirmRequestDTO in backend
     }
@@ -71,8 +71,7 @@ export class CartListComponent implements OnInit {
         if (this.cartService.couponCodeApplied.getValue() !== undefined) {
           this.removeCoupon();
         }
-        this.cartService.itemsInCartSubject.next([]);
-        localStorage.removeItem(this.cartService.itemsInCartKey);
+        this.cartService.ClearCart();
         this.rewardService.GetCurrentUserRewardPoint();
         console.log('cart confirmed');
         
@@ -96,12 +95,11 @@ export class CartListComponent implements OnInit {
     let subscription = this.allActiveCouponsNotUsedByUser$.subscribe(
       (coupons) => { 
         let coupon = coupons.find(coupon => coupon.couponCode === inputtedCouponCode);
-        if (coupon !== undefined) {
-          (this.checkCartPriceValidForCoupon(coupon) === true && this.checkRewardPointValidForCoupon(coupon) === true) ? 
-            this.notifyServiceCouponApplied(coupon) : console.log("Cart price not valid for coupon");
-        } else {
+        if (coupon === undefined) {
           console.log("No coupon valid");
-        }
+        } 
+        (this.checkCartPriceValidForCoupon(coupon!) === true && this.checkRewardPointValidForCoupon(coupon!) === true) ? 
+          this.notifyServiceCouponApplied(coupon!) : console.log("Cart price not valid for coupon");
       }
     );
     subscription.unsubscribe(); //unsubscribe after first emit

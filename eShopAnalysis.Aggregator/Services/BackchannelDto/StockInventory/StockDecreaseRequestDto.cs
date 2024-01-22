@@ -1,8 +1,12 @@
 ﻿using Newtonsoft.Json;
 
-namespace eShopAnalysis.Aggregator.Models.Dto
+namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
-    //can also used for backchannel too, send to StockInventory back channel to decrease stock quantity of product models
+    /// <summary>
+    /// request from aggregate write to StockInventory 
+    /// in aggregate write ApproveOrdersAndModifyStocks
+    /// to decrease stock item quantity when approve order
+    /// </summary>
     public class StockDecreaseRequestDto
     {
         [JsonProperty]
@@ -18,12 +22,6 @@ namespace eShopAnalysis.Aggregator.Models.Dto
             QuantityToDecrease = quantityToDecrease;
         }
 
-        public StockDecreaseRequestDto() {}
-    }
-    public class OrderApprovedAggregate
-    {
-        public Guid OrderId { get; set; }
-
-        public IEnumerable<StockDecreaseRequestDto> OrderItemsStockToChange { get; set; }
+        public StockDecreaseRequestDto() { }
     }
 }

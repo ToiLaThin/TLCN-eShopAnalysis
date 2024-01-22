@@ -63,6 +63,9 @@ export class BookmarkHttpService implements OnInit{
     return this.http.delete<IBookmarkProduct>(`${env.BASEURL}/api/ProductInteraction/BookmarkAPI/UnBookmarkProductFromUser`, { headers: headers });
   }
 
+
+  //https://angular.io/guide/http-request-data-from-server
+  //observable from http does not need to be unsubscribed
   public GetBookmarkProductMappings() {
     this.getBookmarkProductMappings().subscribe((bookmarkProductMappings) => {
       console.log("From GetBookmarkProductMappings of bookmark-product-http service: getted", bookmarkProductMappings);

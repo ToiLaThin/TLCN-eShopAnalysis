@@ -4,16 +4,27 @@
         <div class="hnavbar-options">
             <div class="container">
                 <esa-h-navbar-options></esa-h-navbar-options>
-                <button class="hnavbar-tabs-toggler" (click)="toggleNav()"><i class="fas fa-bars"></i></button>
+                <button class="hnavbar-tabs-toggler" 
+                        (click)="toggleNav()">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
         </div>
     </div>
 
     <ul class="hnavbar-tabs">
-        <li><a>HOME</a></li>
-        <li><a [routerLink]="[{outlets: {primary: 'management'}}]">MANAGEMENT</a></li>
-        <li><a [routerLink]="[{outlets: {primary: 'shopping'}}]">SHOPPING</a></li>
-        <li><a>CONTACT</a></li>
+        <li>
+            <a>HOME</a>
+        </li>
+        <li>
+            <a [routerLink]="[{outlets: {primary: 'management'}}]">MANAGEMENT</a>
+        </li>
+        <li>
+            <a [routerLink]="[{outlets: {primary: 'shopping'}}]">SHOPPING</a>
+        </li>
+        <li>
+            <a>CONTACT</a>
+        </li>
     </ul>
     
     <div class="container">

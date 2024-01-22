@@ -1,5 +1,4 @@
-﻿using eShopAnalysis.Aggregator.Dto;
-using eShopAnalysis.Aggregator.Result;
+﻿using eShopAnalysis.Aggregator.Result;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
 
 namespace eShopAnalysis.Aggregator.Services.BackchannelServices
@@ -8,6 +7,6 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
     {
         Task<BackChannelResponseDto<CouponDto>> RetrieveCouponWithCode(string couponCode);
 
-        Task<BackChannelResponseDto<SaleItemDto>> AddSaleItem(SaleItem saleItem);
+        Task<BackChannelResponseDto<SaleItemDto>> AddSaleItem(Aggregator.Services.BackchannelDto.SaleItemDto saleItem);
     }
 }

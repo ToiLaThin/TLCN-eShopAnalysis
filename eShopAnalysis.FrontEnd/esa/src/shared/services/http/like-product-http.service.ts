@@ -83,14 +83,14 @@ export class LikeProductHttpService implements OnInit{
     return this.http.get<ILikeProduct[]>(`${env.BASEURL}/api/ProductInteraction/LikeAPI/GetUserProductLikedMappingsOfUser`, { headers: headers });
   }
 
-  public GetLikeProductMappings(): Subscription {
-    let subscription = this.getLikeProductMappings().subscribe((likedProducts) => {
+  //https://angular.io/guide/http-request-data-from-server
+  //observable from http does not need to be unsubscribed
+  public GetLikeProductMappings() {
+    this.getLikeProductMappings().subscribe((likedProducts) => {
       this.userLikeProductMappingsSub.next(likedProducts);
     })    
-    return subscription;
-    //.unsubscribe(); this line will cause the handler inside the subscribe not executed cause error so we return subscription
-    // but do not unsubscribe in the component too, because if unsubscribe in the component, the handler inside the subscribe will not be executed when the subscription is still neccessary
-    // especially subscription inside service like this
+    //.unsubscribe(); this line will cause the handler inside the subscribe not executed cause error
+    // but do not unsubscribe in the component too, because if unsubscribe in the component, the handler inside the subscribe will not be executed when the subscription is still neccessary  
   }
 
   //used when user logged out => no longer able to indentify user by userId

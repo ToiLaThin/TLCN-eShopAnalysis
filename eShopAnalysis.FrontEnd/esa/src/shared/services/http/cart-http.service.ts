@@ -9,13 +9,14 @@ import { environment as env } from 'src/environments/environment';
 })
 export class CartHttpService {
 
-  itemsInCartSubject!: BehaviorSubject<ICartItem[]>;
+  private itemsInCartSubject!: BehaviorSubject<ICartItem[]>;
+  private itemsInCartKey = 'itemsInCart';
   itemsInCart$!: Observable<ICartItem[]>;
+  public get itemsInCart() : ICartItem[] { return this.itemsInCartSubject.getValue(); }
   itemsInCartCount$!: Observable<number>;
   discountAmountByCoupon$!: BehaviorSubject<number>;  
   couponApplied$!: BehaviorSubject<boolean>;
   couponCodeApplied!: BehaviorSubject<string | undefined>;
-  itemsInCartKey = 'itemsInCart';
   
   constructor(private http: HttpClient) { 
     this.itemsInCartSubject = new BehaviorSubject<ICartItem[]>(JSON.parse(localStorage.getItem(this.itemsInCartKey) || '[]'));
@@ -30,14 +31,13 @@ export class CartHttpService {
   public upsertItemToCart(cartItem: ICartItem) {
     let itemsInCart = this.itemsInCartSubject.getValue();
     let item = itemsInCart.find(item => item.productModelId === cartItem.productModelId && item.productId === cartItem.productId);
-    if (item) { 
-      //if product price or sale is update, we have to update both products and cart, will use signalR later
-      item.quantity = item.quantity + cartItem.quantity;
-      item.finalPrice = item.finalPrice + cartItem.finalPrice;
-      item.finalAfterSalePrice = item.finalAfterSalePrice && cartItem.finalAfterSalePrice ? item.finalAfterSalePrice + cartItem.finalAfterSalePrice : undefined;
-    } else {
+    if (item === undefined) { 
       itemsInCart.push(cartItem);
-    }
+    } 
+    //if product price or sale is update, we have to update both products and cart, will use signalR later
+    item!.quantity = item!.quantity + cartItem.quantity;
+    item!.finalPrice = item!.finalPrice + cartItem.finalPrice;
+    item!.finalAfterSalePrice = item!.finalAfterSalePrice && cartItem.finalAfterSalePrice ? item!.finalAfterSalePrice + cartItem.finalAfterSalePrice : undefined;
     this.itemsInCartSubject.next(itemsInCart);
     localStorage.setItem(this.itemsInCartKey, JSON.stringify(itemsInCart));
   }
@@ -51,24 +51,28 @@ export class CartHttpService {
     newPriceOnSaleModel: number) {
       let itemsInCart = this.itemsInCartSubject.getValue();
       let itemToFind = itemsInCart.find(item => item.productModelId === oldProductModelId && item.productId === oldProductId);
-      if (itemToFind) {
-        itemToFind.productId = newProductId;
-        itemToFind.productModelId = newProductModelId;
-        itemToFind.unitPrice = newPrice;
-        itemToFind.finalPrice = itemToFind.quantity * newPrice;
-        itemToFind.unitAfterSalePrice = itemToFind.isOnSale === false ? undefined : newPriceOnSaleModel;
-        itemToFind.finalAfterSalePrice = itemToFind.isOnSale === false ? undefined : 
-                             newPriceOnSaleModel === undefined ? undefined : 
-                             newPriceOnSaleModel * itemToFind.quantity; 
-        this.itemsInCartSubject.next(itemsInCart);
-        localStorage.setItem(this.itemsInCartKey, JSON.stringify(itemsInCart));
-      } else {
+      if (itemToFind === undefined) { 
         alert('product model not found in cart');
       }
+      itemToFind!.productId = newProductId;
+      itemToFind!.productModelId = newProductModelId;
+      itemToFind!.unitPrice = newPrice;
+      itemToFind!.finalPrice = itemToFind!.quantity * newPrice;
+      itemToFind!.unitAfterSalePrice = itemToFind!.isOnSale === false ? undefined : newPriceOnSaleModel;
+      itemToFind!.finalAfterSalePrice = itemToFind!.isOnSale === false ? undefined : 
+                            newPriceOnSaleModel === undefined ? undefined : 
+                            newPriceOnSaleModel * itemToFind!.quantity; 
+      this.itemsInCartSubject.next(itemsInCart);
+      localStorage.setItem(this.itemsInCartKey, JSON.stringify(itemsInCart));
   }
 
   public confirmCart(cartConfirmRequest: ICartConfirmRequest) : Observable<any>{
     return this.http.post<ICartConfirmRequest>(`${env.BASEURL}/api/Aggregate/WriteAggregator/CheckCouponAndAddCart`, cartConfirmRequest);
+  }
+
+  public ClearCart() {
+    this.itemsInCartSubject.next([]);
+    localStorage.removeItem(this.itemsInCartKey);
   }
 
   public changeCartItemQuantity(indexInCart: number, newQuantity: number) {

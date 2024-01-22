@@ -1,7 +1,8 @@
 ﻿namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
     /// <summary>
-    /// Response from Product Catalog with additional info from ProductModelInfoRequestMetaDto
+    /// Response from Product Catalog with additional info from ProductModelInfoRequestMetaDto 
+    /// in GetProductModelInfosWithStockOfProvider aggregate read
     /// </summary>
     public class ProductModelInfoResponseDto
     {

@@ -6,7 +6,9 @@
         Ended
     }
 
-    //response from CouponSaleItem to get CouponDto    
+    /// <summary>
+    /// response from CouponSaleItem to get CouponDto in CheckCouponAndAddCart before add cart
+    /// </summary>
     public class CouponDto
     {
         public Guid CouponId { get; set; }

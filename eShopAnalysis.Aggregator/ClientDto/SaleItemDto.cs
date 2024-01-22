@@ -1,9 +1,12 @@
 ﻿using eShopAnalysis.Aggregator.Services.BackchannelDto;
 
-namespace eShopAnalysis.Aggregator.Dto
+namespace eShopAnalysis.Aggregator.ClientDto
 {
-    //request from frontend
-    public class SaleItem
+    /// <summary>
+    /// request from Client
+    /// is duplicated in ClientDto & BackchannelDto because it is used also iin backchannel communication
+    /// </summary>
+    public class SaleItemDto
     {
         //because if and item model is  on sales multiple time, id, modelId, and business key might not be enough
         public Guid SaleItemId { get; set; }

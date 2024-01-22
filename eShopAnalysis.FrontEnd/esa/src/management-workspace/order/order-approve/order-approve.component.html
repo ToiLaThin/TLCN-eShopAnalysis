@@ -28,13 +28,17 @@
         <td>
             <button mat-flat-button 
                     color="primary"
-                    (click)="approveOrder(o.orderId)"
-                    >
+                    (click)="approveOrder(o.orderId)">
                     Approve
             </button>
             <button mat-flat-button color="accent">View Detail</button>
         </td>
+    </tr>
 </table>
 
-<button mat-flat-button color="primary" (click)="confirm()">Confirm</button>
-<button mat-flat-button color="accent" (click)="reset()">Reset</button>
+<button mat-flat-button color="primary" (click)="confirm()">
+    Confirm
+</button>
+<button mat-flat-button color="accent" (click)="reset()">
+    Reset
+</button>

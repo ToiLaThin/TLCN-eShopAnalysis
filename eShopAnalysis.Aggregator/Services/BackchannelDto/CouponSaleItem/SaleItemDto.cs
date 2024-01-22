@@ -1,8 +1,10 @@
-﻿using eShopAnalysis.Aggregator.Services.BackchannelDto;
-
-namespace eShopAnalysis.Aggregator.Dto
+﻿namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
-    //response from saleItemCoupon after add SaleItem
+    /// <summary>
+    /// request to saleItemCoupon to add SaleItem 
+    /// response (also is response) from saleItemCoupon after add SaleItem 
+    /// in aggregate write AddSaleItemAndUpdateProductToOnSale
+    /// </summary>
     public class SaleItemDto
     {
         public Guid SaleItemId { get; set; }
