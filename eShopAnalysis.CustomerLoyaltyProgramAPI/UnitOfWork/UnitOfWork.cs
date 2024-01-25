@@ -3,7 +3,7 @@ using eShopAnalysis.CustomerLoyaltyProgramAPI.Repository;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
 
-namespace eShopAnalysis.CouponSaleItemAPI.UnitOfWork
+namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {

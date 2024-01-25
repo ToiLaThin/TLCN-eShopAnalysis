@@ -1,7 +1,7 @@
 ﻿using eShopAnalysis.CustomerLoyaltyProgramAPI.Repository;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace eShopAnalysis.CouponSaleItemAPI.UnitOfWork
+namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitOfWork
 {
     public interface IUnitOfWork: IDisposable
     {

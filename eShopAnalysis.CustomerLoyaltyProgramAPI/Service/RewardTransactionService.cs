@@ -1,6 +1,6 @@
-﻿using eShopAnalysis.CouponSaleItemAPI.UnitOfWork;
-using eShopAnalysis.CustomerLoyaltyProgramAPI.Dto;
+﻿using eShopAnalysis.CustomerLoyaltyProgramAPI.Dto;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Models;
+using eShopAnalysis.CustomerLoyaltyProgramAPI.UnitOfWork;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Utilities.Factory;
 using Microsoft.EntityFrameworkCore;
 

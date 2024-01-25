@@ -17,6 +17,10 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.Utilities.Factory
                 throw new ArgumentException("invalid balance , it is less than zero ");
             }
 
+            if (orderPrice <= 0) {
+                throw new ArgumentException("invalid order price , it is less than or equal zero ");
+            }
+
             return new RewardTransaction() {
                 RewardTransactionId = Guid.NewGuid(),
                 UserId = userId,
@@ -46,6 +50,10 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.Utilities.Factory
 
             if (balanceBefore + pointTransition < 0) {
                 throw new ArgumentException("the transaction is not valid, it cause balance to be less than zero ");
+            }
+
+            if ((int)couponDiscountType != (int)CouponDiscountType.ByValue && (int)couponDiscountType != (int)CouponDiscountType.ByPercent) {
+                throw new ArgumentException("the transaction is not valid, discount type is not valid");
             }
 
             return new RewardTransaction()
