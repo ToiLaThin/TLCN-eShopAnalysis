@@ -1,8 +1,8 @@
 using AutoMapper;
-using eShopAnalysis.CouponSaleItemAPI.UnitOfWork;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Data;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Repository;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Service;
+using eShopAnalysis.CustomerLoyaltyProgramAPI.UnitOfWork;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Utilities.Behaviors;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Utilities.Factory;
 using eShopAnalysis.EventBus.Abstraction;
