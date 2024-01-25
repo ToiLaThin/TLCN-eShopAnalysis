@@ -8,23 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.Repository
+namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.UnitOfWork
 {
-    /// <summary>
-    /// please seed db in the derived class, because each test in the test class run , the base constructor & dispose will be call. Just put break point, run test in debug mode to see, every test run, these init & dispose will call over and over
-    /// </summary>
-    public class BaseUnitTestRepository: IDisposable
+    public class BaseUnitTestUnitOfWork: IDisposable
     {
         private string connectionString = "Host=localhost;Username=postgres;Password=123;Database=CustomerLoyaltyProgramUnitTestDb";
-        protected CustomerLoyaltyProgramAPI.Data.PostgresDbContext PostgresDbContext { get; set; }
+        protected PostgresDbContext PostgresDbContext { get; set; }
 
         protected IEnumerable<RewardTransaction> DummyRewardTranData { get; set; }
 
         protected IEnumerable<UserRewardPoint> DummyUserRewardPointData { get; set; }
-
-
-        public BaseUnitTestRepository()
-        {
+        public BaseUnitTestUnitOfWork() {
             DbContextOptions<PostgresDbContext> dbContextOption = new DbContextOptionsBuilder<PostgresDbContext>().UseNpgsql(connectionString: this.connectionString).Options;
             PostgresDbContext = new PostgresDbContext(dbContextOption);
             DummyRewardTranData = DummyDataProvider.GetRewardTransactionDummyData();

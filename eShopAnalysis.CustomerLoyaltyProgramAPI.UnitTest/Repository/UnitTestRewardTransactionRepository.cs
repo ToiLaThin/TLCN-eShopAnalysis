@@ -6,7 +6,7 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.Repository
 {
     public class UnitTestRewardTransactionRepository: BaseUnitTestRepository
     {
-        protected RewardTransactionRepository RewardTransactionRepository { get; set; }
+        protected CustomerLoyaltyProgramAPI.Repository.RewardTransactionRepository RewardTransactionRepository { get; set; }
         public UnitTestRewardTransactionRepository() {
             this.SeedDb();
             RewardTransactionRepository = new RewardTransactionRepository(PostgresDbContext);

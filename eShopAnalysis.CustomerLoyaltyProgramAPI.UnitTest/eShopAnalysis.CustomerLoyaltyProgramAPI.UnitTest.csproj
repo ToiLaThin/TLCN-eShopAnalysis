@@ -26,11 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Service\" />
-    <Folder Include="UnitOfWork\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\eShopAnalysis.CustomerLoyaltyProgramAPI\eShopAnalysis.CustomerLoyaltyProgramAPI.csproj" />
   </ItemGroup>
 
