@@ -1,5 +1,6 @@
 ﻿using eShopAnalysis.CustomerLoyaltyProgramAPI.Models;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.UnitOfWork;
+using eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.Repository;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.UnitOfWork
     public class UnitTestUnitOfWork: BaseUnitTestUnitOfWork
     {
         protected CustomerLoyaltyProgramAPI.UnitOfWork.UnitOfWork UnitOfWork { get; set; }
-        public UnitTestUnitOfWork() {
+        public UnitTestUnitOfWork(FixtureUnitTestUnitOfWork fixtureUnitTestUnitOfWork): base(fixtureUnitTestUnitOfWork) {
             this.SeedDb();
             UnitOfWork = new CustomerLoyaltyProgramAPI.UnitOfWork.UnitOfWork(PostgresDbContext);
         }
@@ -20,7 +21,8 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.UnitOfWork
         public override void SeedDb()
         {
             base.SeedDb();
-            if (PostgresDbContext.Database.EnsureCreated() == false)
+            bool isDbJustCreated = PostgresDbContext.Database.EnsureCreated();
+            if (PostgresDbContext.RewardTransactions.Any() == true)
             {
                 return;
             }
