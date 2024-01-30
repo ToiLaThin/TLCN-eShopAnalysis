@@ -80,7 +80,7 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.Utils
             };
             yield return new UserRewardPoint
             {
-                UserId = Guid.Parse("e31600b9-2b3e-45f6-ac6f-349a9650fe02"),
+                UserId = Guid.Parse("e31600b9-2b3e-45f6-ac6f-349a9650f1e4"),
                 RewardPoint = 40
             };
         }

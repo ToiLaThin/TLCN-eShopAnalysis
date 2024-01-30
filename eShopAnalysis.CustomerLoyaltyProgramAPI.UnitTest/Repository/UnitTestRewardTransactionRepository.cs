@@ -118,8 +118,7 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.Repository
             addedRewardTrans.Should().BeAssignableTo<RewardTransaction>();
             addedRewardTrans.Should().BeEquivalentTo(actualRewardTrans);
             addedRewardTrans.Should().BeEquivalentTo(toAddRewardTrans);
-
-            //We must delete the added since this is async & no longer dispose db after each test (not ensured delete but remove range)
+            
             RewardTransactionRepository.Delete(actualRewardTrans);
 
         }
@@ -158,7 +157,7 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.Repository
             addedRewardTrans.Should().BeEquivalentTo(actualRewardTrans);
             addedRewardTrans.Should().BeEquivalentTo(toAddRewardTrans);
 
-            //
+            //We must delete the added since this is async & no longer dispose db after each test (not ensured delete but remove range)
             RewardTransactionRepository.Delete(actualRewardTrans);
         }
 
