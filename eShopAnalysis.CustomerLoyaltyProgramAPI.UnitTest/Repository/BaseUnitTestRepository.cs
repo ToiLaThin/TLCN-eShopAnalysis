@@ -45,6 +45,7 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.Repository
         public void Dispose()
         {
             PostgresDbContext.RewardTransactions.RemoveRange(PostgresDbContext.RewardTransactions.ToList());
+            PostgresDbContext.UserRewardPoints.RemoveRange(PostgresDbContext.UserRewardPoints.ToList());
             PostgresDbContext.SaveChanges();
         }
     }
