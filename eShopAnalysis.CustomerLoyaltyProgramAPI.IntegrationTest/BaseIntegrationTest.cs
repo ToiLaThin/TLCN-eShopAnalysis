@@ -12,7 +12,7 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.IntegrationTest
 {
     public class BaseIntegrationTest : IClassFixture<CustomerLoyaltyProgramWebAppFactory>, IDisposable
     {
-        private readonly IServiceScope _scope;
+        protected readonly IServiceScope _scope;
         protected PostgresDbContext DbContext { get; private set; }
 
         protected IEnumerable<RewardTransaction> DummyRewardTranData { get; set; }
@@ -38,6 +38,6 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.IntegrationTest
         {
             _scope?.Dispose();
             DbContext.Dispose();
-        }
+        }        
     }
 }
