@@ -1,6 +1,6 @@
 ﻿using eShopAnalysis.CustomerLoyaltyProgramAPI.Models;
 
-namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.Utils
+namespace eShopAnalysis.CustomerLoyaltyProgramAPI.IntegrationTest.Utils
 {
     internal class DummyDataProvider
     {
@@ -82,6 +82,11 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.Utils
             {
                 UserId = Guid.Parse("e31600b9-2b3e-45f6-ac6f-349a9650f1e4"),
                 RewardPoint = 40
+            };
+            yield return new UserRewardPoint
+            {
+                UserId = Guid.Parse("5928ff97-e8f8-4cf4-bc9d-34cbf825c054"),
+                RewardPoint = 300
             };
         }
     }
