@@ -1,6 +1,6 @@
 ﻿using eShopAnalysis.CustomerLoyaltyProgramAPI.Data;
+using eShopAnalysis.CustomerLoyaltyProgramAPI.IntegrationTest.Utils;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Models;
-using eShopAnalysis.CustomerLoyaltyProgramAPI.UnitTest.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
