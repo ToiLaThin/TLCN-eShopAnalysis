@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Dto;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Dto.BackchannelDto;
+using eShopAnalysis.CustomerLoyaltyProgramAPI.IntegrationTest.Utils;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
