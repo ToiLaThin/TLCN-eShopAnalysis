@@ -48,12 +48,14 @@ namespace eShopAnalysis.IdentityServer.Configuration
                 
                 RequireConsent = false,
                 RedirectUris = { "http://localhost:4200/signin-oidc" }, //redirect auth url,
+                //RedirectUris = { "http://localhost:4200/auth/signin-oidc" }, //redirect auth url for migrate client,
                 AlwaysIncludeUserClaimsInIdToken = true, //require to add claims to id_token
 
                 AllowAccessTokensViaBrowser = true, //must have to return access token
                 AllowedCorsOrigins = { "http://localhost:4200" },
                 RequireClientSecret = false,
                 PostLogoutRedirectUris = new List<string> { "http://localhost:4200/signout-oidc" },
+                //PostLogoutRedirectUris = new List<string> { "http://localhost:4200/auth/signout-oidc" }, //for migrate client
                 AccessTokenLifetime = 3600,                
             }
         };

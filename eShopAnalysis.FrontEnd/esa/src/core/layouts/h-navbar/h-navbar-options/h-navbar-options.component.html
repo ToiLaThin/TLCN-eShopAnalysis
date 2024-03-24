@@ -7,8 +7,8 @@
     <span>{{this.cartItemsCount$ | async}}</span>
 </a>
 <a class="hnavbar-account" type="button" (mouseenter)="toggleDropDown()">
+    <i class="fa-solid fa-user-tie"></i>
     <div>
-        <i class="fa-solid fa-user-tie"></i>
         <p *ngIf="(this.authStatus$| async) === AuthStatus.Authenticated 
             ;else Anonymous">
             Welcome {{this.userRole$ | async}} {{this.userName$ | async}}
