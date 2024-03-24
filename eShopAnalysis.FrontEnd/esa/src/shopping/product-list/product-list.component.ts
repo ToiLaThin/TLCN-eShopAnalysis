@@ -38,7 +38,7 @@ export class ProductListComponent implements OnInit {
   private _subcription!: Subscription;
   constructor(private productService: ProductHttpService, 
               private catalogService:CatalogHttpService,
-              private route: Router) {
+              private route: Router) {  
 
     this.allToDisplayProduct$ = this.productService.paginatedProducts$.pipe(
       map(paginatedProducts => paginatedProducts.products)

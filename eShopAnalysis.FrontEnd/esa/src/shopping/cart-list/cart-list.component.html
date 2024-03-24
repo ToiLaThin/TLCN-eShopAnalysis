@@ -1,115 +1,120 @@
 <ng-container *ngIf="(this.cartItemCount$ | async) as count; else addToCartMessage">
-        <h1>Shopping Cart</h1>
+    <h1>Shopping Cart</h1>
 
-        <div class="shopping-cart">
-            <div class="column-labels">
-                <label class="product-image">Image</label>
-                <label class="product-details">Product</label>
-                <label class="product-price">Price</label>
-                <label class="product-quantity">Quantity</label>
-                <label class="product-removal">Remove</label>
-                <label class="product-line-price">Total</label>
-            </div>
+    <div class="shopping-cart">
+        <div class="column-labels">
+            <label class="product-image">Image</label>
+            <label class="product-details">Product</label>
+            <label class="product-price">Price</label>
+            <label class="product-quantity">Quantity</label>
+            <label class="product-removal">Remove</label>
+            <label class="product-line-price">Total</label>
+        </div>
 
-            <ng-container>
-                <div class="product" *ngFor="let cartItem of (this.cartItems$ | async); let i = index">
-                    <div class="product-image">
+        <ng-container>
+            <div class="product" *ngFor="let cartItem of (this.cartItems$ | async); let i = index">
+                <div class="product-image">
                     <img src="https://s.cdpn.io/3/dingo-dog-bones.jpg">
                     <!-- change to cartItem image which require info from product service so it get really complicated right here -->
-                    </div>
-                    <div class="product-details">
+                </div>
+                <div class="product-details">
                     <div class="product-title">{{cartItem.productModelId}}</div>
-                    <p class="product-description">The best dog bones of all time. Holy crap. Your dog will be begging for these things! I got curious once and ate one myself. I'm a fan.</p>
-                    </div>
-                    <div class="product-price" *ngIf="this.cartItem.isOnSale !== true; else unitPriceOnSale">{{cartItem.unitPrice}}</div>
-                    <ng-template #unitPriceOnSale>
-                        <div class="product-price-sale">
-                            <span style="text-decoration:line-through;
+                    <p class="product-description">The best dog bones of all time. Holy crap. Your dog will be begging
+                        for these things! I got curious once and ate one myself. I'm a fan.</p>
+                </div>
+                <div class="product-price" *ngIf="this.cartItem.isOnSale !== true; else unitPriceOnSale">
+                    {{cartItem.unitPrice}}</div>
+                <ng-template #unitPriceOnSale>
+                    <div class="product-price-sale">
+                        <span style="text-decoration:line-through;
                                         color: black;
                                         margin-right: 5px;">{{cartItem.unitPrice}}</span>
-                            {{cartItem.unitAfterSalePrice}}
-                        </div>
-                    </ng-template>
-                    <div class="product-quantity">
-                    <input type="number" 
-                            value="{{cartItem.quantity}}" 
-                            min="1" 
-                            (change)="changeCartItemQuantity(i, $event)"
-                    >
-                    </div>
-                    <div class="product-removal">
-                    <input type="button" 
-                            value="Remove"
-                            class="remove-product" 
-                            (click)="removeCartItemFromCart(i)"
-                    >
-                    </div>
-                    <div class="product-line-price" *ngIf="this.cartItem.isOnSale !== true; else linePriceOnSale">{{cartItem.finalPrice}}</div>
-                    <ng-template #linePriceOnSale>
-                        <div class="product-line-price-sale">
-                            <span style="text-decoration:line-through;
-                                        color: black;
-                                        margin-right: 5px;">{{cartItem.finalPrice}}</span>
-                            {{cartItem.finalAfterSalePrice}}
-                        </div>
-                    </ng-template>
-                </div>
-
-            </ng-container>
-
-            <div class="totals">
-                <ng-container *ngIf="(this.couponApplied$ | async) === false; else couponRemove">
-                    <div class="totals-item">
-                        <label>Apply coupon</label>
-                        <input type="text" #couponCodeApply 
-                               style="border: 1px solid #ddd; margin-left: 8px;">
-                        <button (click)="applyCoupon()"
-                                style="border: 1px solid #ddd; margin-left: 16px; background-color: lightgray; cursor: pointer;"
-                        >
-                                Apply
-                        </button>
-                    </div>
-                </ng-container>                
-                <ng-template #couponRemove>
-                    <div class="totals-item">
-                        <label>Coupon Applied successfully</label>
-                        <button (click)="removeCoupon()"
-                                style="border: 1px solid red; margin-left: 16px; background-color: red; color: white; cursor: pointer;"
-                        >
-                                Remove
-                        </button>
+                        {{cartItem.unitAfterSalePrice}}
                     </div>
                 </ng-template>
+                <div class="product-quantity">
+                    <input type="number" value="{{cartItem.quantity}}" min="1"
+                        (change)="changeCartItemQuantity(i, $event)">
+                </div>
+                <div class="product-removal">
+                    <input type="button" value="Remove" class="remove-product" (click)="removeCartItemFromCart(i)">
+                </div>
+                <div class="product-line-price" *ngIf="this.cartItem.isOnSale !== true; else linePriceOnSale">
+                    {{cartItem.finalPrice}}</div>
+                <ng-template #linePriceOnSale>
+                    <div class="product-line-price-sale">
+                        <span style="text-decoration:line-through;
+                                        color: black;
+                                        margin-right: 5px;">{{cartItem.finalPrice}}</span>
+                        {{cartItem.finalAfterSalePrice}}
+                    </div>
+                </ng-template>
+            </div>
+
+        </ng-container>
+
+        <div class="totals">
+            <ng-container *ngIf="(this.couponApplied$ | async) === false; else couponRemove">
                 <div class="totals-item">
+                    <label>Apply coupon</label>
+                    <input type="text" #couponCodeApply style="border: 1px solid #ddd; margin-left: 8px;">
+                    <button (click)="applyCoupon()"
+                        style="border: 1px solid #ddd; margin-left: 16px; background-color: lightgray; cursor: pointer;">
+                        Apply
+                    </button>
+                </div>
+            </ng-container>
+            <ng-template #couponRemove>
+                <div class="totals-item">
+                    <label>Coupon Applied successfully</label>
+                    <button (click)="removeCoupon()"
+                        style="border: 1px solid red; margin-left: 16px; background-color: red; color: white; cursor: pointer;">
+                        Remove
+                    </button>
+                </div>
+            </ng-template>
+            <div class="totals-item">
                 <label>Subtotal</label>
                 <div class="totals-value">{{this.subItemsPrice$ | async}}</div>
-                </div>
-                <div class="totals-item">
+            </div>
+            <div class="totals-item">
                 <label>Discount amount by sale</label>
                 <div class="totals-value">{{this.discountAmountSale$ | async}}</div>
-                </div>
-                <div class="totals-item">
-                    <label>Discount amount by coupon</label>
-                    <div class="totals-value">{{this.discountAmountCoupon$ | async}}</div>
-                    </div>
-                <div class="totals-item totals-item-total">
-                <label>Grand Total After Sale</label>
-                <div class="totals-value">{{this.subItemsAfterSalePrice$ | async}}</div>
-                </div>
-                <div class="totals-item totals-item-total">
-                    <label>Grand Total After Coupon Applied</label>
-                    <div class="totals-value">{{this.subItemsAfterSaleThenCouponPrice$ | async}}</div>
-                </div>
-                <div class="totals-item totals-item-total">
-                    <label>Grand Total</label>
-                    <div class="totals-value">{{this.subItemsAfterSaleThenCouponPrice$ | async}}</div>
+            </div>
+            <div class="totals-item">
+                <label>Discount amount by coupon</label>
+                <div class="totals-value">
+                    {{this.discountAmountCoupon$ | async}}
                 </div>
             </div>
-            <button class="checkout" (click)="confirmCart()">Confirm cart</button>
+            <div class="totals-item totals-item-total">
+                <label>Grand Total After Sale</label>
+                <div class="totals-value">
+                    {{this.subItemsAfterSalePrice$ | async}}
+                </div>
+            </div>
+            <div class="totals-item totals-item-total">
+                <label>Grand Total After Coupon Applied</label>
+                <div class="totals-value">
+                    {{this.subItemsAfterSaleThenCouponPrice$ | async}}
+                </div>
+            </div>
+            <div class="totals-item totals-item-total">
+                <label>Grand Total</label>
+                <div class="totals-value">
+                    {{this.subItemsAfterSaleThenCouponPrice$ | async}}
+                </div>
+            </div>
         </div>
+        <button class="checkout" (click)="confirmCart()">
+            Confirm cart
+        </button>
+    </div>
 
 </ng-container>
 <ng-template #addToCartMessage>
     <h2>Please add product to cart to buy</h2>
-    <a [routerLink]="'/shopping/product-list'">Let' s go</a>
+    <a [routerLink]="'/shopping/product-list'">
+        Let' s go
+    </a>
 </ng-template>

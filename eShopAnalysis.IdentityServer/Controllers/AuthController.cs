@@ -76,7 +76,8 @@ namespace eShopAnalysis.IdentityServer.Controllers
             await _signInManager.SignOutAsync();
             var logoutRequest = await _interactionIDSService.GetLogoutContextAsync(logoutId);
             if (String.IsNullOrEmpty(logoutRequest.PostLogoutRedirectUri)) {
-                return Redirect("http://localhost:4200/signout-oidc");
+                //return Redirect("http://localhost:4200/signout-oidc"); //old client
+                return Redirect("http://localhost:4200/auth/signout-oidc"); //for migrate client
             }
             return Redirect(logoutRequest.PostLogoutRedirectUri);
         }

@@ -1,25 +1,124 @@
 ﻿@using eShopAnalysis.IdentityServer.Models.ViewModels;
 @model LoginViewModel
-<form asp-controller="Auth" asp-action="Login" method="post">
-    <input type="hidden" asp-for="ReturnUrl" />
-    <div>
-        <label>Username</label>
-        <input asp-for="Username" />
-    </div>
-    <div>
-        <label>Password</label>
-        <input asp-for="Password" />
-    </div>
-    <div>
-        <button type="submit">Sign In</button>
-    </div>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+    <title>Login KFC Boostrap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Helvatica Nue', sans-serif !important;
+            font-size: 16px !important;
+            color: #222 !important;
+        }
 
-<button>
-    @Html.ActionLink("Register","Register","Auth")
-</button>
+        .heading {
+            font-family: 'Oswald', sans-serif;
+            color: #222;
+        }
 
+        /* form-group form-control */
+        input {
+            border: none;
+            outline: none;    
+            width: 100%;
+            padding: 12px 0;
+            border-bottom: 1px solid #222;    
+            transition: border-bottom 0.1s ease-in;
+        }
 
+        input:focus {
+            border-bottom: 3px solid rgb(218, 43, 43);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="mx-auto" style="width: 90%;">
+        <div class="container-fluid row d-flex flex-column-reverse flex-lg-row">
+            <div class="col-lg-6 overflow-x-hidden">
+                <img src="https://www.magestore.com/wp-content/uploads/2022/10/what-is-retail-management.jpg"
+                     class="fluid-img">
+            </div>
+            <div class="col-lg-6">
+                <form class="d-flex flex-column m-5 justify-content-center gap-4" 
+                      asp-controller="Auth" 
+                      asp-action="Login" 
+                      method="post">
+                    <div>
+                        <input type="hidden" asp-for="ReturnUrl" />
+                        <h2 class="text-uppercase fw-bold heading">
+                            Login
+                        </h2>
+                        <div class="form-group">
+                            <label for="username">
+                            </label>
+                            <!-- do not add .form-control to input, it will have fixed appearance -->
+                            <input id="username"
+                                   asp-for="Username"
+                                   type="text"
+                                   placeholder="Username *">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">
+                            </label>
+                            <!-- do not add .form-control to input, it will have fixed appearance -->
+                            <input id="password"
+                                   asp-for="Password"
+                                   type="text"
+                                   placeholder="Password *">
+                        </div>
+                        <div class="clearfix mt-2">
+                            <span class="float-end">
+                                Forget your password ?
+                            </span>
+                        </div>
+                    </div>
+                    <button class="btn btn-success rounded-pill w-100 py-3" 
+                            type="submit">
+                        Login
+                    </button>
+                    <div>
+                        <h3 class="heading fs-4">
+                            Or continue with
+                        </h3>
+                        <button class="btn btn-primary rounded-pill w-100 py-3 mt-2">
+                            <i class="devicon-facebook-plain colored" style="font-size: 30px;">
+                            </i>
+                            Signin with Facebook
+                        </button>
+                        <button class="btn btn-dark rounded-pill w-100 py-3 mt-2">
+                            <i class="devicon-apple-original" style="font-size: 30px;">
+                            </i>
+                            Signin with Apple
+                        </button>
+                        <button class="btn btn-danger rounded-pill w-100 py-3 mt-2">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" class="d-inline-block" width="30" height="30" />
+                            Signin with Google
+                        </button>
+                        <p class="text-center mt-2">
+                            Haven’t got an account?
+                            <span class="text-decoration-underline text-dark fw-bold">
+                                @Html.ActionLink("Sign Up", "Register", "Auth")
+                            </span>
+                        </p>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+    </script>
+</body>
+</html>
 <div>
     <h2>Or Sign In With External Identity Providers:</h2>
     <form asp-controller="Auth" asp-action="ExternalLogin"
