@@ -1,5 +1,6 @@
 ﻿using eShopAnalysis.Aggregator.Result;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
+using eShopAnalysis.Aggregator.Services.BackchannelDto.CartOrder;
 using eShopAnalysis.Aggregator.Utilities;
 using Microsoft.Extensions.Options;
 
@@ -42,14 +43,26 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
             return result;
         }
 
-        public async Task<BackChannelResponseDto<object>> AddCart(CartConfirmRequestToCartApiDto requestToCartApiDto)
+        public async Task<BackChannelResponseDto<CartSummaryResponseDto>> AddCart(CartConfirmRequestToCartApiDto requestToCartApiDto)
         {
-            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<CartConfirmRequestToCartApiDto, object>>();
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<CartConfirmRequestToCartApiDto, CartSummaryResponseDto>>();
             var result = await baseService.SendAsync(new BackChannelRequestDto<CartConfirmRequestToCartApiDto>()
             {
                 ApiType = ApiType.POST,
                 Url = $"{_backChannelUrls.Value.CartAPIBaseUri}/AddCart",
                 Data = requestToCartApiDto
+            });
+            return result;
+        }
+
+        public async Task<BackChannelResponseDto<OrderAggregateCartResponseDto>> GetOrderAggregateCartByCartId(Guid cartId)
+        {
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<ReferenceTypeWrapperDto<Guid>, OrderAggregateCartResponseDto>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<ReferenceTypeWrapperDto<Guid>>
+            {
+                ApiType = ApiType.POST,
+                Url = $"{_backChannelUrls.Value.OrderAPIBaseUri}/GetOrderAggregateCartByCartId",
+                Data = new ReferenceTypeWrapperDto<Guid>(cartId)
             });
             return result;
         }

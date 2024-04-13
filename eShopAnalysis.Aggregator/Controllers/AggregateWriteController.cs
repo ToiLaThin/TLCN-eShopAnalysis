@@ -1,6 +1,7 @@
 ﻿
 using eShopAnalysis.Aggregator.ClientDto;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
+using eShopAnalysis.Aggregator.Services.BackchannelDto.CartOrder;
 using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using eShopAnalysis.Aggregator.Utilities.Behaviors;
 using Microsoft.AspNetCore.Mvc;
@@ -77,7 +78,7 @@ namespace eShopAnalysis.ApiGateway.Controllers
 
         [HttpPost("CheckCouponAndAddCart")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OrderAggregateCartResponseDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult> CheckCouponAndAddCart([FromBody] Aggregator.ClientDto.CartConfirmRequestDto cartConfirmRequestDto)
         {
@@ -121,7 +122,15 @@ namespace eShopAnalysis.ApiGateway.Controllers
             {
                 return NotFound(cartBackChannelResp.Error);
             }
-            return Ok();
+
+            //get the order with this cartId, then aggregate to make the order with cart, return to client
+            Guid cardId = cartBackChannelResp.Data.Id;
+            var orderAggregateCartBackChannelResp = await _backChannelCartOrderService.GetOrderAggregateCartByCartId(cardId);
+            if (orderAggregateCartBackChannelResp == null || cartBackChannelResp.IsFailed || cartBackChannelResp.IsException) {
+                return NotFound(orderAggregateCartBackChannelResp.Error);
+            }
+
+            return Ok(orderAggregateCartBackChannelResp.Data);
         }
 
         [HttpPost("AddSaleItemAndUpdateProductToOnSale")]

@@ -1,5 +1,6 @@
 ﻿using eShopAnalysis.Aggregator.Result;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
+using eShopAnalysis.Aggregator.Services.BackchannelDto.CartOrder;
 
 namespace eShopAnalysis.Aggregator.Services.BackchannelServices
 {
@@ -10,6 +11,7 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
         Task<BackChannelResponseDto<IEnumerable<Guid>>> BulkApproveOrder(IEnumerable<Guid> orderIdsToApprove);
 
         //i do not want to use CartSummary here
-        Task<BackChannelResponseDto<object>> AddCart(CartConfirmRequestToCartApiDto requestToCartApiDto);
+        Task<BackChannelResponseDto<CartSummaryResponseDto>> AddCart(CartConfirmRequestToCartApiDto requestToCartApiDto);
+        Task<BackChannelResponseDto<OrderAggregateCartResponseDto>> GetOrderAggregateCartByCartId(Guid cartId);
     }
 }

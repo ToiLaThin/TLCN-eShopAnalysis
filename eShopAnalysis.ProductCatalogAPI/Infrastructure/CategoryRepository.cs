@@ -118,12 +118,12 @@ namespace eShopAnalysis.ProductCatalogAPI.Infrastructure
             if (!sessionIsNull && !sessionHandle.IsInTransaction)
                 throw new InvalidOperationException("used not correctly");
 
-            if (sessionIsNull)
-            {
+            if (sessionIsNull) {
                 await _context.CatalogCollection.InsertOneAsync(catalog);
+            } 
+            else {
+                await _context.CatalogCollection.InsertOneAsync(session: sessionHandle, catalog);
             }
-            await _context.CatalogCollection.InsertOneAsync(session: sessionHandle, catalog);
-
             Catalog result = await _context.CatalogCollection.Find(c => c.CatalogId == catalog.CatalogId).FirstOrDefaultAsync();
             return result;
 

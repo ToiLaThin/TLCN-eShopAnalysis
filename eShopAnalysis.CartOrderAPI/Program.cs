@@ -11,6 +11,7 @@ using eShopAnalysis.CartOrderAPI.IntegrationEvents;
 using eShopAnalysis.CartOrderAPI.Application.IntegrationEvents.EventHandling;
 using Serilog;
 using eShopAnalysis.CartOrderAPI.Utilities.Behaviors;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 //this will config all required by event bus, review appsettings.json EventBus section and EventBus Connection string
@@ -42,6 +43,15 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IOrderQueries>(sp => 
     new OrderQueries(builder.Configuration.GetConnectionString("OrderCartDb"))
 );
+
+//config automapper
+var mapperConfig = new MapperConfiguration(cfg =>
+{
+    cfg.AddMaps(assembliesToScan: Assembly.GetExecutingAssembly());
+});
+IMapper mapper = new Mapper(mapperConfig);
+builder.Services.AddSingleton(mapper);
+
 var app = builder.Build();
 var eventBus = app.Services.GetRequiredService<IEventBus>();
 eventBus.Subscribe<OrderPaymentTransactionCompletedIntegrationEvent, IIntegrationEventHandler<OrderPaymentTransactionCompletedIntegrationEvent>>();

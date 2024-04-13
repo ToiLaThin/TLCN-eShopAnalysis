@@ -7,7 +7,7 @@ using MediatR;
 namespace eShopAnalysis.CartOrderAPI.Application.Commands
 {
     //TODO see if this is the right data to return 
-    public class PickPaymentMethodCODCommand: IRequest<CommandHandlerResponseDto<OrderViewModel>>
+    public class PickPaymentMethodCODCommand: IRequest<CommandHandlerResponseDto<Order>>
     {
         public Guid OrderId { get; set; }
 
