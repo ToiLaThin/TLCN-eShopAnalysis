@@ -26,7 +26,7 @@ namespace eShopAnalysis.CartOrderAPI.Infrastructure.Repositories
 
         public async Task<Order> GetOrderAsyncWithChangeTracker(Guid orderId)
         {
-            Order order = await _context.Orders.Include(c => c.Cart)
+            Order order = await _context.Orders.Include(c => c.Cart).ThenInclude(c => c.Items)
                                                .Include(c => c.Address)
                                                .FirstOrDefaultAsync(c => c.Id == orderId);
             if (order != null)

@@ -3,6 +3,19 @@ using eShopAnalysis.CartOrderAPI.Domain.SeedWork;
 
 namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate
 {
+    public enum OrdersSortType
+    {
+        Ascending = 0,
+        Descending = 1
+    }
+
+    public enum OrdersSortBy
+    {
+        Id = 0,
+        SubTotal = 1,
+        DateCreatedDraft = 2,
+    }
+
     public enum PaymentMethod {
         COD = 0,
         Momo = 1,
@@ -86,10 +99,15 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate
         //make sure we can only call this when the order status is created draft
         private bool MarkCustomerInfoConfirmed()
         {
-            if (this.OrdersStatus != OrderStatus.CreatedDraft && this.DateCustomerInfoConfirmed != null)
+            //means that until stock confirm user can still change customer info
+            if (this.OrdersStatus != OrderStatus.CreatedDraft && this.OrdersStatus != OrderStatus.CustomerInfoConfirmed && this.OrdersStatus != OrderStatus.Checkouted)
                 return false;
             this.DateCustomerInfoConfirmed = DateTime.Now;
-            this.OrdersStatus = OrderStatus.CustomerInfoConfirmed;
+
+            //only change to CustomerInfoConfirmed if orderStatus is CreatedDraft, else if it already is CustomerInfoConfirmed or checkouted, leave them be
+            if (this.OrdersStatus == OrderStatus.CreatedDraft) {
+                this.OrdersStatus = OrderStatus.CustomerInfoConfirmed;
+            }
             return true;
         }
         public bool UpdateCustomerInfoOnThisOrder(Address address, string phoneNumber)

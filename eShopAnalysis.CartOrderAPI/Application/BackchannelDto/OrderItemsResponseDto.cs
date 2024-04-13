@@ -1,14 +1,14 @@
 ﻿using eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate;
 
 namespace eShopAnalysis.CartOrderAPI.Services.BackchannelDto
-{
+{    
     //public enum PaymentMethod
     //{
     //    COD = 0,
     //    Momo = 1,
     //    CreditCard = 2
     //}
-    //status is customerInfoConfirmed and payment method is COD can still be load on the UI for admin to handle
+    ////status is customerInfoConfirmed and payment method is COD can still be load on the UI for admin to handle
     //public enum OrderStatus
     //{
     //    CreatedDraft = 0,

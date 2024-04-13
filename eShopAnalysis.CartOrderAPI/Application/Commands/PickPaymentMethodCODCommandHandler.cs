@@ -6,7 +6,7 @@ using MediatR;
 
 namespace eShopAnalysis.CartOrderAPI.Application.Commands
 {
-    public class PickPaymentMethodCODCommandHandler : IRequestHandler<PickPaymentMethodCODCommand, CommandHandlerResponseDto<OrderViewModel>>
+    public class PickPaymentMethodCODCommandHandler : IRequestHandler<PickPaymentMethodCODCommand, CommandHandlerResponseDto<Order>>
     {
         IUnitOfWork _uOW;
 
@@ -14,18 +14,19 @@ namespace eShopAnalysis.CartOrderAPI.Application.Commands
         {
             _uOW = uOW;
         }
-        public async Task<CommandHandlerResponseDto<OrderViewModel>> Handle(PickPaymentMethodCODCommand request, CancellationToken cancellationToken)
+        public async Task<CommandHandlerResponseDto<Order>> Handle(PickPaymentMethodCODCommand request, CancellationToken cancellationToken)
         {
             var transaction = await _uOW.BeginTransactionAsync();
             Order orderToUpdate = await _uOW.OrderRepository.GetOrderAsyncWithChangeTracker(request.OrderId);
             bool didSuccessfully = orderToUpdate.PickPaymentMethodCOD();
             if (didSuccessfully == false) {
                 _uOW.RollbackTransaction();
-                return CommandHandlerResponseDto<OrderViewModel>.Failure("cannot pick payment method COD for this order");
+                return CommandHandlerResponseDto<Order>.Failure("cannot pick payment method COD for this order");
             }
             await _uOW.CommitTransactionAsync(transaction);
-            OrderViewModel orderReturn = new OrderViewModel() { OrderId = request.OrderId };
-            return CommandHandlerResponseDto<OrderViewModel>.Success(orderReturn);
+            //return result which is the updated order;
+            var orderReturn = await _uOW.OrderRepository.GetOrderAsyncWithChangeTracker(orderId: request.OrderId);
+            return CommandHandlerResponseDto<Order>.Success(orderReturn);
         }
     }
 }

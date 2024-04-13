@@ -1,5 +1,7 @@
-﻿using eShopAnalysis.CartOrderAPI.Application.Commands;
+﻿using AutoMapper;
+using eShopAnalysis.CartOrderAPI.Application.Commands;
 using eShopAnalysis.CartOrderAPI.Application.Dto;
+using eShopAnalysis.CartOrderAPI.Application.Envelope;
 using eShopAnalysis.CartOrderAPI.Application.Queries;
 using eShopAnalysis.CartOrderAPI.Application.Result;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
@@ -19,13 +21,15 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
     {
         private IMediator _mediator;
         private IOrderQueries _orderQueries;
-        public OrderController(IMediator mediator, IOrderQueries orderQueries) {
+        private IMapper _mapper;
+        public OrderController(IMediator mediator, IOrderQueries orderQueries, IMapper mapper) {
             _mediator = mediator;
             _orderQueries = orderQueries;
+            _mapper = mapper;
         }
 
         [HttpGet("GetDraftOrdersOfUser")]
-        [ProducesResponseType(typeof(CartSummary), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<OrderDraftViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<ActionResult<IEnumerable<OrderDraftViewModel>>> GetDraftOrdersOfUser([FromQuery] string userId)
@@ -38,41 +42,129 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
             return Ok(queryResult.Data);
         }
 
-        [HttpPost("ConfirmOrderCustomerInfo")]
-        [ProducesResponseType(typeof(CartSummary), StatusCodes.Status200OK)]
+
+        //return type is now envelope
+        [HttpGet("GetOrdersAggregateCartFilterSortPagination")]
+        [ProducesResponseType(typeof(OrderAggregateCartViewModelListEnvelope), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<Order>> ConfirmOrderCustomerInfo([FromBody] CustomerOrderInfoConfirmedRequestDto customerOrderInfoConfirmedRequestDto)
+        public async Task<ActionResult<OrderAggregateCartViewModelListEnvelope>> GetOrdersAggregateCartFilterSortPagination([FromQuery] OrderStatus? filterOrderStatus,
+            PaymentMethod? filterPaymentMethod,
+            OrdersSortBy sortBy = OrdersSortBy.Id,
+            int page = 1,
+            int pageSize = 10,
+            OrdersSortType sortType = OrdersSortType.Ascending)
+        {
+            //enum default value is 0, if not passing value in, it have 0 as default value
+            int filterPaymentMethodPassIn = filterPaymentMethod.HasValue ? (int)filterPaymentMethod : -1;
+            int filterOrderStatusPassIn = filterOrderStatus.HasValue ? (int)filterOrderStatus : -1;
+            var queryResult = await _orderQueries.GetOrdersAggregateCartFilterSortPagination(
+                    (OrderStatus)filterOrderStatusPassIn,
+                    (PaymentMethod)filterPaymentMethodPassIn,
+                    sortBy,
+                    page,
+                    pageSize,
+                    sortType);
+
+            if (queryResult.IsFailed || queryResult.IsException) {
+                return NotFound(queryResult.Error);
+            }
+
+            //another query to get the total count
+            int totalOrdersAfterFilter = await _orderQueries.GetOrdersAggregateCartTotalCountAfterFiletered((OrderStatus)filterOrderStatusPassIn, (PaymentMethod)filterPaymentMethodPassIn);
+            if ((totalOrdersAfterFilter == 0 && queryResult.Data.Count() > 0) || totalOrdersAfterFilter < queryResult.Data.Count()) {
+                return NotFound("the total is not valid");
+            }
+            OrderAggregateCartViewModelListEnvelope envelope = new OrderAggregateCartViewModelListEnvelope(queryResult.Data, totalOrdersAfterFilter);
+            return Ok(envelope);
+        }
+
+        [HttpGet("GetOrderAggregateCartByCartId")]
+        [ProducesResponseType(typeof(OrderAggregateCartViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<OrderAggregateCartViewModel>> GetOrderAggregateCartByCartId([FromQuery] string cartId)
+        {
+            Guid cartIdGuid = Guid.Parse(cartId);
+            var queryResult = await _orderQueries.GetOrderAggregateCartByCartIdUsingRelationship(cartIdGuid);
+            if (queryResult.IsFailed || queryResult.IsException) {
+                return NotFound(queryResult.Error);
+            }
+            return Ok(queryResult.Data);
+        }
+
+        [HttpGet("GetOrderAggregateCartByOrderId")]
+        [ProducesResponseType(typeof(OrderAggregateCartViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<OrderAggregateCartViewModel>> GetOrderAggregateCartByOrderId([FromQuery] string orderId)
+        {
+            Guid orderIdGuid = Guid.Parse(orderId);
+            var queryResult = await _orderQueries.GetOrderAggregateCartByOrderIdUsingRelationship(orderIdGuid);
+            if (queryResult.IsFailed || queryResult.IsException) {
+                return NotFound(queryResult.Error);
+            }
+            return Ok(queryResult.Data);
+        }
+
+        [HttpPost("ConfirmOrderCustomerInfo")]
+        [ProducesResponseType(typeof(OrderAggregateCartViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<OrderAggregateCartViewModel>> ConfirmOrderCustomerInfo([FromBody] CustomerOrderInfoConfirmedRequestDto customerOrderInfoConfirmedRequestDto)
         {
             //TODO for now i do thing minimun, please review it later
-            OrderInfoConfirmCommand command = new OrderInfoConfirmCommand(customerOrderInfoConfirmedRequestDto.OrderId,customerOrderInfoConfirmedRequestDto.Address, customerOrderInfoConfirmedRequestDto.PhoneNumber);
+            OrderInfoConfirmCommand command = new OrderInfoConfirmCommand(customerOrderInfoConfirmedRequestDto.OrderId, customerOrderInfoConfirmedRequestDto.Address, customerOrderInfoConfirmedRequestDto.PhoneNumber);
             var commandResult = await _mediator.Send(command);
             if (commandResult.IsFailed || commandResult.IsException) {
                 return NotFound(commandResult.Error);
             }
-            return Ok(commandResult.Data);
+            //Mapping from Order to OrderAggregateCartModel
+            OrderAggregateCartViewModel mappingResult = _mapper.Map<Order, OrderAggregateCartViewModel>(commandResult.Data);
+            return Ok(mappingResult);
         }
 
         [HttpPut("PickPaymentMethodCOD")]
-        [ProducesResponseType(typeof(CartSummary), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OrderAggregateCartViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<OrderViewModel>> PickPaymentMethodCOD([FromQuery] Guid orderId)
+        public async Task<ActionResult<OrderAggregateCartViewModel>> PickPaymentMethodCOD([FromQuery] Guid orderId)
         {
             PickPaymentMethodCODCommand command = new PickPaymentMethodCODCommand(orderId);
             var commandResult = await _mediator.Send(command);
             if (commandResult.IsFailed || commandResult.IsException) {
                 return NotFound(commandResult.Error);
             }
-            return Ok(commandResult.Data);
+            //Mapping from Order to OrderAggregateCartModel
+            OrderAggregateCartViewModel mappingResult = _mapper.Map<Order, OrderAggregateCartViewModel>(commandResult.Data);
+            return Ok(mappingResult);
+        }
+
+        [HttpPost("BackChannel/GetOrderAggregateCartByCartId")]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<BackChannelResponseDto<OrderAggregateCartViewModel>> GetOrderAggregateCartByCartId([FromBody] ReferenceTypeWrapperDto<Guid> wrapperCartId)
+        {
+            if (wrapperCartId == null) {
+                throw new ArgumentNullException(nameof(wrapperCartId));
+            }
+            if (wrapperCartId.Data == null) {
+                throw new ArgumentNullException(nameof(wrapperCartId.Data));
+            }
+            Guid cartId = wrapperCartId.Data;
+            //after the cart and order draft just create, no address for that order existed, so do not use GetOrderAggregateCartByCartIdUsingRelationship
+            var queryResult = await _orderQueries.GetOrderAggregateCartByCartIdWithoutAddressUsingRelationship(cartId);
+            if (queryResult.IsFailed || queryResult.IsException) {
+                return BackChannelResponseDto<OrderAggregateCartViewModel>.Failure(queryResult.Error);
+            }
+            return BackChannelResponseDto<OrderAggregateCartViewModel>.Success(queryResult.Data);
         }
 
         [HttpPut("BackChannel/BulkApproveOrder")]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<BackChannelResponseDto<IEnumerable<Guid>>> BulkApproveOrder([FromBody] IEnumerable<Guid> orderIdsToApprove)
         {
-            if (orderIdsToApprove == null) { 
-                throw new ArgumentNullException(nameof(orderIdsToApprove)); 
+            if (orderIdsToApprove == null) {
+                throw new ArgumentNullException(nameof(orderIdsToApprove));
             }
             OrderApproveCommand command = new OrderApproveCommand(orderIdsToApprove);
             var commandResult = await _mediator.Send(command);
@@ -94,6 +186,5 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
             }
             return BackChannelResponseDto<IEnumerable<OrderItemsResponseDto>>.Success(queryResult.Data);
         }
-
     }
 }
