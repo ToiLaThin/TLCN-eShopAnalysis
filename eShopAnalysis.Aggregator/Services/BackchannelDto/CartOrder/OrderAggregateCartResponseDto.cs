@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 
-namespace eShopAnalysis.Aggregator.Services.BackchannelDto.CartOrder
-{    
+namespace eShopAnalysis.Aggregator.Services.BackchannelDto
+{
     public record AddressViewModel
     {
         [JsonProperty]
@@ -22,6 +22,7 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelDto.CartOrder
 
     /// <summary>
     /// The response from cartOrder Api to get info about order that we just create from cartId. ALL PROP SHOULD HAVE SET; (DIFF FROM THE MODEL IN CARTORDER API). for the data is not null or have the default value
+    /// We also send this to angular client, we can make it clean with a modal with same properties but different name in a different location, then use automapper to map , it might be a TODO
     /// </summary>
     public record OrderAggregateCartResponseDto
     {
@@ -165,5 +166,14 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelDto.CartOrder
 
         [JsonProperty]
         public double FinalAfterSalePrice { get; set; }
+
+        [JsonProperty]
+        public string ProductName { get; set; }
+
+        [JsonProperty]
+        public string ProductImage { get; set; }
+
+        [JsonProperty]
+        public string SubCatalogName { get; set; }
     }
 }

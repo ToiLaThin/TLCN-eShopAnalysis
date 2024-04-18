@@ -28,7 +28,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
                                   c.TotalPriceFinal,
 
                                   cI.ProductId, cI.ProductModelId, cI.BusinessKey AS CartItemBusinessKey, cI.CartId, cI.SaleItemId, cI.IsOnSale, cI.SaleType, cI.SaleValue,
-                                  cI.Quantity, cI.UnitPrice, cI.FinalPrice, cI.UnitAfterSalePrice, cI.FinalAfterSalePrice
+                                  cI.Quantity, cI.UnitPrice, cI.FinalPrice, cI.UnitAfterSalePrice, cI.FinalAfterSalePrice, cI.ProductName, cI.ProductImage, cI.SubCatalogName
                            FROM Orders o            
                            INNER JOIN Cart c on o.CartId = c.Id
                            INNER JOIN CartItem cI ON c.Id = cI.CartId

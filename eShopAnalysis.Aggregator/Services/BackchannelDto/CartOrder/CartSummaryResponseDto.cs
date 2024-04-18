@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace eShopAnalysis.Aggregator.Services.BackchannelDto.CartOrder
+namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
     /// <summary>
     /// Response from CartOrderApi when calling backchannel/addCart after successfully add cart and order
