@@ -71,6 +71,12 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate
         public double UnitAfterSalePrice { get; set; }
         public double FinalAfterSalePrice { get; set; }
 
+        public string ProductName { get; set; }
+
+        public string ProductImage {  get; set; }
+
+        public string SubCatalogName { get; set; }
+
 
         //no longer necessary since we config foreign key constraint in CartSummaryEntityTypeConfiguration.cs
         public CartItem MarkBelongToCartWithId(Guid cartId)

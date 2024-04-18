@@ -27,7 +27,8 @@ namespace eShopAnalysis.CartOrderAPI.Application.Mapping
                     cartItem.UnitPrice,
                     cartItem.FinalPrice,
                     cartItem.UnitAfterSalePrice,
-                    cartItem.FinalAfterSalePrice)
+                    cartItem.FinalAfterSalePrice,
+                    cartItem.ProductName, cartItem.ProductImage, cartItem.SubCatalogName)
             );
             CreateMap<CartSummary, CartSummaryViewModel>().ConstructUsing(cartSummary => new CartSummaryViewModel(
                 cartSummary.Id,
@@ -55,7 +56,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Mapping
                     cartItem.UnitPrice,
                     cartItem.FinalPrice,
                     cartItem.UnitAfterSalePrice,
-                    cartItem.FinalAfterSalePrice))
+                    cartItem.FinalAfterSalePrice, cartItem.ProductName, cartItem.ProductImage, cartItem.SubCatalogName))
                 )
             );
         }

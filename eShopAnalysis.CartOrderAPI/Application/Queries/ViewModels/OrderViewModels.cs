@@ -29,6 +29,11 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
         public string Street { get; }
         public string FullAddressName { get; }
 
+        //require to materialize address view model
+        public AddressViewModel()
+        {
+        }
+
         public AddressViewModel(Guid orderReferenceId, Address address)
         {
             OrderReferenceId = orderReferenceId;
@@ -272,6 +277,11 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
         public double UnitAfterSalePrice { get; }
         public double FinalAfterSalePrice { get; }
 
+        public string ProductName { get; set; }
+        public string ProductImage { get; set; }
+        public string SubCatalogName { get; set; }
+        
+        public CartItemViewModel() { }
         public CartItemViewModel(
             Guid productId, 
             Guid productModelId, 
@@ -285,7 +295,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
             double unitPrice,
             double finalPrice,
             double unitAfterSalePrice,
-            double finalAfterSalePrice)
+            double finalAfterSalePrice, string productName, string productImage, string subCatalogName)
         {
             ProductId = productId;
             ProductModelId = productModelId;
@@ -300,6 +310,9 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
             FinalPrice = finalPrice;
             UnitAfterSalePrice = unitAfterSalePrice;
             FinalAfterSalePrice = finalAfterSalePrice;
+            ProductName = productName;
+            ProductImage = productImage;
+            SubCatalogName = subCatalogName;
         }
 
         public CartItemViewModel(CartItem cartItem)
@@ -317,6 +330,9 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
             FinalPrice = cartItem.FinalPrice;
             UnitAfterSalePrice = cartItem.UnitAfterSalePrice;
             FinalAfterSalePrice = cartItem.FinalAfterSalePrice;
+            ProductName = cartItem.ProductName;
+            ProductImage = cartItem.ProductImage;
+            SubCatalogName = cartItem.SubCatalogName;
         }
     }
 }

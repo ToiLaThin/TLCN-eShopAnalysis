@@ -49,6 +49,8 @@ namespace eShopAnalysis.CartOrderAPI.Infrastructure.EntityConfigurations
             cartItemBuilderConfig.Property(cI => cI.BusinessKey).ValueGeneratedNever();
             cartItemBuilderConfig.Property(cI => cI.CartId).ValueGeneratedNever();
 
+            cartItemBuilderConfig.Property(cI => cI.ProductName).IsRequired().HasMaxLength(300);
+            cartItemBuilderConfig.Property(cI => cI.SubCatalogName).IsRequired().HasMaxLength(200);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿
-namespace eShopAnalysis.Aggregator.Services.BackchannelDto
+﻿namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 {
     public enum DiscountType
     {
@@ -30,6 +29,12 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelDto
 
         public double UnitAfterSalePrice { get; set; }
         public double FinalAfterSalePrice { get; set; }
+
+        public string ProductName { get; set; }
+
+        public string ProductImage { get; set; }
+
+        public string SubCatalogName { get; set; }
     }
 
 

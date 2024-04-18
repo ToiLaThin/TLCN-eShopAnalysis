@@ -1,7 +1,6 @@
 ﻿
 using eShopAnalysis.Aggregator.ClientDto;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
-using eShopAnalysis.Aggregator.Services.BackchannelDto.CartOrder;
 using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using eShopAnalysis.Aggregator.Utilities.Behaviors;
 using Microsoft.AspNetCore.Mvc;

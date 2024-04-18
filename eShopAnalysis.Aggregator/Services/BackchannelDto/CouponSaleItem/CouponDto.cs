@@ -1,5 +1,5 @@
 ﻿namespace eShopAnalysis.Aggregator.Services.BackchannelDto
-{ 
+{
     public enum Status
     {
         Active,

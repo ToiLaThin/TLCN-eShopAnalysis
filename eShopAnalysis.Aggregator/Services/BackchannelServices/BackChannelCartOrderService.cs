@@ -1,6 +1,5 @@
 ﻿using eShopAnalysis.Aggregator.Result;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
-using eShopAnalysis.Aggregator.Services.BackchannelDto.CartOrder;
 using eShopAnalysis.Aggregator.Utilities;
 using Microsoft.Extensions.Options;
 
