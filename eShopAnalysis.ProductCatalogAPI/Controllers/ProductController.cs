@@ -68,6 +68,23 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
             return NoContent();
         }
 
+        [HttpGet("SearchProductByName")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<ProductDto>> SearchProductByName([FromQuery] string searchPhrase)
+        {
+            if (string.IsNullOrWhiteSpace(searchPhrase)) { 
+                throw new ArgumentNullException(nameof(searchPhrase));
+            }
+            var serviceResult = await _service.SearchProductByName(searchPhrase);
+            var resultDto = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(serviceResult.Data);
+            if (resultDto.Count() > 0) {
+                return Ok(resultDto);
+            }
+            return NoContent();
+        }
+
         [HttpGet("GetAllProduct")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]

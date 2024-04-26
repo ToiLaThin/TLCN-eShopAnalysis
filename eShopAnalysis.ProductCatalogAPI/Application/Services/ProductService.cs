@@ -6,6 +6,7 @@ using eShopAnalysis.ProductCatalogAPI.Application.Result;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models;
 using eShopAnalysis.ProductCatalogAPI.Domain.Models.Aggregator;
 using eShopAnalysis.ProductCatalogAPI.Domain.Specification;
+using eShopAnalysis.ProductCatalogAPI.Domain.Specification.FilterSpecification;
 using eShopAnalysis.ProductCatalogAPI.Infrastructure.Contract;
 using Newtonsoft.Json;
 using static eShopAnalysis.ProductCatalogAPI.Domain.Models.ProductModel;
@@ -18,6 +19,8 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
         Task<ServiceResponseDto<Product>> Get(Guid productId);
 
         Task<ServiceResponseDto<IEnumerable<Product>>> GetAllMatching(ProductLazyLoadRequestDto lazyLoadRequestDto);
+
+        Task<ServiceResponseDto<IEnumerable<Product>>> SearchProductByName(string productNameSearch);
 
         ServiceResponseDto<IEnumerable<Product>> GetAll();
         Task<ServiceResponseDto<Product>> AddProduct(Product product);
@@ -124,8 +127,18 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             return ServiceResponseDto<Product>.Failure("subcatalog not found or product not found");
         }
 
-        #endregion
+        public async Task<ServiceResponseDto<IEnumerable<Product>>> SearchProductByName(string productNameSearch)
+        {
+            IQueryable<Product> originalQuery = _unitOfWork.ProductRepository.GetAllAsQueryable();
+            string normalizedProductNameSearch = productNameSearch.Trim().ToLower();
+            var productNameEqualFilterSpec = new ProductNameEqualOrContainFilterSpecification(normalizedProductNameSearch);
+            var result = SpecificationEvaluator<Product>.GetQuery(query: originalQuery,
+                                                                  filterSpec: productNameEqualFilterSpec)
+                                                        .AsEnumerable();
+            return ServiceResponseDto<IEnumerable<Product>>.Success(result);
+        }
 
+        #endregion
         #region Product Model Services
         public async Task<ServiceResponseDto<IEnumerable<ProductModel>>> GetAllProductModels(Guid productId)
         {
