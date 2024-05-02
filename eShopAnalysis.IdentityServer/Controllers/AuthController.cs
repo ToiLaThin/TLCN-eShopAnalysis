@@ -1,4 +1,7 @@
-﻿using eShopAnalysis.IdentityServer.Models.ViewModels;
+﻿using eShopAnalysis.IdentityServer.Dto;
+using eShopAnalysis.IdentityServer.Envelop;
+using eShopAnalysis.IdentityServer.Models;
+using eShopAnalysis.IdentityServer.Models.ViewModels;
 using eShopAnalysis.IdentityServer.Utilities;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -10,14 +13,14 @@ namespace eShopAnalysis.IdentityServer.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<EsaUser> _userManager;
+        private readonly SignInManager<EsaUser> _signInManager;
         private EmailSenderService _emailSenderService;
         private IIdentityServerInteractionService _interactionIDSService;
         private ILogger _logger;
 
-        public AuthController(UserManager<IdentityUser> userManager,
-                              SignInManager<IdentityUser> signInManager,
+        public AuthController(UserManager<EsaUser> userManager,
+                              SignInManager<EsaUser> signInManager,
                               EmailSenderService emailSenderService,
                               IIdentityServerInteractionService interactionIDSService,
                               ILogger logger)
@@ -54,7 +57,7 @@ namespace eShopAnalysis.IdentityServer.Controllers
             }
             else if (result.IsNotAllowed) //not confirm email
             {
-                IdentityUser user = await _userManager.FindByNameAsync(vm.Username);
+                EsaUser user = await _userManager.FindByNameAsync(vm.Username);
                 if (user != null)
                 {
                     string userEmail = user.Email;
@@ -96,7 +99,7 @@ namespace eShopAnalysis.IdentityServer.Controllers
         {
             //get form data using traditional aproach
             string inputActivationToken = Request.Form["inputActivationToken"].ToString();
-            IdentityUser user = await _userManager.FindByEmailAsync(nvm.Email);
+            EsaUser user = await _userManager.FindByEmailAsync(nvm.Email);
             if (user != null) { 
                 if (inputActivationToken.Equals(nvm.AccountActivationToken))
                 {
@@ -129,7 +132,7 @@ namespace eShopAnalysis.IdentityServer.Controllers
         public async Task<IActionResult> NotifyConfirmEmail(NotifyConfirmEmailViewModel nvm)
         {
             string email = nvm.Email; string returnUrl = nvm.ReturnUrl;
-            IdentityUser user = await _userManager.FindByEmailAsync(email);
+            EsaUser user = await _userManager.FindByEmailAsync(email);
 
             var accountActivationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             MailRequest mailContent = new MailRequest();
@@ -156,7 +159,7 @@ namespace eShopAnalysis.IdentityServer.Controllers
             if (rvm.Password == rvm.PasswordConfirmed)
             {
                 //phai cos await neu ko se redirect trc khi tao user
-                var user = new IdentityUser {
+                var user = new EsaUser {
                     UserName = rvm.Username,
                     Email = rvm.Email,
                 };
@@ -167,12 +170,52 @@ namespace eShopAnalysis.IdentityServer.Controllers
                 if (result.Succeeded) {
                     await _userManager.AddClaimAsync(user, claimToAdd); //TO TEST
                     await _userManager.AddClaimAsync(user, claimToAddToAccessToken); //TO TEST
-                    return RedirectToAction(nameof(NotifyConfirmEmail), new { email = rvm.Email, returnUrl = rvm.ReturnUrl });
+                    //return RedirectToAction(nameof(NotifyConfirmEmail), new { email = rvm.Email, returnUrl = rvm.ReturnUrl }); this will use the email confirm
+
+                    //this 3 LINES not use email confirm, also change in the program cs config
+                    await _userManager.AddClaimAsync(user, new Claim(MyClaimType.Role, RoleType.AuthenticatedUser));
+                    await _signInManager.SignInAsync(user, false);
+                    return Redirect(rvm.ReturnUrl); 
                 }
 
             }
             return View();
         }
+
+
+        //TODO: later, we will require user have login, token have the same id to access this
+        [HttpGet]
+        public async Task<IActionResult> GetUserInfo(string userId)
+        {
+            var esaCurrentUser = await _userManager.FindByIdAsync(userId);
+            if (esaCurrentUser == null) {
+                return NotFound();
+            }
+            return new JsonResult(new EsaUserDto(esaCurrentUser));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUserInfo([FromBody] EsaUserEnvelope esaUserEvelope)
+        {
+            if (esaUserEvelope == null) {
+                return BadRequest();
+            }
+            if (esaUserEvelope.EsaUserDto == null || String.IsNullOrEmpty(esaUserEvelope.UserId)) {
+                return BadRequest();
+            }
+            var esaCurrentUser = await _userManager.FindByIdAsync(esaUserEvelope.UserId);
+            if (esaCurrentUser == null) {
+                return NotFound();
+            }
+            
+            esaCurrentUser.UserName = esaUserEvelope.EsaUserDto.Username;
+            esaCurrentUser.Email = esaUserEvelope.EsaUserDto.Email;
+            esaCurrentUser.AvatarUrl = esaUserEvelope.EsaUserDto.AvatarUrl;
+
+            await _userManager.UpdateAsync(esaCurrentUser);
+            return Ok(new EsaUserDto(esaCurrentUser));
+        }
+
         public async Task<IActionResult> ExternalLogin(string provider, string returnUrl)
         {
             var redirectUri = Url.Action(nameof(ExternalLoginCallback), "Auth", new { returnUrl });
@@ -224,7 +267,7 @@ namespace eShopAnalysis.IdentityServer.Controllers
                 return RedirectToAction("Login");
             }
 
-            var user = new IdentityUser
+            var user = new EsaUser
             {
                 UserName = vm.Username,
                 Email = vm.Email,
