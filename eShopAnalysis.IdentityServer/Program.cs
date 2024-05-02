@@ -1,5 +1,6 @@
 ﻿using eShopAnalysis.IdentityServer.Configuration;
 using eShopAnalysis.IdentityServer.Controllers;
+using eShopAnalysis.IdentityServer.Models;
 using eShopAnalysis.IdentityServer.Utilities;
 using IdentityServer4;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -18,7 +19,7 @@ builder.Services.AddTransient<EmailSenderService, EmailSenderService>();
 
 //config asp.net core identity for storing user infomation
 string connString = builder.Configuration.GetConnectionString("AuthIdentityConnStr");
-builder.Services.AddDbContext<IdentityDbContext>(identityDbConfig =>
+builder.Services.AddDbContext<EsaIdentityDbContext>(identityDbConfig =>
 {
     identityDbConfig.UseSqlServer(connString, sqlServerConfig =>
     {
@@ -27,7 +28,7 @@ builder.Services.AddDbContext<IdentityDbContext>(identityDbConfig =>
     });
 });
 builder.Services.AddSingleton<ILogger, Logger<AuthController>>();
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(identityConfig =>
+builder.Services.AddIdentity<EsaUser, IdentityRole>(identityConfig =>
 {
     identityConfig.Password.RequiredLength = 4;
     identityConfig.Password.RequireDigit = false;
@@ -35,11 +36,11 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(identityConfig =>
     identityConfig.Password.RequireNonAlphanumeric = false;
 
     //config to require confirmed email
-    identityConfig.SignIn.RequireConfirmedEmail = true;
+    identityConfig.SignIn.RequireConfirmedEmail = false;
 })
-    .AddEntityFrameworkStores<IdentityDbContext>()
-    .AddUserManager<UserManager<IdentityUser>>()
-    .AddSignInManager<SignInManager<IdentityUser>>()
+    .AddEntityFrameworkStores<EsaIdentityDbContext>()
+    .AddUserManager<UserManager<EsaUser>>()
+    .AddSignInManager<SignInManager<EsaUser>>()
     .AddDefaultTokenProviders(); //for token confirm email generation
 //configure cookie to store identity server session
 builder.Services.ConfigureApplicationCookie(cookieConfig =>
@@ -66,7 +67,7 @@ builder.Services.AddIdentityServer(identityServerOption =>
     identityServerOption.Authentication.CheckSessionCookieSameSiteMode = SameSiteMode.Lax; //can only set its samesite mode to not being none
     identityServerOption.Authentication.CheckSessionCookieName = "idsrv.session";
 })
-    .AddAspNetIdentity<IdentityUser>()
+    .AddAspNetIdentity<EsaUser>()
     .AddInMemoryClients(IdentityServerConfiguration.GetClients())
     .AddInMemoryApiResources(IdentityServerConfiguration.GetApis())
     .AddInMemoryIdentityResources(IdentityServerConfiguration.GetIdentities())
@@ -116,7 +117,7 @@ using (var scope = app.Services.CreateScope())
         // add 10 seconds delay to ensure the db server is up to accept connections
         // this won't be needed in real world application
         //System.Threading.Thread.Sleep(30000);
-        var context = services.GetRequiredService<IdentityDbContext>();
+        var context = services.GetRequiredService<EsaIdentityDbContext>();
         context.Database.EnsureCreated();
 
     }
