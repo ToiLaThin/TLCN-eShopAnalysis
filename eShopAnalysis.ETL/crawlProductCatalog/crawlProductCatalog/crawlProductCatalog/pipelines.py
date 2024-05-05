@@ -17,7 +17,7 @@ from crawlProductCatalog.items import CatalogItem, ProductItem, CublicType
 class SaveToMongoPipeline(object):
     def __init__(self):
         settings = {
-            "CONNECTION_STRING": "your mongo cluster conn string",
+            "CONNECTION_STRING": "mongodb://localhost:27017",
             "MONGODB_DB": "ProductCatalogDb",
             "MONGODB_CATALOG_COLLECTION": "CatalogCollection",
             "MONGODB_PRODUCT_COLLECTION": "ProductCollection"
@@ -46,7 +46,7 @@ class SaveToMongoPipeline(object):
 class ProcessCatalogPipeline(object):
     def __init__(self) -> None:
         settings = {
-            "CONNECTION_STRING": "your mongo cluster conn string",
+            "CONNECTION_STRING": "mongodb://localhost:27017",
             "MONGODB_DB": "ProductCatalogDb",
             "MONGODB_CATALOG_COLLECTION": "CatalogCollection",
             "MONGODB_PRODUCT_COLLECTION": "ProductCollection"
@@ -65,7 +65,7 @@ class ProcessCatalogPipeline(object):
 class ProcessProductPipeline(object):
     def __init__(self) -> None:
         settings = {
-            "CONNECTION_STRING": "your mongo cluster conn string",
+            "CONNECTION_STRING": "mongodb://localhost:27017",
             "MONGODB_DB": "ProductCatalogDb",
             "MONGODB_CATALOG_COLLECTION": "CatalogCollection",
             "MONGODB_PRODUCT_COLLECTION": "ProductCollection"
@@ -119,8 +119,8 @@ class ProcessProductPipeline(object):
             print("*************INFO*****************")
             print("Product name do not have (, will return and still save to db")
             # TODO if product name do not have (, it can still have cublic value and type, so we still need to check on that
-
             return
+        
         product_name, info = product_item_name.split('(')[0].strip(), product_item_name.split('(')[1].strip()
         print("Info", info) # info do not have (
         product_item['ProductName'] = product_name
@@ -130,10 +130,12 @@ class ProcessProductPipeline(object):
             match_cublic_type = re.search(r"[a-zA-Z]+", info)
             cublic_value = int(match_cublic_value.group())
             cublic_type_str = match_cublic_type.group()
-        except Exception as e:
+        except Exception as e: #can be caused by (g), no int inside bracket
             print("*************ERROR*****************")
             print("Error in processing the cublic value and type")
-            raise DropItem()
+            cublic_value = 100 # assign random value, not DropItem because it can still have cublic type like (g)
+            cublic_type_str = "g"
+            # raise DropItem()
         product_item['ProductModels'][0]['CublicValue'] = cublic_value
         lowered_cublic_type_str = cublic_type_str.lower()
         if lowered_cublic_type_str == "ml" or lowered_cublic_type_str == "l":
@@ -158,5 +160,6 @@ class ProcessProductPipeline(object):
             except Exception as e:
                 print("*************ERROR*****************")
                 print("Error in processing the item")
+                print(item)
                 return
         return item

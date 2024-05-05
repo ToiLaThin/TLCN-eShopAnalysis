@@ -66,3 +66,23 @@ class CublicType(Enum):
     ML = 1
     M = 3
     NONE = 3
+
+
+
+# class to store data from crawl.json, these are the catalogs, subcatalogs and products
+# that we decide to crawl, not all of them
+class CrawlItem:
+    def __init__(self, catalog: str, subcatalogs_products: list):
+        self.catalog = catalog
+        print(type(subcatalogs_products[0]["subcatalog_name"]))
+        print(subcatalogs_products[0]["subcatalog_name"])
+        self.subcatalogs_products = [SubcatalogAndProducts(\
+            sub_and_products["subcatalog_name"],\
+            tuple(sub_and_products["product_names"]))\
+        for sub_and_products in subcatalogs_products]
+        # list cannot be key of dict, so we need to convert it to tuple
+
+class SubcatalogAndProducts():
+    def __init__(self, subcatalog_name: str, product_names: tuple[str]):
+        self.subcatalog_name = subcatalog_name
+        self.product_names = product_names

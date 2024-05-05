@@ -5,3 +5,4 @@ selenium
 jupyterlab
 webdriver-manager
 scrapy-selenium
+python-slugify
