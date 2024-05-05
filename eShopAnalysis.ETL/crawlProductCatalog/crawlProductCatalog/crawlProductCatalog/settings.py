@@ -12,16 +12,16 @@ from shutil import which
 
 BOT_NAME = "crawlProductCatalog"
 #limit the number of items to be scraped
-CLOSESPIDER_ITEMCOUNT = 50
+CLOSESPIDER_ITEMCOUNT = 300
 #xtremely necessary for debugging
 LOG_LEVEL='INFO' 
 
 SPIDER_MODULES = ["crawlProductCatalog.spiders"]
 NEWSPIDER_MODULE = "crawlProductCatalog.spiders"
 FEEDS = {
-    # 'catalogs.json': {'format': 'json'},
+    # 'catalogs.json': {'format': 'json', 'overwrite': True},
     # 'catalogs.csv': {'format': 'csv'},
-    # 'products.json': {'format': 'json'},
+    'products.json': {'format': 'json', 'overwrite': True},
 }
 SCRAPEOPS_API_KEY = 'do not reveal your api key'
 SCRAPEOPS_FAKE_USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents?'

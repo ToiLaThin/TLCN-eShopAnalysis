@@ -1,0 +1,625 @@
+[
+    {
+        "catalog": "pet-care",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "care-cat",
+                "product_names": [
+                    "Petio Clean Dog Smell Deodorant Sterilization (500ml)",
+                    "Uncle Bill Scented Waste Bags (120 Bag)",
+                    "Petio Mild Puppy Shampoo (350ml)"
+                ]
+            },
+            {
+                "subcatalog_name": "food-dog",
+                "product_names": [
+                    "FIB’S Meat Formular (400g)",
+                    "FIB’S Meat Formular (1500g)",
+                    "Pedigree Dog Food Beef W/ Vegetable Bag (1.5Kg)",
+                    "Pedigree Dog Food Beef W/ Vegetable For Dog (500g)"
+                ]
+            },
+            {
+                "subcatalog_name": "care-cat",
+                "product_names": [
+                    "ME-O Cat Litter Apple Scent 10Litre",
+                    "ME-O Cat Litter Lemon Scent 5Litre",
+                    "Oakwood Urine Stain & Odour Remover (250ml)"
+                ]
+            },
+            {
+                "subcatalog_name": "food-cat",
+                "product_names": [
+                    "MeO Cat Treat Salmon 50g",
+                    "ME-O Cat Tuna Flavor 450g",
+                    "Reflex Plus Kitten Food Chicken (1.5kg)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "bakery",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "sandwich",
+                "product_names": [
+                    "Homemade High Protein Sandwich(Pc)",
+                    "Homemade High Fiber Sandwich (Pc)",
+                    "Petio Mild Puppy Shampoo (350ml)"
+                ]
+            },
+            {
+                "subcatalog_name": "bread",
+                "product_names": [
+                    "Homemade Sandwich Toast bread (pcs)",
+                    "Farine Baguette (Pc)"
+                ]
+            }            
+        ]
+    },
+    {
+        "catalog": "beer",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "lager-beer",
+                "product_names": [
+                    "333 Beer Can (330ml)",
+                    "Tiger Beer Festive Can 5% (330ml)",
+                    "Tiger Platinum Beer Can (330ml)",
+                    "Tuborg Beer Can (330ml)",
+                    "Tuborg Ice Beer Can (330ml)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "biscuits-and-cakes",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "cakes",
+                "product_names": [
+                    "Chocopie Orion Cake (180g)",
+                    "Lotte Choco pie Banana (12x28g)",
+                    "Yuki&Love Mochi Mixed Flavor (900g)"
+                ]
+            },
+            {
+                "subcatalog_name": "cream-crackers",
+                "product_names": [
+                    "Ritz Cheese Cracker (118g)",
+                    "Jacob's Cream Crackers (200g)"
+                ]
+            },
+            {
+                "subcatalog_name": "other-crackers",
+                "product_names": [
+                    "AFC Vegetable Cracker 200g",
+                    "LU Tuc Cheese Flavour (100g)",
+                    "Ritz Cracker 247g"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "body-care",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "tooth-paste-for-kid",
+                "product_names": [
+                    "2080 DC Kids Toothpaste Apple (80g)"
+                ]
+            },
+            {
+                "subcatalog_name": "toothbrush-for-kids",
+                "product_names": [
+                    "Colgate Kids Toothbrush Spiderman 3-5 Old"
+                ]
+            },
+            {
+                "subcatalog_name": "shave",
+                "product_names": [
+                    "Gillette Shaving Foam Powder Lemon (175g)",
+                    "Gillette Shaving Foam Powder Lemon (50g)",
+                    "Gillette Razor Blue II Plus 5+1 (6pcs)",
+                    "Gillette Blue II Plus (2pcs)",
+                    "Monsieur Barbier Styling Wax (75ml)"
+                ]
+            }, 
+            {
+                "subcatalog_name": "shampoo",
+                "product_names": [
+                    "H&S Shampoo Cool Menthol (480ml)",
+                    "Head & Shoulders Shampoo Dry Scalp Care 2in1 (700ml)",
+                    "Pantene Shampoo Hair Treatment (300g)",
+                    "Rejoice Shampoo Supper Glossy Hair (900g)"
+                ]
+            },
+            {
+                "subcatalog_name": "shower",
+                "product_names": [
+                    "X-Men Body Bath&Shampoo 2in1 Wood (650g)",
+                    "X-Men Perfumed Soap Wood (90g)",
+                    "Old Spice Body Wash Pure Sport (532ml)"
+                ]
+            },
+            {
+                "subcatalog_name": "hand-and-foot-care",
+                "product_names": [
+                    "Lifebuoy Kitchen Fresh Hand Wash (180g)",
+                    "Safeguard Lemon Fresh Hand Wash (450ml)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "breakfast",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "peanut-butter",
+                "product_names": [
+                    "La Petite Epicerie Peanut Butter Smooth (180g)",
+                    "La Petite Epicerie Peanut Butter Crunchy(180g)",
+                    "La Petite Epicerie Peanut Butter Crunchy (780g)"
+                ]
+            },
+            {
+                "subcatalog_name": "cereal-boxes",
+                "product_names": [
+                    "Nestle Honey Stars Breakfast Cereals (300g)",
+                    "Nestle Honey Stars Cereals (150g)",
+                    "Nestle Honey Stars Cereals Food (25g)",
+                    "Nestle KoKo Krunch Breakfast Food (25g)",
+                    "Nestle Koko Krunch Chocolate Cereals (170g)",
+                    "Nestle Koko Krunch Duo Breakfast Cereals (330g)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "cheese",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "slice-cheese",
+                "product_names": [
+                    "La Vache Qui Rit light 8P (120g)",
+                    "La Vache Qui Rit Toast Original (200g)",
+                    "Fol Epi Slices Cheese (150g)"
+                ]
+            },
+            {
+                "subcatalog_name": "cooked-pressed-cheese",
+                "product_names": [
+                    "Anchor Cheddar Slices (200g)",
+                    "Anchor Cheddar (g)",
+                    "Maasdam Slices (150g)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "cosmetics",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "anti-wrinkle-and-anti-ageing-care",
+                "product_names": [
+                    "Himalaya Nourshing Skin Cream (50ml)",
+                    "Organique Age-Reverse Toning Essense (145ml)"
+                ]
+            },
+            {
+                "subcatalog_name": "beauty-care",
+                "product_names": [
+                    "HomoNaturals Detox Cleanser&Smooth Saving (70ml)",
+                    "HomoNaturals Hand Cream (100ml)"
+                ]
+            },
+            {
+                "subcatalog_name": "lips-care",
+                "product_names": [
+                    "Nivea Essential Care (4.8g)",
+                    "Nivea Fruity Shine Strawberry (4.8g)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "fresh-milk",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "whole-milk",
+                "product_names": [
+                    "Meadow Fresh UHT Full Cream Milk (1L)",
+                    "Meadow Fresh UHT Milk Full Cream (3x200ml)",
+                    "Devondale Full Cream Milk 1L",
+                    "Anchor UHT Milk Full Cream (1L)"
+                ]
+            },
+            {
+                "subcatalog_name": "plain-milk",
+                "product_names": [
+                    "Dutch Lady UHT Milk Plain (1L)",
+                    "DalatMilk UHT Milk Plain (4x180ml)",
+                    "DalatMilk Pasteurized Milk (180ml)",
+                    "TH UHT Fresh Milk Sweetened(4x180ml)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "healthcare",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "diaper",
+                "product_names": [
+                    "Huggies Swim Nappies Pants x12 Size 2-3/3-8Kg"
+                ]
+            },
+            {
+                "subcatalog_name": "other-tissue",
+                "product_names": [
+                    "E'mos Premium Tissue (100 Sheets)",
+                    "E'mos Special Tissue 2 Ply (250 Sheets)"
+                ]
+            },
+            {
+                "subcatalog_name": "tissue-box",
+                "product_names": [
+                    "Paseo Ultra Soft Aloe Tissues (95 sheets)",
+                    "Paseo Ultra Soft Aloe Tissues (95 sheets)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "home-care",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "cleaning-wipe",
+                "product_names": [
+                    "Let Green Alcohol wet tissue (10sheets)",
+                    "Let Green Alcohol wet tissue (50sheets)"
+                ]
+            },
+            {
+                "subcatalog_name": "cleaning-product",
+                "product_names": [
+                    "Sunlight Kitchen Cleaner Lemon & Baking Soda (500ml)",
+                    "Apta Spray Marseille Soap 750ml"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "hot-and-cold-brews",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "milk-tea",
+                "product_names": [
+                    "Tearoma Bubble Milk Tea (250g)",
+                    "Ranong Matcha Milk Tea (80g)"
+                ]
+            },
+            {
+                "subcatalog_name": "instant-coffee",
+                "product_names": [
+                    "G7 instant coffee 2in1 box (15x16g)",
+                    "G7 instant Coffee (20x16g)",
+                    "Mr Viet 3 in 1 Instant Coffee 255g",
+                    "Nescafe 3in1 Green (20x17g) (340g)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "ice-cream",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "chocolate-ice-cream",
+                "product_names": [
+                    "Milo Ice Cream Malt Stick (51g)",
+                    "Kitkat Ice Cream Chocolate (375g)",
+                    "Kitkat Ice Cream Stick (80ml)",
+                    "Bellany Choco-Mint (125ml)"
+                ]
+            },
+            {
+                "subcatalog_name": "coconut-ice-cream",
+                "product_names": [
+                    "Bellany Coconut Paletas (55ml)",
+                    "Bellany Coconut Paletas (110ml)",
+                    "Montclair Homemade Coconut Ice Cream (430ml)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "kitchenware",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "aluminum-paper",
+                "product_names": [
+                    "Diamond Aluminium Foil 30cmx7.6m",
+                    "Diamond Aluminium Foil 45cmx7.6m"                    
+                ]
+            },
+            {
+                "subcatalog_name": "grill-and-bbq",
+                "product_names": [
+                    "UB Foil Roaster Dish Wave Base",
+                    "X-BBQ Coconut Charcoal (4kg)",
+                    "Barbecook Elastic Grill (40 x 28cm)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "meat",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "chicken",
+                "product_names": [
+                    "3F Chicken Drumstick (500g)",
+                    "3F Chicken Breast Skinless Fillet (500g)",
+                    "3F Chicken Thigh (500g)",
+                    "3F Chicken Wings (500g)",
+                    "Leboucher Chicken Lollipop Drumstick (500g)"
+                ]
+            },
+            {
+                "subcatalog_name": "beef",
+                "product_names": [
+                    "AG Wilmot Black Angus Rib-Eye Boneless Steak (g)",
+                    "AG Black Angus Sirloin (g)"
+                ]
+            },
+            {
+                "subcatalog_name": "pork",
+                "product_names": [
+                    "G Pork Minced (300g)",
+                    "G Pork Young Ribs (300g)",
+                    "Meat Master Pork Belly 400g",
+                    "Meat Master Pork Minced (400g)",
+                    "VIETGAP Pork Loin (500g)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "processed-dairy-products",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "growing-up-3-6",
+                "product_names": [
+                    "Abbott Grow 1 G-Power (900g)",
+                    "Abbott Grow 4 G-Power Vanilla (900g)"
+                ]
+            },
+            {
+                "subcatalog_name": "sweet-condense-milk",
+                "product_names": [
+                    "Ong Tho Condensed Milk tube (165g)",
+                    "Dutch Lady Condensed Milk (380g)",
+                    "Southern Star Less Sweet Condensed Cream (1.284kg)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "ready-to-cook",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "convenient-food-ready-to-eat",
+                "product_names": [
+                    "Nhip Song Pork Ribs Flavor Instant Noodles 70g",
+                    "Nhip Song Vegan Nam Vang Styles Noodles 65g",
+                    "Minh Ha Vietnamese Pho Kit (138g)",
+                    "Ace Cook Ramen Tonkotsu Pork Bone 120g"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "pasta-and-noodles",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "local-noodles",
+                "product_names": [
+                    "Happy Noodles Soybean Vermicelli (400g)"
+                ]
+            },
+            {
+                "subcatalog_name": "other-pasta-and-noodles",
+                "product_names": [
+                    "Happy Noodles Soybean Macaroni (400g)",
+                    "Panzani Macaroni Fast Cooking 3min. (500g)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "rice",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "regular-rice",
+                "product_names": [
+                    "Ong Cua ST25 Rice (5kg)",
+                    "Neptune Rice ST25 (5kg)",
+                    "Jasmine Rice 5Kg",
+                    "A An Thom ST21 Rice (5kg)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "fresh-food",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "eggs",
+                "product_names": [
+                    "Vfood Chicken Eggs (10pcs)",
+                    "Vfood Duck Eggs (10pcs)",
+                    "Vfood Chicken Eggs (6pcs)",
+                    "Vfood Duck Eggs (6pcs)",
+                    "Ba Huan Chicken Eggs (10pcs)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "snacks-nuts-and-dried-fruits",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "potato-chips-tiles",
+                "product_names": [
+                    "Lay's Stax Original Flavor (100g)",
+                    "Lay's Stax Spicy Lobster (100g)",
+                    "Slide Barbecue Potato Chips 160g"
+                ]
+            },
+            {
+                "subcatalog_name": "soft-dried-fruits",
+                "product_names": [
+                    "Vinamit Soft Dried Banana No Sugar 100g",
+                    "We'natur Dried Banana (330g)",
+                    "Truong Hao Soft Mango (180g)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "soft-drinks",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "cola",
+                "product_names": [
+                    "Coca Cola Sleek Can (320ml)",
+                    "Pepsi Cola Sleek Can ,320ml",
+                    "Pepsi Pet Bottle ,1.5L/,1.75L",
+                    "Coca Cola Original-Less sugar (1.5L)",
+                    "Coca Cola Zero (330ml)",
+                    "Coca Cola Japanese Version(500ml)"
+                ]
+            },
+            {
+                "subcatalog_name": "sport-energy-drink",
+                "product_names": [
+                    "Aquarius Water bottle (390ml)",
+                    "7Up Revive Zero Pet (500ml)",
+                    "Monster Energy Sleek Can (355ml)",
+                    "Monster Energy Punch (500ml)",
+                    "Red Bull Can (250ml)"
+                ]
+            },
+            {
+                "subcatalog_name": "coffee-drinks",
+                "product_names": [
+                    "UCC Black Coffee Non Sugar Can 185g",
+                    "My Café Latte Begium Chocolate (220ml)",
+                    "Dydo Blend Demitasse Black Coffee Can 185g"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "pastry-and-bakery",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "traditional-vietnamese-cake",
+                "product_names": [
+                    "Bao Minh Durian Pia Cake with Salted Egg (300g)",
+                    "Bao Minh Traditional Green Rice Cake (65g)",
+                    "Bao Minh Traditional Green Rice Cake (390g)",
+                    "Bao Minh Nutty Sticky Rice Bar (200g)"
+                ]
+            },
+            {
+                "subcatalog_name": "other-sweet-pastries",
+                "product_names": [
+                    "Bauli Moonfils Strawberry (45g)",
+                    "Homemade Donut Chocolate (Pc)",
+                    "Homemade Vanilla Cupcake (Pc)",
+                    "Homemade Red Velvet Cake (6 Pax)"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "vegetables",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "broccoli",
+                "product_names": [
+                    "Broccoli",
+                    "Broccoli VietGAP (350g)"
+                ]
+            },
+            {
+                "subcatalog_name": "cabbage",
+                "product_names": [
+                    "Cabbage Heart Deli GAP (500g)",
+                    "Cabbage Purple Deli GAP(g)",
+                    "Napa Cabbage VietGAP (600g)"
+                ]
+            },
+            {
+                "subcatalog_name": "potato",
+                "product_names": [
+                    "Potato (500g)",
+                    "Potato Baby (500g)"
+                ]
+            },
+            {
+                "subcatalog_name": "tomato",
+                "product_names": [
+                    "Tomato Beef VietGAP (g)",
+                    "Tomato Cocktail VietGAP",
+                    "Tomato Cherry",
+                    "Tomato Roseberry (g)"
+                ]
+            },
+            {
+                "subcatalog_name": "pumpkin",
+                "product_names": [
+                    "Japanese Pumpkin",
+                    "Pumpkin US 700gr"
+                ]
+            },
+            {
+                "subcatalog_name": "garlic-onion-and-shallot",
+                "product_names": [
+                    "Spring Onion (100g)",
+                    "Purple Onion (300g)",
+                    "Garlic Minced"
+                ]
+            }
+        ]
+    },
+    {
+        "catalog": "water",
+        "subcatalogs_products": [
+            {
+                "subcatalog_name": "natural-water",
+                "product_names": [
+                    "Aquafina Pure Water Bottle ,500ml",
+                    "Aquafina Pure Water Bottle ,1.5L",
+                    "Aquafina Pure Water Bottle ,5L",
+                    "Dasani Bottle (350ml)",
+                    "Dasani Water Boltle (1.5L)",
+                    "Lavie (500ml)",
+                    "Lavie (5L)/(6L)"
+                ]
+            },
+            {
+                "subcatalog_name": "added-vitamins-water",
+                "product_names": [
+                    "I-On Life Water (1.25L)",
+                    "I-On Life Water (300ml)",
+                    "I-On Life Water (4.5L)",
+                    "Pocari Sweat Ion Supply Drink Can(330ml)",
+                    "Pocari Sweat Ion Supply Drink Bottle (900ml)",
+                    "Pocari Sweat Supply Drink Bottle(350ml)"
+                ]
+            }
+        ]
+    }
+]
