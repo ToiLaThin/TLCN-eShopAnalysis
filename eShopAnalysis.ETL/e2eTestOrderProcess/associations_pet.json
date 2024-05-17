@@ -1,0 +1,65 @@
+[
+    {
+        "related_subcatalogs": ["care-cat", "food-cat"],
+        "products": [
+            {
+                "name": "ME-O Cat Litter Apple Scent 10Litre",
+                "weight": 0.1
+            },
+            {
+                "name": "ME-O Cat Litter Lemon Scent 5Litre",
+                "weight": 0.2
+            },
+            {
+                "name": "Oakwood Urine Stain & Odour Remover (250ml)",
+                "weight": 0.15
+            },
+            {
+                "name": "MeO Cat Treat Salmon 50g",
+                "weight": 0.2
+            },
+            {
+                "name": "ME-O Cat Tuna Flavor 450g",
+                "weight": 0.25
+            },
+            {
+                "name": "Reflex Plus Kitten Food Chicken (1.5kg)",
+                "weight": 0.1
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["care-dog", "food-dog"],
+        "products": [
+            {
+                "name": "Petio Clean Dog Smell Deodorant Sterilization (500ml)",
+                "weight": 0.1
+            },
+            {
+                "name": "Uncle Bill Scented Waste Bags (120 Bag)",
+                "weight": 0.1
+            },
+            {
+                "name": "Petio Mild Puppy Shampoo (350ml)",
+                "weight": 0.1
+            },
+            {
+                "name": "FIB’S Meat Formular (400g)",
+                "weight": 0.2
+            },
+            {
+                "name": "FIB’S Meat Formular (1500g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Pedigree Dog Food Beef W/ Vegetable Bag (1.5Kg)",
+                "weight": 0.1
+            },
+            {
+                "name": "Pedigree Dog Food Beef W/ Vegetable For Dog (500g)",
+                "weight": 0.2
+            }
+        ]
+    }
+
+]

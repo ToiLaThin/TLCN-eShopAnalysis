@@ -17,7 +17,7 @@ from crawlProductCatalog.items import CatalogItem, ProductItem, CublicType
 class SaveToMongoPipeline(object):
     def __init__(self):
         settings = {
-            "CONNECTION_STRING": "mongodb://localhost:27017",
+            "CONNECTION_STRING": "your connection string",
             "MONGODB_DB": "ProductCatalogDb",
             "MONGODB_CATALOG_COLLECTION": "CatalogCollection",
             "MONGODB_PRODUCT_COLLECTION": "ProductCollection"
@@ -46,7 +46,7 @@ class SaveToMongoPipeline(object):
 class ProcessCatalogPipeline(object):
     def __init__(self) -> None:
         settings = {
-            "CONNECTION_STRING": "mongodb://localhost:27017",
+            "CONNECTION_STRING": "your connection string",
             "MONGODB_DB": "ProductCatalogDb",
             "MONGODB_CATALOG_COLLECTION": "CatalogCollection",
             "MONGODB_PRODUCT_COLLECTION": "ProductCollection"
@@ -65,7 +65,7 @@ class ProcessCatalogPipeline(object):
 class ProcessProductPipeline(object):
     def __init__(self) -> None:
         settings = {
-            "CONNECTION_STRING": "mongodb://localhost:27017",
+            "CONNECTION_STRING": "your connection string",
             "MONGODB_DB": "ProductCatalogDb",
             "MONGODB_CATALOG_COLLECTION": "CatalogCollection",
             "MONGODB_PRODUCT_COLLECTION": "ProductCollection"
@@ -123,7 +123,7 @@ class ProcessProductPipeline(object):
         
         product_name, info = product_item_name.split('(')[0].strip(), product_item_name.split('(')[1].strip()
         print("Info", info) # info do not have (
-        product_item['ProductName'] = product_name
+        # product_item['ProductName'] = product_name #ko cần bỏ đại lượng, vì nó ảnh hưởng tới việc find product theo tên từ file association
         try:
             # sometimes it's (g), so no match
             match_cublic_value = re.match(r"\d+",info)

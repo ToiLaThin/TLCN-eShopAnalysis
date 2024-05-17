@@ -1,0 +1,142 @@
+[
+    {
+        "related_subcatalogs": ["tooth-paste-for-kid", "toothbrush-for-kids", "slice-cheese", "other-sweet-pastries"],
+        "products": [
+            {
+                "name": "2080 DC Kids Toothpaste Apple (80g)",
+                "weight": 0.15
+            },
+            {
+                "name": "Colgate Kids Toothbrush Spiderman 3-5 Old",
+                "weight": 0.15
+            },
+            {
+                "name": "La Vache Qui Rit light 8P (120g)",
+                "weight": 0.15
+            },
+            {
+                "name": "La Vache Qui Rit Toast Original (200g)",
+                "weight": 0.1
+            },       
+            {
+                "name": "Homemade Donut Chocolate (Pc)",
+                "weight": 0.1
+            },
+            {
+                "name": "Homemade Vanilla Cupcake (Pc)",
+                "weight": 0.15
+            },
+            {
+                "name": "Bauli Moonfils Strawberry (45g)",
+                "weight": 0.1
+            }            
+        ]
+    },
+    {
+        "related_subcatalogs": ["slice-cheese", "plain-milk"],
+        "products": [
+            {
+                "name": "La Vache Qui Rit light 8P (120g)",
+                "weight": 0.2
+            },
+            {
+                "name": "La Vache Qui Rit Toast Original (200g)",
+                "weight": 0.15
+            },
+            {
+                "name": "Fol Epi Slices Cheese (150g)",
+                "weight": 0.05
+            },
+            {
+                "name": "Dutch Lady UHT Milk Plain (1L)",
+                "weight": 0.1
+            },
+            {
+                "name": "DalatMilk UHT Milk Plain (4x180ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "DalatMilk Pasteurized Milk (180ml)",
+                "weight": 0.1
+            },
+            {
+                "name": "TH UHT Fresh Milk Sweetened(4x180ml)",
+                "weight": 0.2
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["other-sweet-pastries", "plain-milk"],
+        "products": [
+            {
+                "name": "Bauli Moonfils Strawberry (45g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Homemade Donut Chocolate (Pc)",
+                "weight": 0.15
+            },
+            {
+                "name": "Homemade Vanilla Cupcake (Pc)",
+                "weight": 0.1
+            },
+            {
+                "name": "Homemade Red Velvet Cake (6 Pax)",
+                "weight": 0.05
+            },
+            {
+                "name": "Dutch Lady UHT Milk Plain (1L)",
+                "weight": 0.1
+            },
+            {
+                "name": "DalatMilk UHT Milk Plain (4x180ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "DalatMilk Pasteurized Milk (180ml)",
+                "weight": 0.1
+            },
+            {
+                "name": "TH UHT Fresh Milk Sweetened(4x180ml)",
+                "weight": 0.2
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["growing-up-3-6", "diaper", "other-tissue"],
+        "products": [
+            {
+                "name": "Abbott Grow 1 G-Power (900g)",
+                "weight": 0.3
+            },
+            {
+                "name": "Abbott Grow 4 G-Power Vanilla (900g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Huggies Swim Nappies Pants x12 Size 2-3/3-8Kg",
+                "weight": 0.2
+            },
+            {
+                "name": "E'mos Premium Tissue (100 Sheets)",
+                "weight": 0.1
+            },
+            {
+                "name": "E'mos Special Tissue 2 Ply (250 Sheets)",
+                "weight": 0.2
+            },
+            {
+                "name": "DalatMilk UHT Milk Plain (4x180ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "DalatMilk Pasteurized Milk (180ml)",
+                "weight": 0.1
+            },
+            {
+                "name": "TH UHT Fresh Milk Sweetened(4x180ml)",
+                "weight": 0.2
+            }
+        ]
+    }
+]

@@ -1,0 +1,39 @@
+[
+    {
+        "related_subcatalogs": ["anti-wrinkle-and-anti-ageing-care", "beauty-care", "lips-care", "shampoo", "shower"],
+        "products": [
+            {
+                "name": "Himalaya Nourshing Skin Cream (50ml)",
+                "weight": 0.15
+            },
+            {
+                "name": "Organique Age-Reverse Toning Essense (145ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "HomoNaturals Detox Cleanser&Smooth Saving (70ml)",
+                "weight": 0.15
+            },
+            {
+                "name": "HomoNaturals Hand Cream (100ml)",
+                "weight": 0.1
+            },       
+            {
+                "name": "Nivea Essential Care (4.8g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Nivea Fruity Shine Strawberry (4.8g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Pantene Shampoo Hair Treatment (300g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Rejoice Shampoo Supper Glossy Hair (900g)",
+                "weight": 0.1
+            }
+        ]
+    }
+]

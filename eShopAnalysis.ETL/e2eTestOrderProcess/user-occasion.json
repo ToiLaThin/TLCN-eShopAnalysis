@@ -1,0 +1,157 @@
+[
+    {
+        "username": "occ1",
+        "password": "pass",
+        "weekday": [0, 3, 6],
+        "profiles": [
+            {
+                "purpose": "Snacks",
+                "weight": 0.4,
+                "items": [
+                    {
+                        "name": "Truong Hao Soft Mango (180g)",
+                        "subcatalog": "soft-dried-fruits",
+                        "quantity": "Medium",
+                        "weight": 0.5
+                    }, 
+                    {
+                        "name": "Lay's Stax Spicy Lobster (100g)",
+                        "subcatalog": "snacks-nuts-and-dried-fruits",
+                        "quantity": "Low",
+                        "weight": 0.5
+                    }
+                ]
+            },
+            {
+                "purpose": "Cooking",
+                "weight": 0.6,
+                "items": [
+                    {
+                        "name": "Meat Master Pork Belly 400g",
+                        "subcatalog": "pork",
+                        "quantity": "Low",
+                        "weight": 0.2
+                    },
+                    {
+                        "name": "Dasani Water Boltle",
+                        "subcatalog": "natural-water",
+                        "quantity": "Low",
+                        "weight": 0.1
+                    },
+                    {
+                        "name": "G Pork Young Ribs (300g)",
+                        "subcatalog": "pork",
+                        "quantity": "Low",
+                        "weight": 0.2
+                    },
+                    {
+                        "name": "Ong Cua ST25 Rice (5kg)",
+                        "subcatalog": "regular-rice",
+                        "quantity": "Low",
+                        "weight": 0.15
+                    },
+                    {
+                        "name": "Vfood Chicken Eggs (10pcs)",
+                        "subcatalog": "eggs",
+                        "quantity": "Low",
+                        "weight": 0.25
+                    },
+                    {
+                        "name": "Broccoli VietGAP (350g)",
+                        "subcatalog": "broccoli",
+                        "quantity": "Medium",
+                        "weight": 0.1
+                    }
+                ]
+            }
+        ]
+    },
+
+    {
+        "username": "occ2",
+        "password": "pass",
+        "weekday": [0, 3, 6],
+        "profiles": [
+            {
+                "purpose": "Snacks",
+                "weight": 0.4,
+                "items": [
+                    {
+                        "name": "Chocopie Orion Cake (180g)",
+                        "subcatalog": "cakes",
+                        "quantity": "Medium",
+                        "weight": 5
+                    }, 
+                    {
+                        "name": "Yuki&Love Mochi Mixed Flavor (900g)",
+                        "subcatalog": "cakes",
+                        "quantity": "High",
+                        "weight": 0.5
+                    }
+                ]
+            },
+            {
+                "purpose": "Cooking",
+                "weight": 0.6,
+                "items": [
+                    {
+                        "name": "Meat Master Pork Belly 400g",
+                        "subcatalog": "pork",
+                        "quantity": "Medium",
+                        "weight": 0.5
+                    },
+                    {
+                        "name": "Vfood Duck Eggs (10pcs)",
+                        "subcatalog": "eggs",
+                        "quantity": "Low",
+                        "weight": 0.5
+                    }
+                ]
+            }
+        ]
+    },
+
+    {
+        "username": "occ3",
+        "password": "pass",
+        "weekday": [0, 3, 6],
+        "profiles": [
+            {
+                "purpose": "Cooking",
+                "weight": 0.6,
+                "items": [
+                    {
+                        "name": "AG Black Angus Sirloin (g)",
+                        "subcatalog": "beef",
+                        "quantity": "Medium",
+                        "weight": 0.4
+                    }, 
+                    {
+                        "name": "Potato (500g)",
+                        "subcatalog": "potato",
+                        "quantity": "Medium",
+                        "weight": 0.3
+                    }, 
+                    {
+                        "name": "Broccoli",
+                        "subcatalog": "broccoli",
+                        "quantity": "High",
+                        "weight": 0.3
+                    }
+                ]
+            },
+            {
+                "purpose": "Pet Care",
+                "weight": 0.4,
+                "items": [
+                    {
+                        "name": "Reflex Plus Kitten Food Chicken (1.5kg)",
+                        "subcatalog": "food-cat",
+                        "quantity": "Medium",
+                        "weight": 1
+                    }
+                ]
+            }
+        ]
+    }
+]
