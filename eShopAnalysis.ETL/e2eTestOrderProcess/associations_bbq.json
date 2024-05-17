@@ -1,0 +1,121 @@
+[
+    {
+        "related_subcatalogs": ["aluminum-paper", "grill-and-bbq", "lager-beer", "beef", "pork"],
+        "products": [
+            {
+                "name": "333 Beer Can (330ml)",
+                "weight": 0.15
+            },
+            {
+                "name": "Barbecook Elastic Grill (40 x 28cm)",
+                "weight": 0.1
+            },
+            {
+                "name": "Tiger Beer Festive Can 5% (330ml)",
+                "weight": 0.15
+            },
+            {
+                "name": "G Pork Young Ribs (300g)",
+                "weight": 0.1
+            },       
+            {
+                "name": "Meat Master Pork Belly 400g",
+                "weight": 0.1
+            },
+            {
+                "name": "AG Wilmot Black Angus Rib-Eye Boneless Steak (g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Diamond Aluminium Foil 30cmx7.6m",
+                "weight": 0.1
+            },
+            {
+                "name": "X-BBQ Coconut Charcoal (4kg)",
+                "weight": 0.1
+            },
+            {
+                "name": "UB Foil Roaster Dish Wave Base",
+                "weight": 0.05
+            },
+            {
+                "name": "Diamond Aluminium Foil 45cmx7.6m",
+                "weight": 0.05
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["lager-beer"],
+        "products": [
+            {
+                "name": "333 Beer Can (330ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "Tiger Platinum Beer Can (330ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "Tiger Beer Festive Can 5% (330ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "Tuborg Beer Can (330ml)",
+                "weight": 0.2
+            },       
+            {
+                "name": "Tuborg Ice Beer Can (330ml)",
+                "weight": 0.2
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["beef", "pork", "chicken"],
+        "products": [
+            {
+                "name": "AG Wilmot Black Angus Rib-Eye Boneless Steak (g)",
+                "weight": 0.05
+            },
+            {
+                "name": "AG Black Angus Sirloin (g)",
+                "weight": 0.1
+            },
+            {
+                "name": "G Pork Minced (300g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Meat Master Pork Belly 400g",
+                "weight": 0.1
+            },
+            {
+                "name": "Meat Master Pork Minced (400g)",
+                "weight": 0.1
+            },       
+            {
+                "name": "VIETGAP Pork Loin (500g)",
+                "weight": 0.05
+            },
+            {
+                "name": "3F Chicken Drumstick (500g)",
+                "weight": 0.1
+            },
+            {
+                "name": "3F Chicken Breast Skinless Fillet",
+                "weight": 0.1
+            },       
+            {
+                "name": "3F Chicken Thigh (500g)",
+                "weight": 0.1
+            },
+            {
+                "name": "3F Chicken Wings (500g)",
+                "weight": 0.1   
+            },
+            {
+                "name": "Leboucher Chicken Lollipop Drumstick (500g)",
+                "weight": 0.1
+            }
+        ]
+    }
+]

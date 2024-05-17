@@ -1,0 +1,262 @@
+[
+    {
+        "related_subcatalogs": ["traditional-vietnamese-cake", "other-sweet-pastries", "cakes", "cream-crackers", "other-crackers", "chocolate-ice-cream", "coconut-ice-cream", "cola"],
+        "products": [
+            {
+                "name": "Bao Minh Durian Pia Cake with Salted Egg (300g)",
+                "weight": 0.25
+            },
+            {
+                "name": "Bao Minh Traditional Green Rice Cake (65g)",
+                "weight": 0.25
+            },
+            {
+                "name": "Bao Minh Traditional Green Rice Cake (390g)",
+                "weight": 0.3
+            },
+            {
+                "name": "Homemade Red Velvet Cake (6 Pax)",
+                "weight": 0.2
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["traditional-vietnamese-cake", "other-sweet-pastries", "cakes", "cream-crackers", "other-crackers", "chocolate-ice-cream", "coconut-ice-cream", "cola"],
+        "products": [
+            {
+                "name": "Bauli Moonfils Strawberry (45g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Homemade Donut Chocolate (Pc)",
+                "weight": 0.2
+            },
+            {
+                "name": "Homemade Vanilla Cupcake (Pc)",
+                "weight": 0.15
+            },
+            {
+                "name": "Homemade Red Velvet Cake (6 Pax)",
+                "weight": 0.2
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["traditional-vietnamese-cake", "other-sweet-pastries", "cakes", "cream-crackers", "other-crackers", "chocolate-ice-cream", "coconut-ice-cream", "cola"],
+        "products": [
+            {
+                "name": "Chocopie Orion Cake (180g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Lotte Choco pie Banana (12x28g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Yuki&Love Mochi Mixed Flavor (900g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Ritz Cheese Cracker (118g)",
+                "weight": 0.2
+            },            
+            {
+                "name": "Jacob's Cream Crackers (200g)",
+                "weight": 0.2
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["traditional-vietnamese-cake", "other-sweet-pastries", "cakes", "cream-crackers", "other-crackers", "chocolate-ice-cream", "coconut-ice-cream", "cola"],
+        "products": [
+            {
+                "name": "AFC Vegetable Cracker 200g",
+                "weight": 0.2
+            },
+            {
+                "name": "LU Tuc Cheese Flavour (100g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Ritz Cracker 247g",
+                "weight": 0.2
+            },
+            {
+                "name": "Homemade Donut Chocolate (Pc)",
+                "weight": 0.2
+            },            
+            {
+                "name": "Homemade Vanilla Cupcake (Pc)",
+                "weight": 0.2
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["traditional-vietnamese-cake", "other-sweet-pastries", "cakes", "cream-crackers", "other-crackers", "chocolate-ice-cream", "coconut-ice-cream", "cola"],
+        "products": [
+            {
+                "name": "Milo Ice Cream Malt Stick (51g)",
+                "weight": 0.25
+            },
+            {
+                "name": "Kitkat Ice Cream Chocolate (375g)",
+                "weight": 0.25
+            },
+            {
+                "name": "Kitkat Ice Cream Stick (80ml)",
+                "weight": 0.25
+            },
+            {
+                "name": "Bellany Choco-Mint (125ml)",
+                "weight": 0.25
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["traditional-vietnamese-cake", "other-sweet-pastries", "cakes", "cream-crackers", "other-crackers", "chocolate-ice-cream", "coconut-ice-cream", "cola"],
+        "products": [
+            {
+                "name": "Bellany Coconut Paletas (55ml)",
+                "weight": 0.3
+            },
+            {
+                "name": "Bellany Coconut Paletas (110ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "Montclair Homemade Coconut Ice Cream (430ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "Bao Minh Durian Pia Cake with Salted Egg (300g)",
+                "weight": 0.15
+            },
+            {
+                "name": "Bao Minh Traditional Green Rice Cake (65g)",
+                "weight": 0.15
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["traditional-vietnamese-cake", "other-sweet-pastries", "cakes", "cream-crackers", "other-crackers", "chocolate-ice-cream", "coconut-ice-cream", "cola", "sport-energy-drink", "coffee-drinks"],
+        "products": [
+            {
+                "name": "Coca Cola Sleek Can (320ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "Pepsi Cola Sleek Can ,320ml",
+                "weight": 0.2
+            },
+            {
+                "name": "Pepsi Pet Bottle ,1.5L/,1.75L",
+                "weight": 0.2
+            },
+            {
+                "name": "Coca Cola Original-Less sugar (1.5L)",
+                "weight": 0.2
+            },
+            {
+                "name": "Coca Cola Zero (330ml)",
+                "weight": 0.2
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["traditional-vietnamese-cake", "other-sweet-pastries", "cakes", "cream-crackers", "other-crackers", "chocolate-ice-cream", "coconut-ice-cream", "cola", "sport-energy-drink", "coffee-drinks"],
+        "products": [
+            {
+                "name": "Coca Cola Japanese Version(500ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "Aquarius Water bottle (390ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "7Up Revive Zero Pet (500ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "Monster Energy Sleek Can (355ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "Monster Energy Punch (500ml)",
+                "weight": 0.2
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["traditional-vietnamese-cake", "other-sweet-pastries", "cakes", "cream-crackers", "other-crackers", "chocolate-ice-cream", "coconut-ice-cream", "cola", "sport-energy-drink", "coffee-drinks"],
+        "products": [
+            {
+                "name": "Red Bull Can (250ml)",
+                "weight": 0.25
+            },
+            {
+                "name": "UCC Black Coffee Non Sugar Can 185g",
+                "weight": 0.25
+            },
+            {
+                "name": "My Café Latte Begium Chocolate (220ml)",
+                "weight": 0.25
+            },
+            {
+                "name": "Dydo Blend Demitasse Black Coffee Can 185g",
+                "weight": 0.25
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["traditional-vietnamese-cake", "other-sweet-pastries", "cakes", "cream-crackers", "other-crackers", "chocolate-ice-cream", "coconut-ice-cream", "cola", "sport-energy-drink", "coffee-drinks", "milk-tea", "instant-coffee"],
+        "products": [
+            {
+                "name": "Tearoma Bubble Milk Tea (250g)",
+                "weight": 0.25
+            },
+            {
+                "name": "Ranong Matcha Milk Tea (80g)",
+                "weight": 0.25
+            },
+            {
+                "name": "G7 instant coffee 2in1 box (15x16g)",
+                "weight": 0.15
+            },
+            {
+                "name": "G7 instant Coffee (20x16g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Mr Viet 3 in 1 Instant Coffee 255g",
+                "weight": 0.1
+            },
+            {
+                "name": "Nescafe 3in1 Green (20x17g) (340g)",
+                "weight": 0.15
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["traditional-vietnamese-cake", "other-sweet-pastries", "cakes", "cream-crackers", "other-crackers", "chocolate-ice-cream", "coconut-ice-cream", "cola", "sport-energy-drink", "coffee-drinks", "milk-tea", "instant-coffee", "natural-water"],
+        "products": [
+            {
+                "name": "Aquafina Pure Water Bottle ,500ml",
+                "weight": 0.25
+            },
+            {
+                "name": "Dasani Bottle (350ml)",
+                "weight": 0.25
+            },
+            {
+                "name": "Aquafina Pure Water Bottle ,1.5L",
+                "weight": 0.25
+            },
+            {
+                "name": "Lavie (500ml)",
+                "weight": 0.25
+            }
+        ]
+    }
+
+]

@@ -45,8 +45,19 @@ class ProductspiderSpider(scrapy.Spider):
             catalog_name = catalog_col.css('a.sm_megamenu_nodrop span.sm_megamenu_title_lv-2::text').get()
             catalog_slug = slugify(catalog_name)
 
-            if catalog_slug == 'pet-care' or catalog_slug == 'fresh-food':
-                continue
+            if catalog_slug in ['eggs', 'care-dog', 'food-dog', 'care-cat', 'food-cat']:
+                #for these categories, the catalog is actually is the level of subcatalog
+                crawl_item = self.dict_crawl_items['fresh-food'] if catalog_slug == 'eggs' else self.dict_crawl_items['pet-care'] # check in crawl.json
+                subcatalogs_products = crawl_item.subcatalogs_products
+                subcatalog_slugs = [sub_and_products.subcatalog_name for sub_and_products in subcatalogs_products]
+                subcatalog_slug = catalog_slug #catalog_slug is actually subcatalog_slug for eggs, care-dog, food-dog, care-cat, food-cat
+                product_names = subcatalogs_products[subcatalog_slugs.index(subcatalog_slug)].product_names
+                subcatalog_detail_url = catalog_col.css('a.sm_megamenu_nodrop::attr(href)').get()
+                yield response.follow(subcatalog_detail_url, callback=self.parse_subcatalog_detail, meta={
+                    "catalog_name": catalog_name,
+                    "subcatalog_name": catalog_name,
+                    "product_names": product_names
+                })
             if catalog_slug in self.dict_crawl_items:
                 catalog_detail_url = catalog_col.css('a.sm_megamenu_nodrop::attr(href)').get()
                 yield response.follow(catalog_detail_url,callback=self.parse_catalog_detail, meta={
@@ -212,18 +223,18 @@ class ProductspiderSpider(scrapy.Spider):
         product_model_item = ProductModelItem()
         product_model_item['_id'] = uuid4().__str__()
         product_model_item['ProductModelThumbnails'] = []
-        product_model_item['CublicType'] = None
-        product_model_item['CublicValue'] = None
-        product_model_item['PricePerCublicValue'] = None
-        product_model_item['CublicPrice'] = None
+        product_model_item['CublicType'] = 3 #no cublic
+        product_model_item['CublicValue'] = -1
+        product_model_item['PricePerCublicValue'] = -1
+        product_model_item['CublicPrice'] = -1
         product_model_item['Price'] = product_model_price if product_model_price else 0
         # these will be set in the pipelines
 
         product_model_item['SaleItemId'] = None
         product_model_item['IsOnSaleModel'] = False
-        product_model_item['SaleValueModel'] = None
-        product_model_item['SaleType'] = None
-        product_model_item['PriceOnSaleModel'] = None
+        product_model_item['SaleValueModel'] = -1
+        product_model_item['SaleType'] = 2 #no discount
+        product_model_item['PriceOnSaleModel'] = -1
         
         product_item = ProductItem()
         product_item['_id'] = uuid4().__str__()
@@ -232,9 +243,9 @@ class ProductspiderSpider(scrapy.Spider):
         product_item['SubCatalogName'] = subcatalog_name
         product_item['ProductCoverImage'] = product_cover_image
         product_item['IsOnSale'] = False
-        product_item['ProductDisplaySaleValue'] = None
-        product_item['ProductDisplaySaleType'] = None
-        product_item['ProductDisplayPriceOnSale'] = None
+        product_item['ProductDisplaySaleValue'] = -1
+        product_item['ProductDisplaySaleType'] = 2 #no discount
+        product_item['ProductDisplayPriceOnSale'] = -1
         product_item['HaveVariants'] = False
         product_item['HavePricePerCublic'] = False
         product_item['Revision'] = 0

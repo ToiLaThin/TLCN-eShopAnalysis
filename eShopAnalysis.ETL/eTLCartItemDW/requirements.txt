@@ -11,3 +11,4 @@ gensim
 matplotlib
 seaborn
 pyLDAvis
+redis # python redis client

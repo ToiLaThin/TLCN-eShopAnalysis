@@ -1,0 +1,159 @@
+[
+    {
+        "related_subcatalogs": ["sandwich", "peanut-butter", "cereal-boxes", "whole-milk"],
+        "products": [
+            {
+                "name": "La Petite Epicerie Peanut Butter Smooth (180g)",
+                "weight": 0.2
+            },
+            {
+                "name": "La Petite Epicerie Peanut Butter Crunchy (780g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Homemade High Protein Sandwich(Pc)",
+                "weight": 0.2
+            },
+            {
+                "name": "Homemade High Fiber Sandwich (Pc)",
+                "weight": 0.2
+            },
+            {
+                "name": "La Petite Epicerie Peanut Butter Crunchy(180g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Nestle Honey Stars Cereals Food (25g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Nestle KoKo Krunch Breakfast Food (25g)",
+                "weight": 0.1
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["sandwich", "peanut-butter", "cereal-boxes", "whole-milk"],
+        "products": [
+            {
+                "name": "Meadow Fresh UHT Full Cream Milk (1L)",
+                "weight": 0.2
+            },
+            {
+                "name": "Anchor UHT Milk Full Cream (1L)",
+                "weight": 0.1
+            },
+            {
+                "name": "Devondale Full Cream Milk 1L",
+                "weight": 0.1
+            },
+            {
+                "name": "Nestle Honey Stars Breakfast Cereals (300g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Nestle Honey Stars Cereals (150g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Nestle Koko Krunch Chocolate Cereals (170g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Nestle Koko Krunch Duo Breakfast Cereals (330g)",
+                "weight": 0.1
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["sweet-condense-milk", "bread"],
+        "products": [
+            {
+                "name": "Ong Tho Condensed Milk tube (165g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Dutch Lady Condensed Milk (380g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Southern Star Less Sweet Condensed Cream (1.284kg)",
+                "weight": 0.2
+            },
+            {
+                "name": "Homemade Sandwich Toast bread (pcs)",
+                "weight": 0.2
+            },
+            {
+                "name": "Farine Baguette (Pc)",
+                "weight": 0.2
+            }            
+        ]
+    },
+    {
+        "related_subcatalogs": ["sandwich", "eggs", "cabbage", "tomato"],
+        "products": [
+            {
+                "name": "Homemade High Protein Sandwich(Pc)",
+                "weight": 0.2
+            },
+            {
+                "name": "Homemade High Fiber Sandwich (Pc)",
+                "weight": 0.15
+            },
+            {
+                "name": "Napa Cabbage VietGAP (600g)",
+                "weight": 0.15
+            },
+            {
+                "name": "Tomato Cherry",
+                "weight": 0.1
+            },
+            {
+                "name": "Tomato Roseberry (g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Vfood Chicken Eggs (6pcs)",
+                "weight": 0.1
+            },
+            {
+                "name": "Ba Huan Chicken Eggs (10pcs)",
+                "weight": 0.1
+            }            
+        ]
+    },
+    {
+        "related_subcatalogs": ["convenient-food-ready-to-eat", "local-noodles", "other-pasta-and-noodles"],
+        "products": [
+            {
+                "name": "Nhip Song Pork Ribs Flavor Instant Noodles 70g",
+                "weight": 0.2
+            },
+            {
+                "name": "Nhip Song Vegan Nam Vang Styles Noodles 65g",
+                "weight": 0.15
+            },
+            {
+                "name": "Minh Ha Vietnamese Pho Kit (138g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Ace Cook Ramen Tonkotsu Pork Bone 120g",
+                "weight": 0.05
+            },
+            {
+                "name": "Happy Noodles Soybean Vermicelli (400g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Happy Noodles Soybean Macaroni (400g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Panzani Macaroni Fast Cooking 3min. (500g)",
+                "weight": 0.1
+            }            
+        ]
+    }
+]

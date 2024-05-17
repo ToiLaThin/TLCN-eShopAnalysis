@@ -1,0 +1,72 @@
+[
+    {
+        "username": "thinh",
+        "password": "pass",
+        "items_profile": [
+            {
+                "name": "I-On Life Water",
+                "quantity": "Low",
+                "weight": 0.5         
+            },
+            {
+                "name": "Tiger Soju Cheeky Plum Beer Can 4%",
+                "quantity": "Medium",
+                "weight": 0.3
+            }, 
+            {
+                "name": "Dasani Water Boltle",
+                "quantity": "High",
+                "weight": 0.1
+            },
+            {
+                "name": "La Boulangere 8 plain Tortilla 320g",
+                "quantity": "Low",
+                "weight": 0.1
+            }, 
+            {
+                "name": "Balance Milk Chocolate Bars 35g",
+                "quantity": "Low",
+                "weight": 0.1
+            }
+        ]
+    },
+    {
+        "username": "thinh",
+        "password": "pass",
+        "profiles": [
+            {
+                "purpose": "Travel",
+                "weight": 0.4,
+                "items_profile": [
+                    {
+                        "name": "I-On Life Water",
+                        "subcatalog": "natural-water",
+                        "quantity": "Low",
+                        "weight": 0.5         
+                    },
+                    {
+                        "name": "Tiger Soju Cheeky Plum Beer Can 4%",
+                        "quantity": "Medium",
+                        "weight": 0.3
+                    }, 
+                    {
+                        "name": "Dasani Water Boltle",
+                        "subcatalog": "natural-water",
+                        "quantity": "High",
+                        "weight": 0.1
+                    },
+                    {
+                        "name": "La Boulangere 8 plain Tortilla 320g",
+                        "quantity": "Low",
+                        "weight": 0.1
+                    }, 
+                    {
+                        "name": "Balance Milk Chocolate Bars 35g",
+                        "quantity": "Low",
+                        "weight": 0.1
+                    }
+                ]
+            }
+        ]
+    }
+]

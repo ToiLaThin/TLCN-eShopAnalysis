@@ -1,0 +1,189 @@
+[
+    {
+        "related_subcatalogs": ["tooth-paste-for-kid", "toothbrush-for-kids", "whole-milk", "chocolate-ice-cream", "potato-chips-tiles"],
+        "products": [
+            {
+                "name": "2080 DC Kids Toothpaste Apple (80g)",
+                "weight": 0.15
+            },
+            {
+                "name": "Colgate Kids Toothbrush Spiderman 3-5 Old",
+                "weight": 0.15
+            },
+            {
+                "name": "Meadow Fresh UHT Milk Full Cream (3x200ml)",
+                "weight": 0.1
+            },
+            {
+                "name": "Anchor UHT Milk Full Cream (1L)",
+                "weight": 0.1
+            },       
+            {
+                "name": "Meadow Fresh UHT Full Cream Milk (1L)",
+                "weight": 0.1
+            },
+            {
+                "name": "Milo Ice Cream Malt Stick (51g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Kitkat Ice Cream Chocolate (375g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Bellany Choco-Mint (125ml)",
+                "weight": 0.1
+            },
+            {
+                "name": "Lay's Stax Original Flavor (100g)",
+                "weight": 0.05
+            },
+            {
+                "name": "Slide Barbecue Potato Chips 160g",
+                "weight": 0.05
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["whole-milk", "plain-milk"],
+        "products": [
+            {
+                "name": "Meadow Fresh UHT Full Cream Milk (1L)",
+                "weight": 0.1
+            },
+            {
+                "name": "Meadow Fresh UHT Milk Full Cream (3x200ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "Devondale Full Cream Milk 1L",
+                "weight": 0.1
+            },
+            {
+                "name": "Anchor UHT Milk Full Cream (1L)",
+                "weight": 0.1
+            },       
+            {
+                "name": "Dutch Lady UHT Milk Plain (1L)",
+                "weight": 0.1
+            },
+            {
+                "name": "DalatMilk UHT Milk Plain (4x180ml)",
+                "weight": 0.1
+            },
+            {
+                "name": "DalatMilk Pasteurized Milk (180ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "TH UHT Fresh Milk Sweetened(4x180ml)",
+                "weight": 0.1
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["chocolate-ice-cream", "coconut-ice-cream"],
+        "products": [
+            {
+                "name": "Milo Ice Cream Malt Stick (51g)",
+                "weight": 0.2
+            },
+            {
+                "name": "Kitkat Ice Cream Chocolate (375g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Kitkat Ice Cream Stick (80ml)",
+                "weight": 0.1
+            },
+            {
+                "name": "Bellany Choco-Mint (125ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "Bellany Coconut Paletas (55ml)",
+                "weight": 0.1
+            },       
+            {
+                "name": "Bellany Coconut Paletas (110ml)",
+                "weight": 0.2
+            },
+            {
+                "name": "Montclair Homemade Coconut Ice Cream (430ml)",
+                "weight": 0.1
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["potato-chips-tiles", "soft-dried-fruits"],
+        "products": [
+            {
+                "name": "Lay's Stax Original Flavor (100g)",
+                "weight": 0.3
+            },
+            {
+                "name": "Lay's Stax Spicy Lobster (100g)",
+                "weight": 0.3
+            },
+            {
+                "name": "Slide Barbecue Potato Chips 160g",
+                "weight": 0.25
+            },
+            {
+                "name": "Vinamit Soft Dried Banana No Sugar 100g",
+                "weight": 0.15
+            }
+        ]
+    },
+    {
+        "related_subcatalogs": ["soft-dried-fruits"],
+        "products": [
+            {
+                "name": "We'natur Dried Banana (330g)",
+                "weight": 0.4
+            },
+            {
+                "name": "Truong Hao Soft Mango (180g)",
+                "weight": 0.4
+            },
+            {
+                "name": "Vinamit Soft Dried Banana No Sugar 100g",
+                "weight": 0.2
+            }
+        ]
+    },
+
+    {
+        "related_subcatalogs": ["chocolate-ice-cream", "potato-chips-tiles", "other-sweet-pastries"],
+        "products": [
+            {
+                "name": "Milo Ice Cream Malt Stick (51g)",
+                "weight": 0.15
+            },
+            {
+                "name": "Kitkat Ice Cream Chocolate (375g)",
+                "weight": 0.15
+            },
+            {
+                "name": "Bellany Choco-Mint (125ml)",
+                "weight": 0.1
+            },
+            {
+                "name": "Lay's Stax Original Flavor (100g)",
+                "weight": 0.1
+            },
+            {
+                "name": "Slide Barbecue Potato Chips 160g",
+                "weight": 0.1
+            },
+            {
+                "name": "Homemade Donut Chocolate (Pc)",
+                "weight": 0.2
+            },
+            {
+                "name": "Homemade Vanilla Cupcake (Pc)",
+                "weight": 0.2
+            }
+        ]
+    }
+]

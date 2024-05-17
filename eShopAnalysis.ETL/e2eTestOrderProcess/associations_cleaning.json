@@ -1,0 +1,23 @@
+[
+    {
+        "related_subcatalogs": ["cleaning-wipe", "cleaning-product"],
+        "products": [
+            {
+                "name": "Let Green Alcohol wet tissue (10sheets)",
+                "weight": 0.2
+            },
+            {
+                "name": "Let Green Alcohol wet tissue (50sheets)",
+                "weight": 0.25
+            },
+            {
+                "name": "Sunlight Kitchen Cleaner Lemon & Baking Soda (500ml)",
+                "weight": 0.35
+            },
+            {
+                "name": "Apta Spray Marseille Soap 750ml",
+                "weight": 0.3
+            }
+        ]
+    }
+]
