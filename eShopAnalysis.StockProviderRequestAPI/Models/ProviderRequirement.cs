@@ -19,7 +19,13 @@ namespace eShopAnalysis.StockProviderRequestAPI.Models
         public Guid BusinessKey { get; set; }
 
         [BsonRepresentation(BsonType.Double)]
-        public double UnitRequestPrice { get; set; } 
+        public double UnitRequestPrice { get; set; }
+        
+        [BsonRepresentation(BsonType.Int32)]
+        public int QuantityToRequestMoreFromProvider { get; set; } //should be positive
+        
+        [BsonRepresentation(BsonType.Int32)]
+        public int QuantityToNotify { get; set; }  //this should > QuantityToRequestMoreFromProvider, positive
 
         public StockItemRequestMeta() { }
     }

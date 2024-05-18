@@ -17,7 +17,16 @@ namespace eShopAnalysis.StockProviderRequestAPI.Models
         public Guid BusinessKey { get; set; }
 
         [BsonRepresentation(BsonType.Int32)]
-        public int ItemQuantity { get; set; }
+        public int ItemQuantity { get; set; } 
+
+        [BsonRepresentation(BsonType.Int32)]
+        public int CurrentItemQuantityInStockBeforeThisStockRequest { get; set; }
+
+        [BsonRepresentation(BsonType.Int32)]
+        public int DistanceToReachNotifyQuantityLevelBeforeThisStockRequest { get; set; }
+
+        [BsonRepresentation(BsonType.Int32)]
+        public int DistanceToReachOrderMoreQuantityLevelBeforeThisStockRequest { get; set; }
 
         [BsonRepresentation(BsonType.Double)]
         public double UnitRequestPrice { get; set; } //different from unitPrce of product

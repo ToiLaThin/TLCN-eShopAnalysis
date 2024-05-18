@@ -12,5 +12,10 @@
         public Guid BusinessKey { get; set; }
 
         public double UnitRequestPrice { get; set; }
+
+        //these do NOTHING, they 're reduntdant, they're here just for this dto in ProductCatalogAPI match in Aggregator
+        public int QuantityToRequestMoreFromProvider { get; set; }
+
+        public int QuantityToNotify { get; set; }
     }
 }
