@@ -59,7 +59,7 @@ namespace eShopAnalysis.ApiGateway.Controllers
                                                                          QuantityToDecrease = grp.Sum(grp => grp.QuantityToDecrease),
                                                                      };
                                                                  });
-            //TODO add validate and return failed if update make stock goes below a threshhold
+            //TODO add validate and return failed if update make stock goes below a threshhold (can be checked in UI already but add one more validation layer)
             var resultStockUpdate = await _backChannelStockInventoryService.DecreaseStockItems(stockDecreaseReqs);
             if (resultStockUpdate.IsSuccess)
             {
@@ -217,6 +217,9 @@ namespace eShopAnalysis.ApiGateway.Controllers
                 throw new ArgumentNullException(nameof(stockReqTrans));
             }
 
+            //stockReqTrans.StockItemRequests.CurrentItemQuantityInStockBeforeStockRequest, DistanceToReachNotifyQuantityLevel, DistanceToReachOrderMoreQuantityLevel
+            //these can be calc here given receiving enough data to calculate these here, not calculate on frontend
+            //BUT FOR NOW, WE calc them on frontend and pass to here
             stockReqTrans.TotalQuantity = stockReqTrans.StockItemRequests.Aggregate(0, (sumAllStockItemsQty, stockItemReq) => sumAllStockItemsQty + stockItemReq.ItemQuantity);
             stockReqTrans.TotalTransactionPrice = stockReqTrans.StockItemRequests.Aggregate(0.0, (sumAllStockItemsPrice, stockItemReq) => sumAllStockItemsPrice + stockItemReq.UnitRequestPrice);
             var addStockReqTransBackChannelRes = await _backChannelStockProviderRequestService.AddNewStockRequestTransaction(stockReqTrans);

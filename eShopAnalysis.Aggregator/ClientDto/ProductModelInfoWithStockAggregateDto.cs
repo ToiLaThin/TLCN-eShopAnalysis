@@ -22,5 +22,9 @@
         public double UnitRequestPrice { get; set; }
 
         public int CurrentQuantity { get; set; }
+
+        public int QuantityToRequestMoreFromProvider { get; set; }
+
+        public int QuantityToNotify { get; set; }
     }
 }

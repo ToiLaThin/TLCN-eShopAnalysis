@@ -14,5 +14,10 @@
         public Guid BusinessKey { get; set; }
 
         public double UnitRequestPrice { get; set; }
+
+        //these 2 will be send to ProductCatalogApi to do NOTHING, they 're reduntdant
+        public int QuantityToRequestMoreFromProvider { get; set; }
+
+        public int QuantityToNotify { get; set; }
     }
 }

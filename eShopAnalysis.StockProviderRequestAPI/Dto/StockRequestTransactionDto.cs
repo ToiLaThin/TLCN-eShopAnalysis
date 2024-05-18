@@ -13,6 +13,12 @@ namespace eShopAnalysis.StockProviderRequestAPI.Dto
 
         public int ItemQuantity { get; set; }
 
+        public int CurrentItemQuantityInStockBeforeThisStockRequest { get; set; }
+
+        public int DistanceToReachNotifyQuantityLevelBeforeThisStockRequest { get; set; } //positive, less than DistanceToReachOrderMoreQuantityLevel
+
+        public int DistanceToReachOrderMoreQuantityLevelBeforeThisStockRequest { get; set; } //positive, more than DistanceToReachNotifyQuantityLevel
+
         public double UnitRequestPrice { get; set; } //different from unitPrce of product
 
         public double TotalItemRequestPrice { get; set; }

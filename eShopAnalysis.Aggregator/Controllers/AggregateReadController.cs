@@ -112,7 +112,9 @@ namespace eShopAnalysis.Aggregator.Controllers
                     ProductCoverImage = pMI.ProductCoverImage,
                     Price = pMI.Price,
                     UnitRequestPrice = pMIReqMeta.UnitRequestPrice,
-                    CurrentQuantity = iS.CurrentQuantity
+                    CurrentQuantity = iS.CurrentQuantity,
+                    QuantityToRequestMoreFromProvider = pMIReqMeta.QuantityToRequestMoreFromProvider,
+                    QuantityToNotify = pMIReqMeta.QuantityToNotify
                 });
             if (productModelInfoWithStockAggregates == null || productModelInfoWithStockAggregates.Count() <=0 ) {
                 return NotFound("join result is null");

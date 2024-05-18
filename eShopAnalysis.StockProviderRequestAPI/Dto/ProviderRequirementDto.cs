@@ -10,6 +10,10 @@
 
         public double UnitRequestPrice { get; set; }
 
+        public int QuantityToRequestMoreFromProvider { get; set; }
+
+        public int QuantityToNotify { get; set; }
+
     }
 
     public class ProviderRequirementDto
