@@ -28,6 +28,18 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
             return result;
         }
 
+        public async Task<BackChannelResponseDto<IEnumerable<ProductModelInfoResponseDto>>> GetProductModelInfosOfProductModelIds(IEnumerable<Guid> productModelIds)
+        {
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<IEnumerable<Guid>, IEnumerable<ProductModelInfoResponseDto>>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<IEnumerable<Guid>>()
+            {
+                ApiType = ApiType.POST,
+                Url = $"{_backChannelUrls.Value.ProductAPIBaseUri}/GetProductModelInfosOfProductModelIds",
+                Data = productModelIds
+            });
+            return result;
+        }
+
         public async Task<BackChannelResponseDto<IEnumerable<ProductModelInfoResponseDto>>> GetProductModelInfosOfProvider(IEnumerable<ProductModelInfoRequestMetaDto> productModelInfoRequestMetas)
         {
             var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<IEnumerable<ProductModelInfoRequestMetaDto>, IEnumerable<ProductModelInfoResponseDto>>>();

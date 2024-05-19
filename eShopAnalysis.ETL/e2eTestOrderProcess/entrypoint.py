@@ -16,15 +16,14 @@ for user in users_occasion:
     if day_of_week not in user["weekday"]:
         print(f"User {user_name} is not buy today, weekday: {day_of_week}, 0 - 6 is Monday - Sunday")
         continue
-    for profile in profiles:
-        num_profile_use = 1 #randint(1, len(profiles))
-        profile_weights = [profile["weight"] for profile in profiles]
-        profiles_use = choices(profiles, k=num_profile_use, weights=profile_weights)
-        one_profile_use = profiles_use[0]
-        purpose = one_profile_use['purpose']
-        print(f"User {user_name} is buy with purpose: {purpose}")
-        items = one_profile_use['items']
-        order_confirm_flow(user_name, password, items)
+    num_profile_use = 1 #randint(1, len(profiles))
+    profile_weights = [profile["weight"] for profile in profiles]
+    profiles_use = choices(profiles, k=num_profile_use, weights=profile_weights)
+    one_profile_use = profiles_use[0]
+    purpose = one_profile_use['purpose']
+    print(f"User {user_name} is buy with purpose: {purpose}")
+    items = one_profile_use['items']
+    order_confirm_flow(user_name, password, items)
 
 f = open('user-frequent.json', 'r')
 users_frequent = json.load(f)

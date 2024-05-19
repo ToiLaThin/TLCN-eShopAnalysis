@@ -41,6 +41,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
         //SubCatalog DeleteSubCatalog(Guid catalogId, Guid subCatalogId);
 
         Task<ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>> GetProductModelInfosOfProvider(IEnumerable<ProductModelInfoRequestMetaDto> productModelInfoReqMetas);
+        Task<ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>> GetProductModelInfosOfProductModelIds(IEnumerable<Guid> productModelIds);
     }
     public class ProductService : IProductService
     {
@@ -290,6 +291,26 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
                 result = result.Concat(productModelInfosToAddToResult);
             }
 
+            if (result == null || result.Count() == 0) {
+                return ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Failure("no valid ProductModelInfoResponseDto to return");
+            }
+            return ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Success(result);
+        }
+
+        public async Task<ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>> GetProductModelInfosOfProductModelIds(IEnumerable<Guid> productModelIds)
+        {
+            var productModelIdsDistinct = productModelIds.Distinct();
+            var result = _unitOfWork.ProductRepository.GetAllAsQueryable()
+                                                            .Where(p => productModelIdsDistinct.Contains(p.ProductModels[0].ProductModelId))
+                                                            .Select(p => new ProductModelInfoResponseDto
+                                                            {
+                                                                ProductId = p.ProductId,
+                                                                ProductModelName = p.ProductName,
+                                                                BusinessKey = p.BusinessKey,
+                                                                ProductModelId = p.ProductModels[0].ProductModelId,
+                                                                Price = p.ProductModels[0].Price,
+                                                                ProductCoverImage = p.ProductCoverImage
+                                                            }).ToList();
             if (result == null || result.Count() == 0) {
                 return ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Failure("no valid ProductModelInfoResponseDto to return");
             }
