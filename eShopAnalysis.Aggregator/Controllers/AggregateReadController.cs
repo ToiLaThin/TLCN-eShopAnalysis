@@ -16,18 +16,21 @@ namespace eShopAnalysis.Aggregator.Controllers
         private readonly IBackChannelStockInventoryService _backChannelStockInventoryService;
         private readonly IBackChannelCouponSaleItemService _backChannelCouponSaleItemService;
         private readonly IBackChannelProductCatalogService _backChannelProductCatalogService;
+        private readonly IBackChannelStockProviderRequestService _backChannelStockProviderRequestService;
 
         public AggregateReadController(
             IBackChannelStockInventoryService backChannelStockInventoryService,
             IBackChannelCartOrderService backChannelCartOrderService,
             IBackChannelCouponSaleItemService backChannelCouponSaleItemService,
-            IBackChannelProductCatalogService backChannelProductCatalogService
+            IBackChannelProductCatalogService backChannelProductCatalogService,
+            IBackChannelStockProviderRequestService backChannelStockProviderRequestService
             )
         {
             _backChannelStockInventoryService = backChannelStockInventoryService;
             _backChannelCartOrderService = backChannelCartOrderService;
             _backChannelCouponSaleItemService = backChannelCouponSaleItemService;
             _backChannelProductCatalogService = backChannelProductCatalogService;
+            _backChannelStockProviderRequestService = backChannelStockProviderRequestService;
         }
 
         [HttpGet("GetOrderToApproveWithStock")]
@@ -38,7 +41,7 @@ namespace eShopAnalysis.Aggregator.Controllers
         {
             var approvedOrdersResult = await _backChannelCartOrderService.GetToApprovedOrders();
             if (approvedOrdersResult.IsFailed || approvedOrdersResult.IsException || approvedOrdersResult.Data.Count() <= 0) {
-                return NotFound("GetToApprovedOrders failed or GetOrderItemsStock failed");
+                return NotFound("GetToApprovedOrders failed");
             }
 
             //https://stackoverflow.com/a/34883995
@@ -48,20 +51,27 @@ namespace eShopAnalysis.Aggregator.Controllers
                                                                 .ToList();
             var productModelInfosResult = await _backChannelProductCatalogService.GetProductModelInfosOfProductModelIds(allItemsInOrdersIds);
             if (productModelInfosResult.IsFailed || productModelInfosResult.IsException) { 
-                return NotFound("GetToApprovedOrders failed or GetOrderItemsStock failed");
+                return NotFound("GetProductModelInfosOfProductModelIds failed");
             }
 
             var allItemsStockResult = await _backChannelStockInventoryService.GetOrderItemsStock(allItemsInOrdersIds);
             if (allItemsStockResult.IsFailed || allItemsStockResult.IsException) {
-                return NotFound("GetToApprovedOrders failed or GetOrderItemsStock failed");
+                return NotFound("GetOrderItemsStock failed");
+            }
+
+            var stockItemReqMetasFromProvidersResult = await _backChannelStockProviderRequestService.GetStockItemRequestMetasWithProductModelIds(allItemsInOrdersIds);
+            if (stockItemReqMetasFromProvidersResult.IsFailed || stockItemReqMetasFromProvidersResult.IsException) {
+                return NotFound("GetStockItemRequestMetasWithProductModelIds failed");
             }
 
             var productModelInfoResponses = productModelInfosResult.Data;
             var allItemsStockResponses = allItemsStockResult.Data;
             var ordersToApprovedResp = approvedOrdersResult.Data;
+            var stockItemReqMetaContainingPModelIds = stockItemReqMetasFromProvidersResult.Data;
             IEnumerable<ProductModelInfoWithStockAggregateDto> productModelInfoWithStockAggregates = (
                 from pMI in productModelInfoResponses
                 join iS in allItemsStockResponses on pMI.ProductModelId equals iS.ProductModelId
+                join sIRM in stockItemReqMetaContainingPModelIds on pMI.ProductModelId equals sIRM.ProductModelId
                 select new ProductModelInfoWithStockAggregateDto()
                 {
                     ProductModelId = pMI.ProductModelId,
@@ -70,10 +80,10 @@ namespace eShopAnalysis.Aggregator.Controllers
                     ProductModelName = pMI.ProductModelName,
                     ProductCoverImage = pMI.ProductCoverImage,
                     Price = pMI.Price,
-                    UnitRequestPrice = 0,
+                    UnitRequestPrice = sIRM.UnitRequestPrice,
                     CurrentQuantity = iS.CurrentQuantity,
-                    QuantityToRequestMoreFromProvider = 0,
-                    QuantityToNotify = 0
+                    QuantityToRequestMoreFromProvider = sIRM.QuantityToRequestMoreFromProvider,
+                    QuantityToNotify = sIRM.QuantityToNotify
                 });
 
             var ordersToApproved = new List<OrderItemsDto>();

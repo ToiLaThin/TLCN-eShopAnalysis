@@ -4,6 +4,7 @@ using eShopAnalysis.StockProviderRequestAPI.Models;
 using eShopAnalysis.StockProviderRequestAPI.Service;
 using eShopAnalysis.StockProviderRequestAPI.Utilities.Behaviors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 
 namespace eShopAnalysis.StockProviderRequestAPI.Controllers
@@ -78,6 +79,21 @@ namespace eShopAnalysis.StockProviderRequestAPI.Controllers
                 return NotFound(serviceResult.Error);
             }
             return Ok(serviceResult.Data);
+        }
+
+        [HttpPost("BackChannel/GetStockItemRequestMetasWithProductModelIds")]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<BackChannelResponseDto<IEnumerable<StockItemRequestMetaDto>>> GetStockItemRequestMetasWithProductModelIds([FromBody] IEnumerable<Guid> productModelIds)
+        {
+            if (productModelIds == null || productModelIds.Count() <= 0 ) { 
+                throw new ArgumentException(nameof(productModelIds));
+            }
+            var serviceResult = await _service.GetStockItemRequestMetasWithProductModelIds(productModelIds);
+            if (serviceResult.IsFailed) {
+                return BackChannelResponseDto<IEnumerable<StockItemRequestMetaDto>>.Failure(serviceResult.Error);
+            }
+            var resultDto = _mapper.Map<IEnumerable<StockItemRequestMeta>, IEnumerable<StockItemRequestMetaDto>>(serviceResult.Data);
+            return BackChannelResponseDto<IEnumerable<StockItemRequestMetaDto>>.Success(resultDto);
         }
     }
 }

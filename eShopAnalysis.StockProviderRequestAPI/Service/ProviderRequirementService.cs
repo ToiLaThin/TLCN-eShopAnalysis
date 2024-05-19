@@ -1,6 +1,7 @@
 ﻿using eShopAnalysis.StockProviderRequestAPI.Dto;
 using eShopAnalysis.StockProviderRequestAPI.Models;
 using eShopAnalysis.StockProviderRequestAPI.Repository;
+using System.Collections.Generic;
 
 namespace eShopAnalysis.StockProviderRequestAPI.Service
 {
@@ -52,6 +53,26 @@ namespace eShopAnalysis.StockProviderRequestAPI.Service
                 return ServiceResponseDto<ProviderRequirement>.Failure("Cannot find provider requirement of that name");
             }
             return ServiceResponseDto<ProviderRequirement>.Success(providerReqToFind);
+        }
+
+        public async Task<ServiceResponseDto<IEnumerable<StockItemRequestMeta>>> GetStockItemRequestMetasWithProductModelIds(IEnumerable<Guid> productModelIds)
+        {
+            var productModelIdsDistinct = productModelIds.Distinct();
+            var stockItemRequestMetasWithProductModelIds = _providerReqRepo.GetAllAsQueryable()
+                .Where(
+                    p => p.AvailableStockItemRequestMetas.Any(
+                        stockItemReqMeta => productModelIdsDistinct.Contains(stockItemReqMeta.ProductModelId)
+                    )
+                )
+                .SelectMany(p => p.AvailableStockItemRequestMetas.Where(
+                    stockItemReqMeta => productModelIdsDistinct.Contains(stockItemReqMeta.ProductModelId))
+                )
+                .ToList();
+            if (stockItemRequestMetasWithProductModelIds == null || stockItemRequestMetasWithProductModelIds.Count <= 0) {
+                return ServiceResponseDto<IEnumerable<StockItemRequestMeta>>.Failure("null stockItemRequest with those productModelIds");
+            }
+            return ServiceResponseDto<IEnumerable<StockItemRequestMeta>>.Success(stockItemRequestMetasWithProductModelIds);
+
         }
 
         public async Task<ServiceResponseDto<string>> Truncate()

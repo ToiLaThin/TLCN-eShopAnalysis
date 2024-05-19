@@ -238,7 +238,7 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<BackChannelResponseDto<IEnumerable<ProductModelInfoResponseDto>>> GetProductModelInfosOfProductModelIds([FromBody] IEnumerable<Guid> productModelIds)
         {
-            if (productModelIds == null || productModelIds.Count() == 0) {
+            if (productModelIds == null || productModelIds.Count() <= 0) {
                 throw new ArgumentException(nameof(productModelIds));
             }
             var serviceResult = await _service.GetProductModelInfosOfProductModelIds(productModelIds);
