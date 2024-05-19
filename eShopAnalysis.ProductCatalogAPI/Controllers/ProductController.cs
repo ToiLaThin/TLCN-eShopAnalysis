@@ -233,5 +233,19 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
                                          BackChannelResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Failure(serviceResult.Error);
             return response;
         }
+
+        [HttpPost("BackChannel/GetProductModelInfosOfProductModelIds")]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<BackChannelResponseDto<IEnumerable<ProductModelInfoResponseDto>>> GetProductModelInfosOfProductModelIds([FromBody] IEnumerable<Guid> productModelIds)
+        {
+            if (productModelIds == null || productModelIds.Count() == 0) {
+                throw new ArgumentException(nameof(productModelIds));
+            }
+            var serviceResult = await _service.GetProductModelInfosOfProductModelIds(productModelIds);
+            var response = (serviceResult.IsSuccess == true) ?
+                                         BackChannelResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Success((serviceResult.Data)) :
+                                         BackChannelResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Failure(serviceResult.Error);
+            return response;
+        }
     }
 }

@@ -19,10 +19,10 @@ namespace eShopAnalysis.Aggregator.ClientDto
     /// response from Aggregate to frontend
     /// contain info about order item & its stock to approve order
     /// </summary>
-    public class OrderItemAndStockAggregateDto
+    public class OrderItemAndStockLookupAggregateDto
     {
         public IEnumerable<OrderItemsDto> OrderItems { get; set; }
 
-        public Dictionary<string, int> ItemsStock { get; set; }
+        public IEnumerable<ProductModelInfoWithStockAggregateDto> StockLookupItems { get; set; }
     }
 }

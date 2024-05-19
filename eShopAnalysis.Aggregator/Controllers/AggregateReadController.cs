@@ -32,49 +32,68 @@ namespace eShopAnalysis.Aggregator.Controllers
 
         [HttpGet("GetOrderToApproveWithStock")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(OrderItemAndStockAggregateDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OrderItemAndStockLookupAggregateDto), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<OrderItemAndStockAggregateDto>> GetOrderToApprovedWithStock()
+        public async Task<ActionResult<OrderItemAndStockLookupAggregateDto>> GetOrderToApprovedWithStock()
         {
             var approvedOrdersResult = await _backChannelCartOrderService.GetToApprovedOrders();
-            if (approvedOrdersResult.IsSuccess && approvedOrdersResult.Data.Count() > 0)
-            {
-                //https://stackoverflow.com/a/34883995
-                var allItemsInOrdersIds = approvedOrdersResult.Data.SelectMany(o => o.OrderItemsQty)
-                                                                   .DistinctBy(oIQ => oIQ.ProductModelId)
-                                                                   .Select(oIQ => oIQ.ProductModelId)
-                                                                   .ToList();
-                var allItemsStockResult = await _backChannelStockInventoryService.GetOrderItemsStock(allItemsInOrdersIds);
-                if (allItemsStockResult.IsSuccess)
-                {
-                    var ordersToApprovedResp = approvedOrdersResult.Data;
-                    Dictionary<string, int> itemsStock = new Dictionary<string, int>();
-                    foreach (var item in allItemsStockResult.Data)
-                    {
-                        itemsStock.Add(item.ProductModelId.ToString(), item.CurrentQuantity);
-                    }
-
-                    var ordersToApproved = new List<OrderItemsDto>();
-                    foreach (var orderResp in ordersToApprovedResp)
-                    {
-                        ordersToApproved.Add(new OrderItemsDto()
-                        {
-                            OrderId = orderResp.OrderId,
-                            OrderStatus = orderResp.OrderStatus,
-                            PaymentMethod = orderResp.PaymentMethod,
-                            TotalPriceFinal = orderResp.TotalPriceFinal,
-                            OrderItemsQty = orderResp.OrderItemsQty,
-                        });
-                    }
-                    var result = new OrderItemAndStockAggregateDto()
-                    {
-                        OrderItems = ordersToApproved,
-                        ItemsStock = itemsStock
-                    };
-                    return Ok(result);
-                }
+            if (approvedOrdersResult.IsFailed || approvedOrdersResult.IsException || approvedOrdersResult.Data.Count() <= 0) {
+                return NotFound("GetToApprovedOrders failed or GetOrderItemsStock failed");
             }
-            return NotFound("GetToApprovedOrders failed or GetOrderItemsStock failed");
+
+            //https://stackoverflow.com/a/34883995
+            var allItemsInOrdersIds = approvedOrdersResult.Data.SelectMany(o => o.OrderItemsQty)
+                                                                .DistinctBy(oIQ => oIQ.ProductModelId)
+                                                                .Select(oIQ => oIQ.ProductModelId)
+                                                                .ToList();
+            var productModelInfosResult = await _backChannelProductCatalogService.GetProductModelInfosOfProductModelIds(allItemsInOrdersIds);
+            if (productModelInfosResult.IsFailed || productModelInfosResult.IsException) { 
+                return NotFound("GetToApprovedOrders failed or GetOrderItemsStock failed");
+            }
+
+            var allItemsStockResult = await _backChannelStockInventoryService.GetOrderItemsStock(allItemsInOrdersIds);
+            if (allItemsStockResult.IsFailed || allItemsStockResult.IsException) {
+                return NotFound("GetToApprovedOrders failed or GetOrderItemsStock failed");
+            }
+
+            var productModelInfoResponses = productModelInfosResult.Data;
+            var allItemsStockResponses = allItemsStockResult.Data;
+            var ordersToApprovedResp = approvedOrdersResult.Data;
+            IEnumerable<ProductModelInfoWithStockAggregateDto> productModelInfoWithStockAggregates = (
+                from pMI in productModelInfoResponses
+                join iS in allItemsStockResponses on pMI.ProductModelId equals iS.ProductModelId
+                select new ProductModelInfoWithStockAggregateDto()
+                {
+                    ProductModelId = pMI.ProductModelId,
+                    ProductId = pMI.ProductId,
+                    BusinessKey = pMI.BusinessKey,
+                    ProductModelName = pMI.ProductModelName,
+                    ProductCoverImage = pMI.ProductCoverImage,
+                    Price = pMI.Price,
+                    UnitRequestPrice = 0,
+                    CurrentQuantity = iS.CurrentQuantity,
+                    QuantityToRequestMoreFromProvider = 0,
+                    QuantityToNotify = 0
+                });
+
+            var ordersToApproved = new List<OrderItemsDto>();
+            foreach (var orderResp in ordersToApprovedResp)
+            {
+                ordersToApproved.Add(new OrderItemsDto()
+                {
+                    OrderId = orderResp.OrderId,
+                    OrderStatus = orderResp.OrderStatus,
+                    PaymentMethod = orderResp.PaymentMethod,
+                    TotalPriceFinal = orderResp.TotalPriceFinal,
+                    OrderItemsQty = orderResp.OrderItemsQty,
+                });
+            }
+            var result = new OrderItemAndStockLookupAggregateDto()
+            {
+                OrderItems = ordersToApproved,
+                StockLookupItems = productModelInfoWithStockAggregates
+            };
+            return Ok(result);
         }
 
         //post but to get only

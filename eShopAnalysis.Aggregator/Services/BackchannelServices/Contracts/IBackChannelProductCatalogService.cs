@@ -10,5 +10,6 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
         Task<BackChannelResponseDto<ProductDto>> AddProduct(ProductDto productToAdd);
 
         Task<BackChannelResponseDto<IEnumerable<ProductModelInfoResponseDto>>> GetProductModelInfosOfProvider(IEnumerable<ProductModelInfoRequestMetaDto> productModelInfoRequestMetas);
+        Task<BackChannelResponseDto<IEnumerable<ProductModelInfoResponseDto>>> GetProductModelInfosOfProductModelIds(IEnumerable<Guid> productModelIds);
     }
 }
