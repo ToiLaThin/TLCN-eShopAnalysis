@@ -17,5 +17,7 @@
         public string CustomerLoyaltyProgramAPIBaseUri { get; set; }
 
         public string StockRequestTransactionAPIBaseUri { get; set; }
+
+        public string ProviderRequirementAPIBaseUri { get; set; }
     }
 }

@@ -14,5 +14,7 @@ namespace eShopAnalysis.StockProviderRequestAPI.Service
         Task<ServiceResponseDto<string>> AddRange(IEnumerable<ProviderRequirement> providerReqsToAdd);
 
         Task<ServiceResponseDto<string>> Truncate();
+
+        Task<ServiceResponseDto<IEnumerable<StockItemRequestMeta>>> GetStockItemRequestMetasWithProductModelIds(IEnumerable<Guid> productModelIds);
     }
 }
