@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace eShopAnalysis.StockInventory.Controllers
 {
     using AutoMapper;
-    using eShopAnalysis.ApiGateway.Services.BackchannelDto;
     using eShopAnalysis.StockInventory.Models;
     using eShopAnalysis.StockInventoryAPI.Dto;
     using eShopAnalysis.StockInventoryAPI.Dto.BackchannelDto;
@@ -79,6 +78,18 @@ namespace eShopAnalysis.StockInventory.Controllers
             }
             var result = await _service.GetStockOfModels(orderItemsStockReq.ProductModelIds);
             if (result.IsFailed || result.IsException) {
+                return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Failure(result.Error);
+            }
+            return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result.Data);
+        }
+
+        [HttpPost("BackChannel/GetAllItemsStock")]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> GetAllItemsStock([FromBody] DummyRequestDto dummyReq)
+        {
+            var result = await _service.GetAllItemsStock();
+            if (result.IsFailed || result.IsException)
+            {
                 return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Failure(result.Error);
             }
             return BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result.Data);
