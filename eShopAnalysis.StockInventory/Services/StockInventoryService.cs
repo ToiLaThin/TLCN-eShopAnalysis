@@ -2,7 +2,6 @@
 
 namespace eShopAnalysis.StockInventoryAPI.Services
 {
-    using eShopAnalysis.ApiGateway.Services.BackchannelDto;
     using eShopAnalysis.StockInventory.Models;
     using eShopAnalysis.StockInventory.Repository;
     using eShopAnalysis.StockInventoryAPI.Dto;
@@ -25,6 +24,8 @@ namespace eShopAnalysis.StockInventoryAPI.Services
         Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> DecreaseStockItems(IEnumerable<StockDecreaseRequestDto> itemStocks);
 
         Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> IncreaseStockItems(IEnumerable<StockIncreaseRequestDto> itemStocks);
+
+        Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> GetAllItemsStock();
     }
 
 
@@ -224,6 +225,24 @@ namespace eShopAnalysis.StockInventoryAPI.Services
                 return ServiceResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result);
             }
             return ServiceResponseDto<IEnumerable<ItemStockResponseDto>>.Failure("Error");
+        }
+
+        public async Task<ServiceResponseDto<IEnumerable<ItemStockResponseDto>>> GetAllItemsStock()
+        {
+            IEnumerable<ItemStockResponseDto> result = _repo.GetAsQueryable()
+                                                            .ToList()
+                                                            .Select(st =>
+                                                            {
+                                                                return new ItemStockResponseDto
+                                                                {
+                                                                    ProductModelId = Guid.Parse(st.ProductModelId),
+                                                                    CurrentQuantity = st.CurrentQuantity,
+                                                                };
+                                                            });
+            if (result == null) {
+                return ServiceResponseDto<IEnumerable<ItemStockResponseDto>>.Failure("Result is null");
+            }
+            return ServiceResponseDto<IEnumerable<ItemStockResponseDto>>.Success(result);
         }
     }
 }

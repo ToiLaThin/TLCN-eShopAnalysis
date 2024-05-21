@@ -1,5 +1,6 @@
 ﻿using eShopAnalysis.Aggregator.Result;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
+using eShopAnalysis.Aggregator.Services.BackchannelDto.StockProviderRequest;
 using eShopAnalysis.Aggregator.Utilities;
 using Microsoft.Extensions.Options;
 
@@ -69,6 +70,18 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
                 ApiType = ApiType.POST,
                 Url = $"{_backChannelUrls.Value.StockInventoryAPIBaseUri}/IncreaseStockItems",
                 Data = stockIncreaseReqs
+            });
+            return result;
+        }
+
+        public async Task<BackChannelResponseDto<IEnumerable<ItemStockResponseDto>>> GetAllItemsStock()
+        {
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<DummyRequestDto, IEnumerable<ItemStockResponseDto>>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<DummyRequestDto>()
+            {
+                ApiType = ApiType.POST,
+                Url = $"{_backChannelUrls.Value.StockInventoryAPIBaseUri}/GetAllItemsStock",
+                Data = new DummyRequestDto()
             });
             return result;
         }

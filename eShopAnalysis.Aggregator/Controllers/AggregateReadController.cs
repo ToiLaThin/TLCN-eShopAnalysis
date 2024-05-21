@@ -1,9 +1,11 @@
 ﻿using eShopAnalysis.Aggregator.ClientDto;
 using eShopAnalysis.Aggregator.Services.BackchannelDto;
+using eShopAnalysis.Aggregator.Services.BackchannelDto.StockProviderRequest;
 using eShopAnalysis.Aggregator.Services.BackchannelServices;
 using eShopAnalysis.Aggregator.Utilities.Behaviors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace eShopAnalysis.Aggregator.Controllers
@@ -149,6 +151,72 @@ namespace eShopAnalysis.Aggregator.Controllers
                 return NotFound("join result is null");
             }
             return Ok(productModelInfoWithStockAggregates);
+        }
+
+        [HttpGet("GetProductModelInfosWithStockRequestRequire")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IEnumerable<ProductModelInfoWithStockAggregateDto>), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<IEnumerable<ProductModelInfoWithStockAggregateDto>>> GetProductModelInfosWithStockRequestRequire()
+        {
+            var itemsStockResult = await _backChannelStockInventoryService.GetAllItemsStock();
+            if (itemsStockResult.IsFailed || itemsStockResult.IsException) {
+                return NotFound(itemsStockResult.Error);
+            }
+
+            var currentInInventoryProductModelIds = itemsStockResult.Data.Select(iS => iS.ProductModelId).ToList();
+            if (currentInInventoryProductModelIds == null || currentInInventoryProductModelIds.Count <= 0) {
+                return NotFound("No Product model ids");
+            }
+
+            var stockItemReqMetasFromProvidersResult = await _backChannelStockProviderRequestService.GetStockItemRequestMetasWithProductModelIds(currentInInventoryProductModelIds);
+            if (stockItemReqMetasFromProvidersResult.IsFailed || stockItemReqMetasFromProvidersResult.IsException)
+            {
+                return NotFound("GetStockItemRequestMetasWithProductModelIds failed");
+            }
+
+            IEnumerable<ItemStockResponseDto> itemsStockResponse = itemsStockResult.Data;
+            IEnumerable<StockItemRequestMetaResponseDto> stockItemReqMetasFromProvidersResponse = stockItemReqMetasFromProvidersResult.Data;
+            var allItemsStockRequestRequire = (
+                from iS in itemsStockResponse
+                join sIRM in stockItemReqMetasFromProvidersResponse on iS.ProductModelId equals sIRM.ProductModelId
+                where iS.CurrentQuantity < sIRM.QuantityToNotify
+                select iS);
+            var allItemsStockRequestRequireProductModelIds = allItemsStockRequestRequire.Select(s => s.ProductModelId).ToList();
+            var allStockItemReqMetaRequestRequire = (
+                from iS in itemsStockResponse
+                join sIRM in stockItemReqMetasFromProvidersResponse on iS.ProductModelId equals sIRM.ProductModelId
+                where iS.CurrentQuantity < sIRM.QuantityToNotify
+                select sIRM);
+
+            var productModelInfosRequestRequireResult = await _backChannelProductCatalogService.GetProductModelInfosOfProductModelIds(allItemsStockRequestRequireProductModelIds);
+            if (productModelInfosRequestRequireResult.IsFailed || productModelInfosRequestRequireResult.IsException) {
+                return NotFound(productModelInfosRequestRequireResult.Error);
+            }
+            IEnumerable<ProductModelInfoResponseDto> productModelInfosRequestRequireResponse = productModelInfosRequestRequireResult.Data;
+
+            //must use query syntax to join three IEnumerable
+            IEnumerable<ProductModelInfoWithStockAggregateDto> productModelInfoWithStockAggregatesRequestRequire = (
+                from pMI in productModelInfosRequestRequireResponse
+                join iS in allItemsStockRequestRequire on pMI.ProductModelId equals iS.ProductModelId
+                join sIRM in allStockItemReqMetaRequestRequire on pMI.ProductModelId equals sIRM.ProductModelId
+                select new ProductModelInfoWithStockAggregateDto()
+                {
+                    ProductModelId = pMI.ProductModelId,
+                    ProductId = pMI.ProductId,
+                    BusinessKey = pMI.BusinessKey,
+                    ProductModelName = pMI.ProductModelName,
+                    ProductCoverImage = pMI.ProductCoverImage,
+                    Price = pMI.Price,
+                    UnitRequestPrice = sIRM.UnitRequestPrice,
+                    CurrentQuantity = iS.CurrentQuantity,
+                    QuantityToRequestMoreFromProvider = sIRM.QuantityToRequestMoreFromProvider,
+                    QuantityToNotify = sIRM.QuantityToNotify
+                });
+            if (productModelInfoWithStockAggregatesRequestRequire == null || productModelInfoWithStockAggregatesRequestRequire.Count() <=0 ) {
+                return NotFound("join result is null");
+            }
+            return Ok(productModelInfoWithStockAggregatesRequestRequire);
         }
     }
 
