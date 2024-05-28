@@ -20,6 +20,8 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
 
         Task<ServiceResponseDto<IEnumerable<Product>>> GetAllMatching(ProductLazyLoadRequestDto lazyLoadRequestDto);
 
+        Task<ServiceResponseDto<IEnumerable<Product>>> GetProductsWithBusinessKeys(IEnumerable<Guid> productBusinessKeys);
+
         Task<ServiceResponseDto<IEnumerable<Product>>> SearchProductByName(string productNameSearch);
 
         ServiceResponseDto<IEnumerable<Product>> GetAll();
@@ -315,6 +317,18 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
                 return ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Failure("no valid ProductModelInfoResponseDto to return");
             }
             return ServiceResponseDto<IEnumerable<ProductModelInfoResponseDto>>.Success(result);
+        }
+
+        public async Task<ServiceResponseDto<IEnumerable<Product>>> GetProductsWithBusinessKeys(IEnumerable<Guid> productBusinessKeys)
+        {
+            var result = _unitOfWork.ProductRepository.GetAllAsQueryable()
+                                                      .Where(p => productBusinessKeys.Contains(p.BusinessKey))
+                                                      .ToList();
+            if (result == null || result.Count() == 0)
+            {
+                return ServiceResponseDto<IEnumerable<Product>>.Failure("no valid products to return");
+            }
+            return ServiceResponseDto<IEnumerable<Product>>.Success(result);
         }
         #endregion
 

@@ -104,7 +104,30 @@ namespace eShopAnalysis.ProductCatalogAPI.Controllers
                 return Ok(resultDto);
             }
             return NoContent();
-        }        
+        }
+
+        [HttpPost("GetProductsWithBusinessKeys")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]       
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductsWithBusinessKeys([FromBody] IEnumerable<Guid> productBusinessKeys)
+        {
+            //this get product of order for reordering
+            var serviceResult = await _service.GetProductsWithBusinessKeys(productBusinessKeys);
+            if (serviceResult.IsFailed)
+            {
+                return NotFound(serviceResult.Error);
+                //will create http response error with error message(the oen pass in NotFound) in angular
+                //https://angular.io/api/common/http/HttpErrorResponse#description
+            }
+            //var resultDto = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(serviceResult.Data);
+            var resultDto = serviceResult.Data;
+            if (resultDto.Count() > 0)
+            {
+                return Ok(resultDto);
+            }
+            return NoContent();
+        }
 
         [HttpPost("UpdateProductSubCatalog")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
