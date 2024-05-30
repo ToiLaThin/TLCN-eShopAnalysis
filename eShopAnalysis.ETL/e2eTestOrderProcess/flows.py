@@ -289,3 +289,185 @@ def order_confirm_flow(username_val, password_val, items: list[Item]):
             
     # close the browser window  
     driver.quit()
+
+def product_interaction_flow(username_val, password_val, items: list[Item]):    
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option("detach", True)
+    driver = webdriver.Chrome(options=options)
+    driver.maximize_window()
+    driver.implicitly_wait(10)# do not mix implicit and explicit waits, the time could increase
+    # Navigate to the localhost:4200
+    wait = WebDriverWait(driver, 20)
+    driver.get("http://localhost:4200")
+
+    def login_action():
+        # wait for 5 seconds
+        # find the login button and click it
+        login_btn = driver.find_element(By.CLASS_NAME, 'login-btn')
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'login-btn')))
+        wait.until(EC.invisibility_of_element((By.TAG_NAME, 'nz-notification')))
+        login_btn.click()
+
+        # find the username and password fields and fill them
+        username = driver.find_element(By.ID, 'username')
+        password = driver.find_element(By.ID, 'password')
+        wait.until(EC.element_to_be_clickable((By.ID, 'username')))
+        wait.until(EC.element_to_be_clickable((By.ID, 'password')))
+        username.send_keys(username_val)
+        password.send_keys(password_val)
+
+        # find the login button and click it
+        login_confirm = driver.find_element(By.CLASS_NAME, 'btn-success')
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'btn-success')))
+        login_confirm.click()
+    login_action()
+
+    from random import randint, choices, sample
+    import glob
+    import json
+    import math
+    def decide_action() -> dict:
+        item_weights_interact = [item["weight"] for item in items]
+        items_to_interact = items
+
+        #dict to remove duplicates, update the num_item_buy, so ui does not have to buy the same item multiple times
+        dict_items = {}
+        for item in items_to_interact:
+            if item["name"] not in dict_items:
+                dict_items[item["name"]] = item
+
+        associations = []
+        for file in glob.glob("associations_*.json"):
+            with open(file) as f:
+                associations_in_a_file = json.load(f)
+                associations = associations + associations_in_a_file
+
+        #find all associations that have the related subcatalogs
+        item_subcatalogs = [item["subcatalog"] for item in dict_items.values()]
+        #items in association that user will buy will not be used again to buy from another associations
+        for association in associations:
+            if set(association["related_subcatalogs"]).intersection(item_subcatalogs):
+                selected_association_all_products = association["products"]
+                selected_association_products_weights = [product["weight"] for product in selected_association_all_products]
+                selected_association_products_names = [product["name"] for product in selected_association_all_products]
+
+                num_item_buy_from_assocation = randint(1, math.floor(len(selected_association_products_names) / 2))
+                association_product_names_will_buy = choices(selected_association_products_names, k=num_item_buy_from_assocation, weights=selected_association_products_weights)
+                # print(f"User {username_val} will buy {association_product_names_will_buy} because of association {association['related_subcatalogs']}")
+
+                for product_name in association_product_names_will_buy:
+                    if product_name not in dict_items:
+                        dict_items[product_name] = {
+                            "name": product_name,
+                            "quantity": 'Low',
+                        }
+        return dict_items
+    dict_items = decide_action()
+
+    items_to_interact = list(dict_items.values())
+    num_item_interact = len(items_to_interact)
+    print("After remove duplicate:", items_to_interact)
+    print(f"User {username_val} will interact with {num_item_interact} items")
+    #unallocate the dict_items from memory
+    del dict_items
+
+    # find the search btn, search input
+    # input the search value and click the search btn
+    for item_qty in items_to_interact:
+        wait.until(EC.invisibility_of_element((By.TAG_NAME, 'nz-notification')))
+        search_input = driver.find_element(By.CLASS_NAME, 'global-search-input')
+        search_input.clear()
+        search_btn = driver.find_element(By.CLASS_NAME, 'global-search-confirm-btn')
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'global-search-input')))
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'global-search-confirm-btn')))
+        item_name = item_qty["name"]
+        search_input.send_keys(item_name)
+        search_btn.click()
+        sleep(2)
+        try:
+            product_card = driver.find_elements(By.CLASS_NAME, 'product-search-card')[0]
+            product_searched_name = product_card.find_element(By.CLASS_NAME, 'product-search-card-title').text
+            if item_name.lower() != product_searched_name.lower():
+                print(f"Item {item_name} not found, could be not crawled successfully")
+                continue
+        except Exception as e:
+            print(f"Item {item_name} not found, could be not crawled successfully")
+            continue
+        
+        actions = ActionChains(driver).move_to_element(product_card).pause(1)
+        actions.perform()
+        view_btn = product_card.find_element(By.CLASS_NAME, 'view-search-btn')
+        wait.until(EC.element_to_be_clickable(view_btn))
+        view_btn.click()
+        sleep(2)
+        
+        #< 0.2 weight => 3star
+        #0.2 weight => 3.5star
+        #0.25 weight => 4star
+        #0.3 - 0.35 weight => 4.5star
+        #> 0.35 weight => 5star
+        try:
+            item_weight = item_qty["weight"]
+            if item_weight < 0.2:
+                star = 3
+            elif item_weight == 0.2:
+                star = 3.5
+            elif item_weight == 0.25:
+                star = 4
+            elif item_weight > 0.25 and item_weight <= 0.35:
+                star = 4.5
+            else:
+                star = 5
+        except Exception as e:
+            star = choices([3, 3.5, 4, 4.5, 5], k=1, weights=[0.1, 0.25, 0.35, 0.2, 0.1])[0]      
+        will_like = True if star >= 4 else False
+        will_bookmark = True if star >= 4.5 else False
+        # ko co weight => random star => tu star => liked, bookmarked
+      
+        # find the star rating and click it
+        star_label = driver.find_element(By.CSS_SELECTOR, f'label[for="rating2-{star}"]')
+        wait.until(EC.visibility_of(star_label))
+        wait.until(EC.element_to_be_clickable(star_label))
+        try:
+            star_label.click()
+        except Exception as e:
+            print(f"Item {item_name} cannot be rated, could be not crawled successfully. Skip rating this item")
+        sleep(1)
+
+        # find the like button and click it
+        if will_like:
+            like_btn = driver.find_element(By.CLASS_NAME, 'product-info-like-interaction-btn')
+            wait.until(EC.element_to_be_clickable(like_btn))
+            like_btn.click()
+            sleep(1)
+        
+        # find the bookmark button and click it
+        if will_bookmark:
+            bookmark_btn = driver.find_element(By.CLASS_NAME, 'product-info-bookmark-interaction-btn')
+            wait.until(EC.element_to_be_clickable(bookmark_btn))
+            bookmark_btn.click()
+            sleep(1)
+
+        close_quickview_btn = driver.find_element(By.CLASS_NAME, 'product-quick-view-close')
+        wait.until(EC.element_to_be_clickable(close_quickview_btn))
+        close_quickview_btn.click()
+
+  
+    # find the cart button and click it, close the search
+    try:
+        close_search_btn = driver.find_element(By.CLASS_NAME, 'global-search-close-btn')
+        wait.until(EC.element_to_be_clickable(close_search_btn))
+        close_search_btn.click()
+    except Exception as e:
+        print("Cannot close the search")
+
+    def logout_action():
+        logout_btn = driver.find_element(By.CLASS_NAME, 'logout-btn')
+        wait.until(EC.invisibility_of_element((By.TAG_NAME, 'nz-notification')))
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'logout-btn')))
+        logout_btn.click()
+        wait.until(EC.url_to_be('http://localhost:4200/shopping/index'))
+        print(driver.current_url)
+        sleep(1)
+    logout_action()
+    driver.quit()
