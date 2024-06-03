@@ -158,6 +158,33 @@ def load_product_model_df_to_mssql(product_model_df: pd.DataFrame):
     logging.log(logging.INFO, 'Connection to MSSQL closed.')
     print(df_product_models)
 
+def load_date_df_to_mssql(date_df: pd.DataFrame):
+    mssql_cursor = get_cursor_data_dw_mssql()
+    date_table_name = os.environ.get('MSSQL_DIM_DATE_TABLE_NAME')
+
+    mssql_cursor.execute(f"""DELETE FROM {date_table_name}""")
+    mssql_cursor.commit()
+
+    for _, row in date_df.iterrows():
+        date_key = row['DateKey']
+        date = row['Date']
+        year = row['Year']
+        month = row['Month']
+        quarter = row['Quarter']
+        day = row['Day']
+        weekday = row['Weekday']
+        weekday_name = row['WeekdayName']
+        mssql_cursor.execute(f"""
+            INSERT INTO {date_table_name} (DateKey, Date, Year, Quarter, Month, Day, Weekday, WeekdayName) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",date_key, date, year, quarter, month, day, weekday, weekday_name)
+    mssql_cursor.commit()
+
+    query = f'SELECT TOP 10 * FROM {date_table_name}'
+    df_date = pd.read_sql_query(query, mssql_cursor.connection)
+    mssql_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+    print(df_date)
+
 def load_cart_item_df_to_mssql(cart_item_df: pd.DataFrame):
     mssql_cursor = get_cursor_data_dw_mssql()
     cart_item_table_name = os.environ.get('MSSQL_FACT_CART_ITEM_TABLE_NAME')
@@ -178,18 +205,20 @@ def load_cart_item_df_to_mssql(cart_item_df: pd.DataFrame):
         cart_item_final_price = row['FinalPrice']
         cart_item_unit_after_sale_price = row['UnitAfterSalePrice']
         cart_item_final_after_sale_price = row['FinalAfterSalePrice']
+        cart_item_date_stock_confirmed_key = row['DateStockConfirmedKey']
 
         mssql_cursor.execute(f"""
             INSERT INTO {cart_item_table_name} 
             (CartId, ProductId, ProductModelId, 
             BusinessKey, SaleItemKey, IsOnSale, 
             SaleValue, Quantity, UnitPrice, FinalPrice, 
-            UnitAfterSalePrice, FinalAfterSalePrice) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""\
+            UnitAfterSalePrice, FinalAfterSalePrice, DateStockConfirmedKey) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""\
                 , cart_id, cart_item_product_id, cart_item_product_model_id\
                 , cart_item_business_key, cart_item_sale_item_id, cart_item_is_on_sale\
                 , cart_item_sale_value, cart_item_quantity\
-                , cart_item_unit_price, cart_item_final_price, cart_item_unit_after_sale_price, cart_item_final_after_sale_price
+                , cart_item_unit_price, cart_item_final_price, cart_item_unit_after_sale_price, cart_item_final_after_sale_price\
+                , cart_item_date_stock_confirmed_key
         )
         mssql_cursor.commit()
         
