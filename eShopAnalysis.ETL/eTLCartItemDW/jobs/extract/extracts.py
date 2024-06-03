@@ -182,8 +182,18 @@ def extract_mongo_product_model_to_df() -> pd.DataFrame:
 
 def extract_mssql_cart_item_to_df() -> pd.DataFrame:
     MSSQL_SRC_CART_ITEM_TABLE_NAME = os.environ.get('MSSQL_SRC_CART_ITEM_TABLE_NAME')
+    MSSQL_SRC_CART_TABLE_NAME = os.environ.get('MSSQL_SRC_CART_TABLE_NAME')
+    MSSQL_SRC_ORDER_TABLE_NAME = os.environ.get('MSSQL_SRC_ORDER_TABLE_NAME')
     mssql_data_src_cursor = get_mssql_data_src_cursor()    
-    query = f'SELECT * FROM {MSSQL_SRC_CART_ITEM_TABLE_NAME}'
+    query = f"""
+        SELECT cI.CartId, cI.ProductId, cI.ProductModelId, cI.BusinessKey\
+                       , cI.SaleItemId, cI.IsOnSale, cI.SaleValue, cI.Quantity, cI.UnitPrice\
+                       , cI.FinalPrice, cI.UnitAfterSalePrice, cI.FinalAfterSalePrice, o.DateStockConfirmed 
+        FROM {MSSQL_SRC_CART_ITEM_TABLE_NAME} cI
+        INNER JOIN {MSSQL_SRC_CART_TABLE_NAME} c ON c.Id = cI.CartId
+        INNER JOIN {MSSQL_SRC_ORDER_TABLE_NAME} o ON c.Id = o.CartId
+        WHERE o.OrdersStatus = 3
+    """
     df_cart_item = pd.read_sql_query(query, mssql_data_src_cursor.connection)
     mssql_data_src_cursor.close()
     logging.log(logging.INFO, 'Connection to MSSQL closed.')
@@ -191,6 +201,6 @@ def extract_mssql_cart_item_to_df() -> pd.DataFrame:
     # this can be in transform
     columns_to_keep = ['CartId', 'ProductId', 'ProductModelId', 'BusinessKey'\
                        , 'SaleItemId', 'IsOnSale', 'SaleValue', 'Quantity', 'UnitPrice'\
-                       , 'FinalPrice', 'UnitAfterSalePrice', 'FinalAfterSalePrice']
+                       , 'FinalPrice', 'UnitAfterSalePrice', 'FinalAfterSalePrice', 'DateStockConfirmed']
     df_cart_item = df_cart_item[columns_to_keep]
     return df_cart_item
