@@ -4,7 +4,9 @@ load_dotenv('config.env')
 
 def extract_mongo_brands_to_df() -> pd.DataFrame:
     MONGODB_PRODUCT_COLLECTION = os.environ.get('MONGODB_PRODUCT_COLLECTION')
-    db = get_db_mongo()
+    MONGO_CONNECTION_STRING = os.environ.get('MONGO_CONNECTION_STRING')
+    MONGO_DATABASE = os.environ.get('MONGO_DATABASE')
+    db = get_db_mongo(MONGO_CONNECTION_STRING, MONGO_DATABASE)
     product_collection = db.get_collection(MONGODB_PRODUCT_COLLECTION)
     
     cursor_products = product_collection.find({})
@@ -26,7 +28,9 @@ def extract_mongo_brands_to_df() -> pd.DataFrame:
 
 def extract_mongo_catalogs_to_df() -> pd.DataFrame:
     MONGODB_CATALOG_COLLECTION = os.environ.get('MONGODB_CATALOG_COLLECTION')
-    db = get_db_mongo()
+    MONGO_CONNECTION_STRING = os.environ.get('MONGO_CONNECTION_STRING')
+    MONGO_DATABASE = os.environ.get('MONGO_DATABASE')
+    db = get_db_mongo(MONGO_CONNECTION_STRING, MONGO_DATABASE)
     catalog_collection = db.get_collection(MONGODB_CATALOG_COLLECTION)
 
     cursor_catalogs = catalog_collection.find({})
@@ -38,7 +42,9 @@ def extract_mongo_catalogs_to_df() -> pd.DataFrame:
 
 def extract_mongo_subcatalogs_to_df() -> pd.DataFrame:    
     MONGODB_CATALOG_COLLECTION = os.environ.get('MONGODB_CATALOG_COLLECTION')
-    db = get_db_mongo()
+    MONGO_CONNECTION_STRING = os.environ.get('MONGO_CONNECTION_STRING')
+    MONGO_DATABASE = os.environ.get('MONGO_DATABASE')
+    db = get_db_mongo(MONGO_CONNECTION_STRING, MONGO_DATABASE)
     catalog_collection = db.get_collection(MONGODB_CATALOG_COLLECTION)
     count_catalog_without_subcatalog = catalog_collection.count_documents({'CatalogSubCatalogs': []})
     print(f'Catalog without any subcatalog: {count_catalog_without_subcatalog}')
@@ -67,7 +73,9 @@ def extract_mongo_subcatalogs_to_df() -> pd.DataFrame:
 
 def extract_mongo_usage_instruction_to_df() -> pd.DataFrame:
     MONGODB_PRODUCT_COLLECTION = os.environ.get('MONGODB_PRODUCT_COLLECTION')
-    db = get_db_mongo()
+    MONGO_CONNECTION_STRING = os.environ.get('MONGO_CONNECTION_STRING')
+    MONGO_DATABASE = os.environ.get('MONGO_DATABASE')
+    db = get_db_mongo(MONGO_CONNECTION_STRING, MONGO_DATABASE)
     product_collection = db.get_collection(MONGODB_PRODUCT_COLLECTION)
     
     cursor_products = product_collection.find({})
@@ -90,7 +98,9 @@ def extract_mongo_usage_instruction_to_df() -> pd.DataFrame:
 
 def extract_mongo_preserve_instruction_to_df() -> pd.DataFrame:
     MONGODB_PRODUCT_COLLECTION = os.environ.get('MONGODB_PRODUCT_COLLECTION')
-    db = get_db_mongo()
+    MONGO_CONNECTION_STRING = os.environ.get('MONGO_CONNECTION_STRING')
+    MONGO_DATABASE = os.environ.get('MONGO_DATABASE')
+    db = get_db_mongo(MONGO_CONNECTION_STRING, MONGO_DATABASE)
     product_collection = db.get_collection(MONGODB_PRODUCT_COLLECTION)
     
     cursor_products = product_collection.find({})
@@ -113,7 +123,9 @@ def extract_mongo_preserve_instruction_to_df() -> pd.DataFrame:
 
 def extract_mongo_product_to_df() -> pd.DataFrame:
     MONGODB_PRODUCT_COLLECTION = os.environ.get('MONGODB_PRODUCT_COLLECTION')
-    db = get_db_mongo()
+    MONGO_CONNECTION_STRING = os.environ.get('MONGO_CONNECTION_STRING')
+    MONGO_DATABASE = os.environ.get('MONGO_DATABASE')
+    db = get_db_mongo(MONGO_CONNECTION_STRING, MONGO_DATABASE)
     product_collection = db.get_collection(MONGODB_PRODUCT_COLLECTION)
 
     cursor_products = product_collection.find({})
@@ -153,7 +165,9 @@ def extract_mongo_product_to_df() -> pd.DataFrame:
 
 def extract_mongo_product_model_to_df() -> pd.DataFrame:
     MONGODB_PRODUCT_COLLECTION = os.environ.get('MONGODB_PRODUCT_COLLECTION')
-    db = get_db_mongo()
+    MONGO_CONNECTION_STRING = os.environ.get('MONGO_CONNECTION_STRING')
+    MONGO_DATABASE = os.environ.get('MONGO_DATABASE')
+    db = get_db_mongo(MONGO_CONNECTION_STRING, MONGO_DATABASE)
     product_collection = db.get_collection(MONGODB_PRODUCT_COLLECTION)
 
     cursor_products = product_collection.find({})
@@ -223,3 +237,43 @@ def extract_mssql_cart_order_to_df() -> pd.DataFrame:
     mssql_data_src_cursor.close()
     logging.log(logging.INFO, 'Connection to MSSQL closed.')
     return df_cart_order
+
+def extract_mssql_cart_item_transactions_to_df() -> pd.DataFrame:
+    MSSQL_SRC_CART_ITEM_TABLE_NAME = os.environ.get('MSSQL_SRC_CART_ITEM_TABLE_NAME')
+    MSSQL_SRC_ORDER_TABLE_NAME = os.environ.get('MSSQL_SRC_ORDER_TABLE_NAME')
+    mssql_data_src_cursor = get_mssql_data_src_cursor()    
+    query = f"""
+        SELECT cI.BusinessKey, cI.CartId, cI.ProductName, cI.SubCatalogName
+        FROM {MSSQL_SRC_CART_ITEM_TABLE_NAME} cI
+        INNER JOIN {MSSQL_SRC_ORDER_TABLE_NAME} o ON cI.CartId = o.CartId
+        WHERE o.OrdersStatus = 3
+    """
+    df_cart_item_transactions = pd.read_sql_query(query, mssql_data_src_cursor.connection)
+    mssql_data_src_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+    return df_cart_item_transactions
+
+def extract_mongo_interactions_to_df() -> pd.DataFrame:
+    MONGODB_LIKE_COLLECTION = os.environ.get('MONGODB_LIKE_COLLECTION')
+    MONGODB_RATE_COLLECTION = os.environ.get('MONGODB_RATE_COLLECTION')
+    MONGODB_BOOKMARK_COLLECTION = os.environ.get('MONGODB_BOOKMARK_COLLECTION')
+    MONGO_CONNECTION_STRING2 = os.environ.get('MONGO_CONNECTION_STRING2')
+    MONGO_DATABASE2 = os.environ.get('MONGO_DATABASE2')
+    db = get_db_mongo(MONGO_CONNECTION_STRING2, MONGO_DATABASE2)
+    like_collection = db.get_collection(MONGODB_LIKE_COLLECTION)
+    rate_collection = db.get_collection(MONGODB_RATE_COLLECTION)
+    bookmark_collection = db.get_collection(MONGODB_BOOKMARK_COLLECTION)
+    cursor_likes = like_collection.find({})
+    cursor_rates = rate_collection.find({})
+    cursor_bookmarks = bookmark_collection.find({})
+    df_likes = pd.DataFrame(list(cursor_likes))
+    df_rates = pd.DataFrame(list(cursor_rates))
+    df_bookmarks = pd.DataFrame(list(cursor_bookmarks))
+    db.client.close()
+    logging.log(logging.INFO, 'Connection to MongoDB closed.')
+
+    df_bookmarks['Bookmark'] = 1
+    df_interactions = df_likes.merge(df_rates, how='outer', on=['UserId', 'ProductBusinessKey'])
+    df_interactions = df_interactions.merge(df_bookmarks, how='outer', on=['UserId', 'ProductBusinessKey'])
+
+    return df_interactions
