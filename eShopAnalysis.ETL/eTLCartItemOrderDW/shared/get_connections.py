@@ -23,14 +23,12 @@ def get_cursor_data_dw_mssql():
         logging.error(traceback.format_exc())
 
 
-def get_db_mongo():
+def get_db_mongo(conn_string, db_name):
     """Get cursor for MongoDB source database"""
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-    MONGO_CONNECTION_STRING = os.environ.get('MONGO_CONNECTION_STRING')
-    MONGO_DATABASE = os.environ.get('MONGO_DATABASE')
     try:
-        conn = pymongo.MongoClient(MONGO_CONNECTION_STRING)
-        db = conn.get_database(MONGO_DATABASE)
+        conn = pymongo.MongoClient(conn_string)
+        db = conn.get_database(db_name)
         logging.info('Connected to MongoDB database')
         return db
     except Exception as e:

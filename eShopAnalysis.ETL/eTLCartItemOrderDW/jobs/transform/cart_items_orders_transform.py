@@ -36,3 +36,19 @@ def transform_cart_order_df_to_cart_order_df_with_fkey(cart_order_df: pd.DataFra
     
     cart_order_df_with_fkey.drop(columns=drop_columns, inplace=True)
     return cart_order_df_with_fkey
+
+def transform_cart_item_transactions_df(cart_item_transactions_df: pd.DataFrame):
+    cart_item_transactions_df.rename(
+        columns={
+            'BusinessKey': 'product_key', 
+            'CartId': 'order_key',
+            'ProductName': 'product_name',
+            'SubCatalogName': 'subcatalog_name',
+        }, 
+        inplace=True
+    )
+    cart_item_transactions_df['product_key'] = cart_item_transactions_df['product_key'].str.lower()
+    cart_item_transactions_df['order_key'] = cart_item_transactions_df['order_key'].str.lower()
+    #drop row where product_name is whitespace
+    cart_item_transactions_df = cart_item_transactions_df[cart_item_transactions_df['product_name'].str.strip() != '']
+    return cart_item_transactions_df
