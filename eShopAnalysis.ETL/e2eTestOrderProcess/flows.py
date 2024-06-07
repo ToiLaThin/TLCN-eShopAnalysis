@@ -254,12 +254,21 @@ def order_confirm_flow(username_val, password_val, items: list[Item]):
         wait.until(EC.element_to_be_clickable(address_input))    
         wait.until(EC.element_to_be_clickable(use_saved_location_btn))
         wait.until(EC.element_to_be_clickable(customer_info_confirm_btn))
-
-        phone_input.send_keys(phone)
-        address_input.send_keys(address)
-        use_saved_location_btn.click()
         sleep(1)
-        customer_info_confirm_btn.click()
+        try:
+            phone_input.send_keys(phone)
+            address_input.send_keys(address)
+            sleep(1)
+            use_saved_location_btn.click()
+            sleep(1)
+            customer_info_confirm_btn.click()
+        except Exception as e:
+            sleep(1)
+            driver.switchTo().alert().accept()
+            print("Alert Text: Please input address first.")
+            use_saved_location_btn.click()
+            sleep(1)
+            customer_info_confirm_btn.click()
 
         # choose the payment method, then confirm
         payment_method_cod_label = driver.find_element(By.CSS_SELECTOR, 'label[for="payment-method-0"]')

@@ -227,3 +227,150 @@ def load_cart_item_df_to_mssql(cart_item_df: pd.DataFrame):
     mssql_cursor.close()
     logging.log(logging.INFO, 'Connection to MSSQL closed.')
     print(df_cart_items)
+
+
+def load_payment_method_df_to_mssql(payment_method_df: pd.DataFrame):
+    mssql_cursor = get_cursor_data_dw_mssql()
+    payment_method_table_name = os.environ.get('MSSQL_DIM_PAYMENT_METHOD_TABLE_NAME')
+
+    mssql_cursor.execute(f"""DELETE FROM {payment_method_table_name}""")
+    mssql_cursor.commit()
+
+    for id, row in payment_method_df.iterrows():
+        payment_method_key = id
+        payment_method_name = row['PaymentMethod']
+        mssql_cursor.execute(f"""
+            INSERT INTO {payment_method_table_name} (PaymentMethodId, MethodName) VALUES (?, ?)
+        """, 
+        payment_method_key, 
+        payment_method_name)
+    mssql_cursor.commit()
+
+    query = f'SELECT * FROM {payment_method_table_name}'
+    df_payment_methods = pd.read_sql_query(query, mssql_cursor.connection)
+    mssql_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+    print(df_payment_methods)
+
+def load_discount_type_df_to_mssql(discount_type_df: pd.DataFrame):
+    mssql_cursor = get_cursor_data_dw_mssql()
+    discount_type_table_name = os.environ.get('MSSQL_DIM_DISCOUNT_TYPE_TABLE_NAME')
+
+    mssql_cursor.execute(f"""DELETE FROM {discount_type_table_name}""")
+    mssql_cursor.commit()
+
+    for id, row in discount_type_df.iterrows():
+        discount_type_key = id
+        discount_type_name = row['DiscountType']
+        mssql_cursor.execute(f"""
+            INSERT INTO {discount_type_table_name} (DiscountTypeId, DiscountTypeName) VALUES (?, ?)
+        """, 
+        discount_type_key, 
+        discount_type_name)
+    mssql_cursor.commit()
+
+    query = f'SELECT * FROM {discount_type_table_name}'
+    df_discount_types = pd.read_sql_query(query, mssql_cursor.connection)
+    mssql_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+    print(df_discount_types)
+
+def load_order_status_df_to_mssql(order_status_df: pd.DataFrame):
+    mssql_cursor = get_cursor_data_dw_mssql()
+    order_status_table_name = os.environ.get('MSSQL_DIM_ORDER_STATUS_TABLE_NAME')
+
+    mssql_cursor.execute(f"""DELETE FROM {order_status_table_name}""")
+    mssql_cursor.commit()
+
+    for id, row in order_status_df.iterrows():
+        order_status_key = id
+        order_status_name = row['OrderStatus']
+        mssql_cursor.execute(f"""
+            INSERT INTO {order_status_table_name} (OrderStatusId, OrderStatusName) VALUES (?, ?)
+        """, 
+        order_status_key, 
+        order_status_name)
+    mssql_cursor.commit()
+
+    query = f'SELECT * FROM {order_status_table_name}'
+    df_order_statuses = pd.read_sql_query(query, mssql_cursor.connection)
+    mssql_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+    print(df_order_statuses)
+
+def load_address_df_to_mssql(address_df: pd.DataFrame):
+    mssql_cursor = get_cursor_data_dw_mssql()
+    address_table_name = os.environ.get('MSSQL_DIM_ADDRESS_TABLE_NAME')
+
+    mssql_cursor.execute(f"""DELETE FROM {address_table_name}""")
+    mssql_cursor.commit()
+
+    for id, row in address_df.iterrows():
+        address_key = id
+        district_or_locality = row['Address']
+        mssql_cursor.execute(f"""
+            INSERT INTO {address_table_name} (AddressId, DistrictOrLocality) VALUES (?, ?)
+        """, 
+        address_key, 
+        district_or_locality)
+    mssql_cursor.commit()
+
+    query = f'SELECT * FROM {address_table_name}'
+    df_addresses = pd.read_sql_query(query, mssql_cursor.connection)
+    mssql_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+    print(df_addresses)
+
+def load_cart_order_df_to_mssql(cart_order_df: pd.DataFrame):
+    mssql_cursor = get_cursor_data_dw_mssql()
+    cart_order_table_name = os.environ.get('MSSQL_FACT_CART_ORDER_TABLE_NAME')
+
+    mssql_cursor.execute(f"""DELETE FROM {cart_order_table_name}""")
+    mssql_cursor.commit()
+
+    for _, row in cart_order_df.iterrows():
+        cart_order_id = row['Id']
+        date_created_draft_key = row['DateCreatedDraftKey']
+        date_stock_confirmed_key = row['DateStockConfirmedKey']
+        orders_status_key = row['OrdersStatusKey']
+        payment_method_key = row['PaymentMethodKey']
+        discount_type_key = row['DiscountTypeKey']
+        address_key = row['AddressKey']
+
+        total_sale_discount_amount = row['TotalSaleDiscountAmount']
+        coupon_discount_amount = row['CouponDiscountAmount']
+        coupon_discount_value = row['CouponDiscountValue']
+        total_price_original = row['TotalPriceOriginal']
+        total_price_after_sale = row['TotalPriceAfterSale']
+        total_price_after_coupon_applied = row['TotalPriceAfterCouponApplied']
+        total_price_final = row['TotalPriceFinal']
+        time_lag_to_approve = row['TimeLagToApprove']
+
+        have_coupon_applied = row['HaveCouponApplied']
+        have_any_sale_item = row['HaveAnySaleItem']
+        
+        mssql_cursor.execute(f"""
+            INSERT INTO {cart_order_table_name} 
+            (CartOrderId, AddressKey, PaymentMethodKey, OrderStatusKey, DiscountTypeKey, DateCreatedDraftKey, DateStockConfirmedKey,
+            HaveCouponApplied, HaveAnySaleItem, CouponDiscountAmount, CouponDiscountValue, TotalSaleDiscountAmount, TotalPriceOriginal, 
+            TotalPriceAfterSale, TotalPriceAfterCouponApplied, TotalPriceFinal, TimeLagToApprove) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            cart_order_id, 
+            address_key, 
+            payment_method_key, 
+            orders_status_key, 
+            discount_type_key, 
+            date_created_draft_key, 
+            date_stock_confirmed_key,
+            have_coupon_applied,
+            have_any_sale_item,
+            coupon_discount_amount,
+            coupon_discount_value,
+            total_sale_discount_amount,
+            total_price_original,
+            total_price_after_sale,
+            total_price_after_coupon_applied,
+            total_price_final,
+            time_lag_to_approve
+        )
+        mssql_cursor.commit()
