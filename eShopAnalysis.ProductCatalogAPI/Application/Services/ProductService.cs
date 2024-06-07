@@ -324,10 +324,12 @@ namespace eShopAnalysis.ProductCatalogAPI.Application.Services
             var result = _unitOfWork.ProductRepository.GetAllAsQueryable()
                                                       .Where(p => productBusinessKeys.Contains(p.BusinessKey))
                                                       .ToList();
-            if (result == null || result.Count() == 0)
-            {
-                return ServiceResponseDto<IEnumerable<Product>>.Failure("no valid products to return");
-            }
+            //if (result == null || result.Count() == 0)
+            //{
+            //    return ServiceResponseDto<IEnumerable<Product>>.Failure("no valid products to return");
+            //}
+
+            // even if no product return empty arr
             return ServiceResponseDto<IEnumerable<Product>>.Success(result);
         }
         #endregion

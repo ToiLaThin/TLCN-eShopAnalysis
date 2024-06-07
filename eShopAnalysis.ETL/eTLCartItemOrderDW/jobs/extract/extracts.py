@@ -204,3 +204,22 @@ def extract_mssql_cart_item_to_df() -> pd.DataFrame:
                        , 'FinalPrice', 'UnitAfterSalePrice', 'FinalAfterSalePrice', 'DateStockConfirmed']
     df_cart_item = df_cart_item[columns_to_keep]
     return df_cart_item
+
+def extract_mssql_cart_order_to_df() -> pd.DataFrame:
+    MSSQL_SRC_CART_TABLE_NAME = os.environ.get('MSSQL_SRC_CART_TABLE_NAME')
+    MSSQL_SRC_ORDER_TABLE_NAME = os.environ.get('MSSQL_SRC_ORDER_TABLE_NAME')
+    mssql_data_src_cursor = get_mssql_data_src_cursor()    
+    query = f"""
+        SELECT c.Id, c.HaveCouponApplied, c.HaveAnySaleItem, c.CouponDiscountType
+                       , c.CouponDiscountValue, c.CouponDiscountAmount, c.TotalSaleDiscountAmount, c.TotalPriceOriginal, c.TotalPriceFinal
+                       , o.DateCreatedDraft, o.DateCheckouted, o.DateCustomerInfoConfirmed, o.DateStockConfirmed, o.DateCompleted, o.DateCancelled, o.DateRefunded
+                       , o.OrdersStatus, o.PaymentMethod
+        FROM {MSSQL_SRC_CART_TABLE_NAME} c
+        INNER JOIN {MSSQL_SRC_ORDER_TABLE_NAME} o 
+        ON c.Id = o.CartId
+        WHERE o.OrdersStatus = 3
+    """
+    df_cart_order = pd.read_sql_query(query, mssql_data_src_cursor.connection)
+    mssql_data_src_cursor.close()
+    logging.log(logging.INFO, 'Connection to MSSQL closed.')
+    return df_cart_order
