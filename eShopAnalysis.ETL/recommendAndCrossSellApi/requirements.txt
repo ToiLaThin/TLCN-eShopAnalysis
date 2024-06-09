@@ -1,0 +1,9 @@
+flask
+flask_cors
+pandas
+matplotlib
+seaborn
+ipykernel
+pyspark
+findspark
+mlxtend
