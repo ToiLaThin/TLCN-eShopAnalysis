@@ -21,6 +21,9 @@ namespace eShopAnalysis.PaymentAPI.Controllers
         public async Task<PaymentResponseDto> MakePayment(PaymentRequestDto paymentRequest)
         {
             if (paymentRequest == null) { throw new ArgumentNullException(nameof(paymentRequest)); }
+            if (paymentRequest.TotalDiscount == -1) {
+                paymentRequest.TotalDiscount = 0;
+            }
             var payUrl = await _paymentService.MakePayment(userId: paymentRequest.UserId,
                                                            orderId: paymentRequest.OrderId,
                                                            subTotal: paymentRequest.SubTotal,

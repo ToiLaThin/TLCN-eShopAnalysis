@@ -130,7 +130,7 @@ namespace eShopAnalysis.PaymentAPI.Service.Strategy
                     Quantity = 1,
                     PriceData = new SessionLineItemPriceDataOptions {
                         UnitAmount = Convert.ToInt64(subTotal - discount),
-                        Currency = "USD",
+                        Currency = "VND",
                         ProductData = new SessionLineItemPriceDataProductDataOptions { Name = "Order" + orderId },
                     }
                   },
