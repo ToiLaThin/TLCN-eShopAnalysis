@@ -1,4 +1,4 @@
-using eShopAnalysis.EventBus.Abstraction;
+﻿using eShopAnalysis.EventBus.Abstraction;
 using eShopAnalysis.EventBus.Extension;
 using eShopAnalysis.CartOrderAPI.Application.BackchannelDto;
 using eShopAnalysis.CartOrderAPI.Infrastructure;
@@ -12,6 +12,7 @@ using eShopAnalysis.CartOrderAPI.Application.IntegrationEvents.EventHandling;
 using Serilog;
 using eShopAnalysis.CartOrderAPI.Utilities.Behaviors;
 using AutoMapper;
+using App.Metrics;
 
 var builder = WebApplication.CreateBuilder(args);
 //this will config all required by event bus, review appsettings.json EventBus section and EventBus Connection string
@@ -52,6 +53,29 @@ var mapperConfig = new MapperConfiguration(cfg =>
 IMapper mapper = new Mapper(mapperConfig);
 builder.Services.AddSingleton(mapper);
 
+//Metric config
+var metricsBuilder = new MetricsBuilder().Report
+                                         .ToInfluxDb("http://localhost:8086", "HealthCheckDb")
+                                         .OutputMetrics
+                                         .AsPrometheusPlainText();
+metricsBuilder.Configuration.Configure(b =>
+{
+    b.DefaultContextLabel = "CartOrder";
+    b.Enabled = true;
+    b.ReportingEnabled = true;
+});
+var metrics = metricsBuilder.Build();
+builder.Services.AddMetrics(metrics);
+builder.Services.AddMetricsTrackingMiddleware();
+builder.Services.AddMetricsEndpoints(setUp =>
+{
+    setUp.MetricsEndpointEnabled = true;
+    setUp.MetricsTextEndpointEnabled = true;
+    setUp.EnvironmentInfoEndpointEnabled = true;
+    //can navigate to localhost/7006/metrics or /metrics-text and see metrics registered☻
+});
+
+
 var app = builder.Build();
 var eventBus = app.Services.GetRequiredService<IEventBus>();
 eventBus.Subscribe<OrderPaymentTransactionCompletedIntegrationEvent, IIntegrationEventHandler<OrderPaymentTransactionCompletedIntegrationEvent>>();
@@ -60,6 +84,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMetricsAllMiddleware();
+app.UseMetricsAllEndpoints();
 app.UseSerilogRequestLogging();
 app.UseAuthorization();
 app.MapControllers();
