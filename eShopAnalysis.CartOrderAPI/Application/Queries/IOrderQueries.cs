@@ -12,6 +12,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
 
         Task<QueryResponseDto<OrderAggregateCartViewModel>> GetOrderAggregateCartByOrderIdUsingRelationship(Guid orderId);
         Task<QueryResponseDto<OrderAggregateCartViewModel>> GetOrderAggregateCartByCartIdUsingRelationship(Guid cartId);
+        Task<QueryResponseDto<IEnumerable<OrderAggregateCartViewModel>>> GetOrdersToDeliver();
 
         Task<QueryResponseDto<OrderAggregateCartViewModel>> GetOrderAggregateCartByCartIdWithoutAddressUsingRelationship(Guid cartId);
 

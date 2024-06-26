@@ -107,6 +107,20 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
             return Ok(queryResult.Data);
         }
 
+        [HttpGet("GetOrdersToDeliver")]
+        [ProducesResponseType(typeof(IEnumerable<OrderAggregateCartViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
+        public async Task<ActionResult<IEnumerable<OrderAggregateCartViewModel>>> GetOrdersToDeliver()
+        {
+            var queryResult = await _orderQueries.GetOrdersToDeliver();
+            if (queryResult.IsFailed || queryResult.IsException)
+            {
+                return NotFound(queryResult.Error);
+            }
+            return Ok(queryResult.Data);
+        }
+
         [HttpPost("ConfirmOrderCustomerInfo")]
         [ProducesResponseType(typeof(OrderAggregateCartViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
