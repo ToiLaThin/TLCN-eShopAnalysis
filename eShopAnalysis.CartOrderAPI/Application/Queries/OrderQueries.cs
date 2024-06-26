@@ -360,6 +360,59 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
             var paginatedOrderAggregateCartGroupsWithMutliItems = orderAggregateCartGroupsWithMutliItems.Skip((page - 1) * pageSize)
                                                                                                         .Take(pageSize);
             return QueryResponseDto<IEnumerable<OrderAggregateCartViewModel>>.Success(paginatedOrderAggregateCartGroupsWithMutliItems);
-        }        
+        }
+
+        public async Task<QueryResponseDto<IEnumerable<OrderAggregateCartViewModel>>> GetOrdersToDeliver()
+        {
+            using var connection = new SqlConnection(_connString);
+            var builder = new SqlBuilder();
+            string sql = @"SELECT o.Id As OrderId, o.CartId, o.BusinessKey AS OrderBusinessKey, o.OrdersStatus AS OrderStatus, o.PaymentMethod, o.PhoneNumber, 
+                                  o.DateCreatedDraft, o.DateCustomerInfoConfirmed, o.DateCheckouted, o.DateStockConfirmed, o.DateRefunded, o.DateCancelled, o.DateCompleted,
+                                    
+                                  c.Id AS CartPrimaryKey, c.UserId, c.HaveCouponApplied, c.CouponId, c.HaveAnySaleItem, c.CouponDiscountType,
+                                  c.CouponDiscountAmount, c.CouponDiscountValue, c.TotalSaleDiscountAmount, c.TotalPriceOriginal, c.TotalPriceAfterSale, c.TotalPriceAfterCouponApplied,
+                                  c.TotalPriceFinal,
+
+                                  cI.ProductId, cI.ProductModelId, cI.BusinessKey AS CartItemBusinessKey, cI.CartId, cI.SaleItemId, cI.IsOnSale, cI.SaleType, cI.SaleValue,
+                                  cI.Quantity, cI.UnitPrice, cI.FinalPrice, cI.UnitAfterSalePrice, cI.FinalAfterSalePrice, cI.ProductName, cI.ProductImage, cI.SubCatalogName
+                           FROM Orders o            
+                           INNER JOIN Cart c on o.CartId = c.Id
+                           INNER JOIN CartItem cI ON c.Id = cI.CartId
+                           WHERE o.OrdersStatus = @orderStatus 
+                         ";
+            object paramsSql = new
+            {
+                orderStatus = (int)OrderStatus.StockConfirmed
+            };
+
+            var orderAggregateCartEntries = await connection.QueryAsync<OrderAggregateCartViewModel, CartSummaryViewModel, CartItemViewModel, OrderAggregateCartViewModel>(
+                sql,
+                map: (order, cart, cartItem) =>
+                {
+                    cart.Items = new List<CartItemViewModel> { cartItem };
+                    order.Cart = cart;
+                    return order;
+                },
+                param: paramsSql,
+                splitOn: "CartPrimaryKey, ProductId");
+
+            if (orderAggregateCartEntries == null)
+            {
+                return QueryResponseDto<IEnumerable<OrderAggregateCartViewModel>>.Failure("Query return no result");
+            }
+
+            var orderAggregateCartGroups = orderAggregateCartEntries.GroupBy(oC => new { oC.OrderId, oC.CartId }); //key: {orderId & cartId}, value is list of OrderAggregateCartViewModel
+            var orderAggregateCartGroupsWithMutliItems = orderAggregateCartGroups.Select(g =>
+            {
+                var groupedOrderAggregateCart = g.First();
+                groupedOrderAggregateCart.Cart.Items = g.Select(g => g.Cart.Items.First()).ToList(); //get all first cartItem from the list OrderAggregateCartViewModel and concat to a single list, assign for Items in the first OrderAggregateCartViewModel
+                return groupedOrderAggregateCart;
+            });
+            if (orderAggregateCartGroupsWithMutliItems == null)
+            {
+                return QueryResponseDto<IEnumerable<OrderAggregateCartViewModel>>.Failure("Query return no result");
+            }            
+            return QueryResponseDto<IEnumerable<OrderAggregateCartViewModel>>.Success(orderAggregateCartGroupsWithMutliItems.Take(5));
+        }
     }
 }
