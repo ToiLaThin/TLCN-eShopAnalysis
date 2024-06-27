@@ -191,6 +191,7 @@ def recommend_content_based() -> list[str]:
 
     hive_table_not_have_data = ss.sql(f"SELECT * FROM {hive_content_recommender_db_name}.{hive_content_recommender_table_name}").count() == 0
     hive_table_not_have_data = True # TODO after fixing wrong data returned, remove this line
+    num_related_products = 3
     if hive_table_not_have_data == True:
         print('No data in product_cosine_sim table. Generating...')
         tfidf_matrix = get_tfidf_matrix(product_df, 'features')
@@ -207,15 +208,15 @@ def recommend_content_based() -> list[str]:
         # do not use insertInto, because it will append data, use saveAsTable instead to overwrite
         ss.createDataFrame(cosine_sim_df).write.mode("overwrite").saveAsTable(f"{hive_content_recommender_db_name}.{hive_content_recommender_table_name}")
         print(ss.sql(f'SELECT * FROM {hive_content_recommender_db_name}.{hive_content_recommender_table_name}').show())
-        # result, recommended_product_names = generate_recommendations_from_pname('Bellany Coconut Paletas (110ml)', 7, product_df, cosine_sim_ndarray)
-        result, recommended_product_keys = generate_recommendations_from_pkey(product_key, 7, product_df, cosine_sim_ndarray)
+        # result, recommended_product_names = generate_recommendations_from_pname('Bellany Coconut Paletas (110ml)', num_related_products + 1, product_df, cosine_sim_ndarray)
+        result, recommended_product_keys = generate_recommendations_from_pkey(product_key, num_related_products + 1, product_df, cosine_sim_ndarray)
     else:
         # TODO wrong data returned, need to check why
         product_cosine_df = ss.sql("SELECT * FROM recommender_db.product_cosine_sim").toPandas()
         cosine_sim_df = product_cosine_df.pivot(index='p_name1', columns='p_name2', values='cosine_sim')
         cosine_sim_ndarray = cosine_sim_df.to_numpy()
-        # result, recommended_product_names = generate_recommendations_from_pname('Bellany Coconut Paletas (110ml)', 7, product_df, cosine_sim_ndarray)
-        result, recommended_product_keys = generate_recommendations_from_pkey(product_key, 7, product_df, cosine_sim_ndarray)
+        # result, recommended_product_names = generate_recommendations_from_pname('Bellany Coconut Paletas (110ml)', num_related_products + 1, product_df, cosine_sim_ndarray)
+        result, recommended_product_keys = generate_recommendations_from_pkey(product_key, num_related_products + 1, product_df, cosine_sim_ndarray)
     ss.stop()
     buff = recommended_product_keys.tolist()
     print(buff)
