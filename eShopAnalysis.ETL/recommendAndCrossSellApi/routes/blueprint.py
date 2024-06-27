@@ -4,4 +4,5 @@ import controllers.recommend_controller as recommend_controller
 blueprint = Blueprint("recommendAndCrossSellApi", __name__)
 
 blueprint.route("/cross_sell", methods=["POST"])(cross_sell_controller.cross_sell)
-blueprint.route("/recommend", methods=["GET"])(recommend_controller.recommend)
+blueprint.route("/recommend", methods=["GET"])(recommend_controller.recommend_collaborate_based)
+blueprint.route("/recommend_content", methods=["GET"])(recommend_controller.recommend_content_based)
