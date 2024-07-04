@@ -1,5 +1,7 @@
 using AutoMapper;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Data;
+using eShopAnalysis.CustomerLoyaltyProgramAPI.IntegrationEvents.Event;
+using eShopAnalysis.CustomerLoyaltyProgramAPI.IntegrationEvents.EventHandling;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Repository;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.Service;
 using eShopAnalysis.CustomerLoyaltyProgramAPI.UnitOfWork;
@@ -13,8 +15,8 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Services.AddEventBus(builder.Configuration);
-//builder.Services.AddTransient<IIntegrationEventHandler<UserAppliedCouponToCartIntegrationEvent>, UserAppliedCouponToCartIntegrationEventHandling>();
+builder.Services.AddEventBus(builder.Configuration);
+builder.Services.AddTransient<IIntegrationEventHandler<NewUserCreatedIntegrationEvent>, NewUserCreatedIntegrationEventHandling>();
 
 builder.Host.UseSerilog((context, config) => {
     config.ReadFrom.Configuration(context.Configuration);
@@ -46,8 +48,8 @@ builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
 app.UseSerilogRequestLogging();
-//var eventBus = app.Services.GetRequiredService<IEventBus>();
-//eventBus.Subscribe<UserAppliedCouponToCartIntegrationEvent, IIntegrationEventHandler<UserAppliedCouponToCartIntegrationEvent>>();
+var eventBus = app.Services.GetRequiredService<IEventBus>();
+eventBus.Subscribe<NewUserCreatedIntegrationEvent, IIntegrationEventHandler<NewUserCreatedIntegrationEvent>>();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

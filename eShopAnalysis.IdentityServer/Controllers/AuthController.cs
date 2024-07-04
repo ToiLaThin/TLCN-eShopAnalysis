@@ -1,5 +1,7 @@
-﻿using eShopAnalysis.IdentityServer.Dto;
+﻿using eShopAnalysis.EventBus.Abstraction;
+using eShopAnalysis.IdentityServer.Dto;
 using eShopAnalysis.IdentityServer.Envelop;
+using eShopAnalysis.IdentityServer.IntegrationEvents.Event;
 using eShopAnalysis.IdentityServer.Models;
 using eShopAnalysis.IdentityServer.Models.ViewModels;
 using eShopAnalysis.IdentityServer.Utilities;
@@ -18,18 +20,21 @@ namespace eShopAnalysis.IdentityServer.Controllers
         private EmailSenderService _emailSenderService;
         private IIdentityServerInteractionService _interactionIDSService;
         private ILogger _logger;
+        private readonly IEventBus _eventBus;
 
         public AuthController(UserManager<EsaUser> userManager,
                               SignInManager<EsaUser> signInManager,
                               EmailSenderService emailSenderService,
                               IIdentityServerInteractionService interactionIDSService,
-                              ILogger logger)
+                              ILogger logger, 
+                              IEventBus eventBus)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSenderService = emailSenderService;
             _interactionIDSService = interactionIDSService;
             _logger = logger;
+            _eventBus = eventBus;
 
         }
 
@@ -175,6 +180,12 @@ namespace eShopAnalysis.IdentityServer.Controllers
                     //this 3 LINES not use email confirm, also change in the program cs config
                     await _userManager.AddClaimAsync(user, new Claim(MyClaimType.Role, RoleType.AuthenticatedUser));
                     await _signInManager.SignInAsync(user, false);
+                    var createdUser = await _userManager.FindByNameAsync(rvm.Username);
+                    if (createdUser == null) {
+                        throw new Exception("No user created?");
+                    }
+                    Guid createdUserId = Guid.Parse(createdUser.Id);
+                    _eventBus.Publish(new NewUserCreatedIntegrationEvent(createdUserId));
                     return Redirect(rvm.ReturnUrl); 
                 }
 
