@@ -10,8 +10,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using eShopAnalysis.EventBus.Abstraction;
+using eShopAnalysis.EventBus.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddEventBus(builder.Configuration);
 //config option pattern for email sender TODO refactor for better structure, extension maybe?
 IConfiguration emailConfiguration = builder.Configuration.GetSection("MailOptions");
 builder.Services.Configure<MailOptions>(emailConfiguration);
@@ -108,6 +111,7 @@ builder.Services.AddCors((setup) =>
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+var eventBus = app.Services.GetRequiredService<IEventBus>();
 /*Migration for Identity*/
 using (var scope = app.Services.CreateScope())
 {
