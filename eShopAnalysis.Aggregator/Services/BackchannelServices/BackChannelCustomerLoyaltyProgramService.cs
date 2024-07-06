@@ -26,5 +26,22 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
             });
             return result;
         }
+
+        public async Task<BackChannelResponseDto<RewardTransactionDto>> AddRewardTransactionForCompleteOrdering([FromBody] RewardTransactionForCompleteOrderingAddRequestDto requestDto)
+        {
+            var baseService = _serviceProvider.GetRequiredService<IBackChannelBaseService<RewardTransactionForCompleteOrderingAddRequestDto, RewardTransactionDto>>();
+            var result = await baseService.SendAsync(new BackChannelRequestDto<RewardTransactionForCompleteOrderingAddRequestDto>()
+            {
+                ApiType = ApiType.POST,
+                Url = $"{_backChannelUrls.Value.CustomerLoyaltyProgramAPIBaseUri}/AddRewardTransactionForCompleteOrdering",
+                Data = requestDto
+            });
+            return result;
+        }
+
+        public int ConvertOrderPriceToRewardPoint(double orderPrice)
+        {
+            return 100;
+        }
     }
 }

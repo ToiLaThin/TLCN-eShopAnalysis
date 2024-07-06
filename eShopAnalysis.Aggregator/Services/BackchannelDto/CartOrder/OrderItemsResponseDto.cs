@@ -42,6 +42,9 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelDto
         public Guid OrderId { get; set; }
 
         [JsonProperty]
+        public Guid UserId { get; set; }
+
+        [JsonProperty]
         public OrderStatus OrderStatus { get; set; }
 
         [JsonProperty]

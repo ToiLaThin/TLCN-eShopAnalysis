@@ -41,7 +41,6 @@ namespace eShopAnalysis.CustomerLoyaltyProgramAPI.Controllers
             return Ok(resultDto);
         }
 
-        //TODO convert to backchannel
         [HttpPost("BackChannel/AddRewardTransactionForApplyCoupon")]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
         public async Task<BackChannelResponseDto<RewardTransactionDto>> AddRewardTransactionForApplyCoupon([FromBody] RewardTransactionForApplyCouponAddRequestDto requestDto)

@@ -32,6 +32,8 @@ namespace eShopAnalysis.CartOrderAPI.Services.BackchannelDto
     {
         public Guid OrderId { get; }
 
+        public Guid UserId { get; }
+
         public OrderStatus OrderStatus { get; }
 
         public PaymentMethod PaymentMethod { get; }

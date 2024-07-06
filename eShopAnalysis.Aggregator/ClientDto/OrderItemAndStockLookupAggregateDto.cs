@@ -6,6 +6,8 @@ namespace eShopAnalysis.Aggregator.ClientDto
     {
         public Guid OrderId { get; set; }
 
+        public Guid UserId { get; set; }
+
         public OrderStatus OrderStatus { get; set; }
 
         public PaymentMethod PaymentMethod { get; set; }

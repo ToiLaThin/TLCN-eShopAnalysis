@@ -61,17 +61,30 @@ namespace eShopAnalysis.ApiGateway.Controllers
                                                                  });
             //TODO add validate and return failed if update make stock goes below a threshhold (can be checked in UI already but add one more validation layer)
             var resultStockUpdate = await _backChannelStockInventoryService.DecreaseStockItems(stockDecreaseReqs);
-            if (resultStockUpdate.IsSuccess)
-            {
-                IEnumerable<Guid> orderIdsToStockConfirmed = orderApprovedAggregates.Select(x => x.OrderId);
-                var resultBulkApprove = await _backChannelCartOrderService.BulkApproveOrder(orderIdsToStockConfirmed);
-                if (resultBulkApprove.IsSuccess)
-                {
-                    return Ok("ApproveOrdersAndModifyStocks succeeded");
-                }
-                //else use eventual consistency, rsult.isFailed mean orderstatus not set
+            if (resultStockUpdate.IsFailed | resultStockUpdate.IsException) {
+                //use eventual consistency, rsult.isFailed mean orderstatus not set
+                return NotFound("resultStockUpdate have error");
             }
-            return NotFound("resultBulkApprove or resultStockUpdate have error");
+            IEnumerable<Guid> orderIdsToStockConfirmed = orderApprovedAggregates.Select(x => x.OrderId);
+            var resultBulkApprove = await _backChannelCartOrderService.BulkApproveOrder(orderIdsToStockConfirmed);
+            if (resultBulkApprove.IsFailed | resultBulkApprove.IsException) {
+                return NotFound("resultBulkApprove have error");
+            }
+
+            foreach (var o in orderApprovedAggregates) {
+                var resultAddRewardTransForCompleteOrdering = await _backChannelCustomerLoyaltyProgramService.AddRewardTransactionForCompleteOrdering(
+                    new RewardTransactionForCompleteOrderingAddRequestDto() {
+                        UserId = o.UserId,
+                        OrderPrice = o.OrderPrice,
+                        PointTransition = _backChannelCustomerLoyaltyProgramService.ConvertOrderPriceToRewardPoint(o.OrderPrice)
+                    }
+                );
+
+                if (resultAddRewardTransForCompleteOrdering.IsFailed | resultAddRewardTransForCompleteOrdering.IsException) {
+                    return NotFound("resultAddRewardTransForCompleteOrdering have error");
+                }
+            }
+            return Ok("ApproveOrdersAndModifyStocks succeeded");
 
         }
 

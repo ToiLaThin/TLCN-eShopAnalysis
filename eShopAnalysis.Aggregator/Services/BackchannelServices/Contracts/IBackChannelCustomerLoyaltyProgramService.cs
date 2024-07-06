@@ -7,5 +7,8 @@ namespace eShopAnalysis.Aggregator.Services.BackchannelServices
     public interface IBackChannelCustomerLoyaltyProgramService
     {
         Task<BackChannelResponseDto<RewardTransactionDto>> AddRewardTransactionForApplyCoupon([FromBody] RewardTransactionForApplyCouponAddRequestDto requestDto);
+        Task<BackChannelResponseDto<RewardTransactionDto>> AddRewardTransactionForCompleteOrdering([FromBody] RewardTransactionForCompleteOrderingAddRequestDto requestDto);
+
+        int ConvertOrderPriceToRewardPoint(double orderPrice);
     }
 }

@@ -94,6 +94,7 @@ namespace eShopAnalysis.Aggregator.Controllers
                 ordersToApproved.Add(new OrderItemsDto()
                 {
                     OrderId = orderResp.OrderId,
+                    UserId = orderResp.UserId,
                     OrderStatus = orderResp.OrderStatus,
                     PaymentMethod = orderResp.PaymentMethod,
                     TotalPriceFinal = orderResp.TotalPriceFinal,

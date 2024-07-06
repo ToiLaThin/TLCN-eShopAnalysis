@@ -180,7 +180,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
         public async Task<QueryResponseDto<IEnumerable<OrderItemsResponseDto>>> GetToApprovedOrders(int limit)
         {
             using var connection = new SqlConnection(_connString);
-            string sql = @"SELECT o.Id AS OrderId, o.OrdersStatus AS OrderStatus, o.PaymentMethod, c.TotalPriceFinal As TotalPriceFinal, 
+            string sql = @"SELECT o.Id AS OrderId, c.UserId AS UserId, o.OrdersStatus AS OrderStatus, o.PaymentMethod, c.TotalPriceFinal As TotalPriceFinal, 
                                   cI.ProductModelId AS ProductModelId, cI.Quantity As Quantity
                            FROM Orders o
                            INNER JOIN Cart c on o.CartId = c.Id

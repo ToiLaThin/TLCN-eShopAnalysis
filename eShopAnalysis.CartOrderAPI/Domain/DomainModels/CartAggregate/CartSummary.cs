@@ -83,7 +83,9 @@ namespace eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate
             {
                 cartSummary.TotalPriceAfterSale = cartSummary.TotalPriceOriginal - cartSummary.TotalSaleDiscountAmount;              
                 cartSummary.TotalPriceFinal = cartSummary.TotalPriceAfterSale;
+                return cartSummary;
             }
+            cartSummary.TotalPriceFinal = cartSummary.TotalPriceOriginal;
             return cartSummary;
         }
 
