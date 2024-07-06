@@ -10,6 +10,10 @@ namespace eShopAnalysis.Aggregator.ClientDto
     {
         public Guid OrderId { get; set; }
 
+        public Guid UserId { get; set; }
+
+        public double OrderPrice { get; set; }
+
         public IEnumerable<StockDecreaseRequestDto> OrderItemsStockToChange { get; set; }
 
 
