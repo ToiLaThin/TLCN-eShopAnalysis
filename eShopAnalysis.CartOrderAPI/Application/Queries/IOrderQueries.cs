@@ -16,7 +16,8 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
 
         Task<QueryResponseDto<OrderAggregateCartViewModel>> GetOrderAggregateCartByCartIdWithoutAddressUsingRelationship(Guid cartId);
 
-        Task<QueryResponseDto<IEnumerable<OrderAggregateCartViewModel>>> GetOrdersAggregateCartFilterSortPagination(
+        Task<QueryResponseDto<IEnumerable<OrderAggregateCartViewModel>>> GetOrdersAggregateCartFilterSortPaginationOfUser(
+            Guid userId,
             OrderStatus filterOrderStatus,
             PaymentMethod filterPaymentMethod,
             OrdersSortBy sortBy = OrdersSortBy.Id,
@@ -25,6 +26,6 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
             OrdersSortType sortType = OrdersSortType.Ascending);
 
         //Can make QueryResponseDto<wrapper of primitive type int to make it reference type>
-        Task<int> GetOrdersAggregateCartTotalCountAfterFiletered(OrderStatus filterOrderStatus, PaymentMethod filterPaymentMethod);
+        Task<int> GetOrdersAggregateCartTotalCountAfterFileteredOfUser(OrderStatus filterOrderStatus, PaymentMethod filterPaymentMethod, Guid userId);
     }
 }

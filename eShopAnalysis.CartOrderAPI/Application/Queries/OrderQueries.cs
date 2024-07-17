@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using eShopAnalysis.CartOrderAPI.Application.Result;
-using eShopAnalysis.CartOrderAPI.Domain.DomainModels.CartAggregate;
 using eShopAnalysis.CartOrderAPI.Domain.DomainModels.OrderAggregate;
 using eShopAnalysis.CartOrderAPI.Services.BackchannelDto;
 using Microsoft.Data.SqlClient;
@@ -236,7 +235,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
         }
 
         //no limit or offset but with the same where
-        public async Task<int> GetOrdersAggregateCartTotalCountAfterFiletered(OrderStatus filterOrderStatus, PaymentMethod filterPaymentMethod)
+        public async Task<int> GetOrdersAggregateCartTotalCountAfterFileteredOfUser(OrderStatus filterOrderStatus, PaymentMethod filterPaymentMethod, Guid userId)
         {
             using var connection = new SqlConnection(_connString);
             var builder = new SqlBuilder();
@@ -250,6 +249,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
             {
                 orderStatus = (int)filterOrderStatus,
                 paymentMethod = (int)filterPaymentMethod,
+                uId = userId
             };
 
             SqlBuilder.Template sqlTemplate = builder.AddTemplate(sql);
@@ -262,11 +262,16 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
             if ((int)filterPaymentMethod != -1 && filterOrderStatus != OrderStatus.CreatedDraft && filterOrderStatus != OrderStatus.CustomerInfoConfirmed) {
                 builder.Where("o.PaymentMethod = @paymentMethod");
             }
+            if (userId != null && userId != default(Guid))
+            {
+                builder.Where("c.UserId = @uId");
+            }
             var totalOrdersAfterFilterCount = await connection.ExecuteScalarAsync<int>(sqlTemplate.RawSql,param: paramsSql);
             return totalOrdersAfterFilterCount;
         }
 
-        public async Task<QueryResponseDto<IEnumerable<OrderAggregateCartViewModel>>> GetOrdersAggregateCartFilterSortPagination(
+        public async Task<QueryResponseDto<IEnumerable<OrderAggregateCartViewModel>>> GetOrdersAggregateCartFilterSortPaginationOfUser(
+            Guid userId,
             OrderStatus filterOrderStatus,
             PaymentMethod filterPaymentMethod,
             OrdersSortBy sortBy = OrdersSortBy.Id,
@@ -284,7 +289,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
                                   c.TotalPriceFinal,
 
                                   cI.ProductId, cI.ProductModelId, cI.BusinessKey AS CartItemBusinessKey, cI.CartId, cI.SaleItemId, cI.IsOnSale, cI.SaleType, cI.SaleValue,
-                                  cI.Quantity, cI.UnitPrice, cI.FinalPrice, cI.UnitAfterSalePrice, cI.FinalAfterSalePrice
+                                  cI.Quantity, cI.UnitPrice, cI.FinalPrice, cI.UnitAfterSalePrice, cI.FinalAfterSalePrice, cI.ProductName, cI.ProductImage, cI.SubCatalogName
                            FROM Orders o            
                            INNER JOIN Cart c on o.CartId = c.Id
                            INNER JOIN CartItem cI ON c.Id = cI.CartId
@@ -299,6 +304,7 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
                 //offset = (page - 1) * pageSize,
                 orderStatus = (int)filterOrderStatus,
                 paymentMethod = (int)filterPaymentMethod,
+                uId = userId,
             };
             //page num is 1 => offset = 0, page num is 2 => page idx = 1 => offset = 1 * pageSize 
 
@@ -307,6 +313,10 @@ namespace eShopAnalysis.CartOrderAPI.Application.Queries
             if ((int)filterOrderStatus != -1)
             {
                 builder.Where("o.OrdersStatus = @orderStatus");
+            }
+            if (userId != null && userId != default(Guid))
+            {
+                builder.Where("c.UserId = @uId");
             }
 
             //***avoid PaymentMethod col  have null value => cause result the be empty***

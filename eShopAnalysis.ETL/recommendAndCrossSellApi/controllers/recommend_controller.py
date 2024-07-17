@@ -182,7 +182,7 @@ def recommend_content_based() -> list[str]:
     if is_table_exists == False:
         print(f"Table {hive_content_recommender_table_name} does not exist. Creating...")
         ss.sql("""
-            CREATE TABLE IF NOT EXISTS product_cosine_sim (
+            CREATE TABLE IF NOT EXISTS recommender_db.product_cosine_sim (
             p_name1 STRING, 
             p_name2 STRING, 
             cosine_sim FLOAT) 
