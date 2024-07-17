@@ -44,21 +44,23 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
 
 
         //return type is now envelope
-        [HttpGet("GetOrdersAggregateCartFilterSortPagination")]
+        [HttpGet("GetOrdersAggregateCartFilterSortPaginationOfUser")]
         [ProducesResponseType(typeof(OrderAggregateCartViewModelListEnvelope), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ServiceFilter(typeof(LoggingBehaviorActionFilter))]
-        public async Task<ActionResult<OrderAggregateCartViewModelListEnvelope>> GetOrdersAggregateCartFilterSortPagination([FromQuery] OrderStatus? filterOrderStatus,
+        public async Task<ActionResult<OrderAggregateCartViewModelListEnvelope>> GetOrdersAggregateCartFilterSortPaginationOfUser([FromQuery] string userId, [FromQuery] OrderStatus? filterOrderStatus,
             PaymentMethod? filterPaymentMethod,
             OrdersSortBy sortBy = OrdersSortBy.Id,
             int page = 1,
             int pageSize = 10,
             OrdersSortType sortType = OrdersSortType.Ascending)
         {
+            Guid userIdGuid = Guid.Parse(userId);
             //enum default value is 0, if not passing value in, it have 0 as default value
             int filterPaymentMethodPassIn = filterPaymentMethod.HasValue ? (int)filterPaymentMethod : -1;
             int filterOrderStatusPassIn = filterOrderStatus.HasValue ? (int)filterOrderStatus : -1;
-            var queryResult = await _orderQueries.GetOrdersAggregateCartFilterSortPagination(
+            var queryResult = await _orderQueries.GetOrdersAggregateCartFilterSortPaginationOfUser(
+                    userIdGuid,
                     (OrderStatus)filterOrderStatusPassIn,
                     (PaymentMethod)filterPaymentMethodPassIn,
                     sortBy,
@@ -71,7 +73,7 @@ namespace eShopAnalysis.CartOrderAPI.Controllers
             }
 
             //another query to get the total count
-            int totalOrdersAfterFilter = await _orderQueries.GetOrdersAggregateCartTotalCountAfterFiletered((OrderStatus)filterOrderStatusPassIn, (PaymentMethod)filterPaymentMethodPassIn);
+            int totalOrdersAfterFilter = await _orderQueries.GetOrdersAggregateCartTotalCountAfterFileteredOfUser((OrderStatus)filterOrderStatusPassIn, (PaymentMethod)filterPaymentMethodPassIn, userIdGuid);
             if ((totalOrdersAfterFilter == 0 && queryResult.Data.Count() > 0) || totalOrdersAfterFilter < queryResult.Data.Count()) {
                 return NotFound("the total is not valid");
             }
