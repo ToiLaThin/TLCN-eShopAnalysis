@@ -16,7 +16,20 @@ def recommend_collaborate_based():
         als = ALS(maxIter=5, regParam=0.01, userCol='user_id', itemCol='product_id', ratingCol='rating', coldStartStrategy='drop')
         als_trained = als.fit(ss.createDataFrame(df))
         predictions = als_trained.transform(ss.createDataFrame(df))
-        predictions.show()
+        predictions.show(5)
+
+        from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
+        from math import sqrt
+
+        # Evaluate the model by computing the RMSE on the test data
+        actual = predictions.toPandas()['rating']
+        prediction = predictions.toPandas()['prediction']
+        rmse = sqrt(mean_squared_error(actual, prediction))
+        print(f'Root-mean-square error = {rmse}')
+        r2 = r2_score(actual, prediction)
+        print(f'R2 = {r2}')
+        mae = mean_absolute_error(actual, prediction)
+        print(f'Mean absolute error = {mae}')
         als_trained.write().overwrite().save(file_path)
         return als_trained
     
@@ -115,25 +128,26 @@ def recommend_content_based() -> list[str]:
             + analyzer='word': chọn đơn vị trích xuất là word
             + ngram_range=(1, 1): mỗi lần trích xuất 1 word
             + min_df=0: tỉ lệ word không đọc được là 0
-            Lúc này ma trận trả về với số dòng tương ứng với số lượng film và số cột tương ứng với số từ được tách ra từ "genres"
+            Lúc này ma trận trả về với số dòng tương ứng với số lượng sp và số cột tương ứng với số từ được tách ra từ "genres"
         """
         tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 1), min_df=0.0)
         new_tfidf_matrix = tf.fit_transform(df[column_name])
+        print(new_tfidf_matrix)
         return new_tfidf_matrix
     
     def get_cosine_sim(matrix) -> np.ndarray:
         """
-                Dùng hàm "linear_kernel" để tạo thành ma trận hình vuông với số hàng và số cột là số lượng film
-                để tính toán điểm tương đồng giữa từng bộ phim với nhau
+                Dùng hàm "linear_kernel" để tạo thành ma trận hình vuông với số hàng và số cột là số lượng sp
+                để tính toán điểm tương đồng giữa từng sp với nhau
         """
         new_cosine_sim = linear_kernel(matrix, matrix)
         return new_cosine_sim
     
     def generate_recommendations_from_pname(product_name, top_x, df, cosine_sim):
         """
-            Xây dựng hàm trả về danh sách top film tương đồng theo tên film truyền vào:
-            + Tham số truyền vào gồm "title" là tên film và "topX" là top film tương đồng cần lấy
-            + Tạo ra list "sim_score" là danh sách điểm tương đồng với film truyền vào
+            Xây dựng hàm trả về danh sách top sp tương đồng theo tên sp truyền vào:
+            + Tham số truyền vào gồm "title" là tên sp và "topX" là top sp tương đồng cần lấy
+            + Tạo ra list "sim_score" là danh sách điểm tương đồng với sp truyền vào
             + Sắp xếp điểm tương đồng từ cao đến thấp
             + Trả về top danh sách tương đồng cao nhất theo giá trị "topX" truyền vào
             Recommended products are numpy array, convert to list to return
@@ -150,9 +164,9 @@ def recommend_content_based() -> list[str]:
     
     def generate_recommendations_from_pkey(product_key, top_x, df, cosine_sim):
         """
-            Xây dựng hàm trả về danh sách top film tương đồng theo tên film truyền vào:
-            + Tham số truyền vào gồm "title" là tên film và "topX" là top film tương đồng cần lấy
-            + Tạo ra list "sim_score" là danh sách điểm tương đồng với film truyền vào
+            Xây dựng hàm trả về danh sách top sp tương đồng theo tên sp truyền vào:
+            + Tham số truyền vào gồm "title" là tên sp và "topX" là top sp tương đồng cần lấy
+            + Tạo ra list "sim_score" là danh sách điểm tương đồng với sp truyền vào
             + Sắp xếp điểm tương đồng từ cao đến thấp
             + Trả về top danh sách tương đồng cao nhất theo giá trị "topX" truyền vào
             Recommended products are numpy array, convert to list to return
@@ -163,9 +177,11 @@ def recommend_content_based() -> list[str]:
         sim_scores = list(enumerate(cosine_sim[idx]))
         sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
         sim_scores = sim_scores[1:top_x + 1]
-        movie_indices = [i[0] for i in sim_scores]
-        print(all_p_keys.iloc[movie_indices].values)
-        return sim_scores, all_p_keys.iloc[movie_indices].values
+        sp_indices = [i[0] for i in sim_scores]
+        # list of tuple (index, cosine_sim_score)
+        print(sim_scores)
+        print(all_p_keys.iloc[sp_indices].values)
+        return sim_scores, all_p_keys.iloc[sp_indices].values
     
     product_key = request.args.get('product_key')
     hive_content_recommender_db_name = 'recommender_db'
@@ -195,7 +211,9 @@ def recommend_content_based() -> list[str]:
     if hive_table_not_have_data == True:
         print('No data in product_cosine_sim table. Generating...')
         tfidf_matrix = get_tfidf_matrix(product_df, 'features')
+        # print(tfidf_matrix)
         cosine_sim_ndarray = get_cosine_sim(tfidf_matrix)
+        print(cosine_sim_ndarray)
 
         # transform ndarray to df and save to hive table, even if we use p_business_key, we can save df with p_name, because the order is the same, not modified
         temp_product_df = get_product_features_data(by_key=False)
